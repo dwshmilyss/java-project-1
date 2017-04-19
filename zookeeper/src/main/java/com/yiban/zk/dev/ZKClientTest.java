@@ -1,4 +1,4 @@
-package main.java.com.yiban.zk.dev;
+package com.yiban.zk.dev;
 
 import java.util.List;
 

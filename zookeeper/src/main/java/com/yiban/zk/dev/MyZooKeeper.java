@@ -1,4 +1,4 @@
-package main.java.com.yiban.zk.dev;
+package com.yiban.zk.dev;
 
 import org.apache.log4j.Logger;
 import org.apache.zookeeper.WatchedEvent;

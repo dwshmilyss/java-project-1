@@ -1,8 +1,5 @@
 package com.yiban.hive.dev;
 
-import org.junit.Test;
-
-import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;

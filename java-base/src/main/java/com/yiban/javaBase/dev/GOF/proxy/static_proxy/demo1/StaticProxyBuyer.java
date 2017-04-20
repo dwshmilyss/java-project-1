@@ -8,9 +8,9 @@ package com.yiban.javaBase.dev.GOF.proxy.static_proxy.demo1;
  * @create 2017/4/20
  * @blog http://blog.csdn.net/dwshmilyss
  */
-public class ProxyBuyer implements IShop{
+public class StaticProxyBuyer implements IShop{
     private IShop mShop;
-    public ProxyBuyer(IShop shop){
+    public StaticProxyBuyer(IShop shop){
         mShop=shop;
     }
 

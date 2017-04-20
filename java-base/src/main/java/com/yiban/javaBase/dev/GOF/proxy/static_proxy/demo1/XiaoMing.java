@@ -1,5 +1,9 @@
 package com.yiban.javaBase.dev.GOF.proxy.static_proxy.demo1;
 
+
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
+
 import org.apache.log4j.Logger;
 
 /**
@@ -10,9 +14,11 @@ import org.apache.log4j.Logger;
  * @create 2017/4/20
  * @blog http://blog.csdn.net/dwshmilyss
  */
-public class XiaoMing implements IShop{
-    Logger logger = Logger.getLogger(XiaoMing.class);
+public class XiaoMing implements IShop {
+//    Logger logger = LoggerFactory.getLogger(XiaoMing.class);
+    private static Logger logger = Logger.getLogger(XiaoMing.class);
     public void buy() {
+        logger.info("小明进行购买");
         System.out.println("小明进行购买");
     }
 }

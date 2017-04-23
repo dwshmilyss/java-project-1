@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.collections;
+package com.yiban.javaBase.dev.collections.queue;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;

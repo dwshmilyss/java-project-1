@@ -1,9 +1,6 @@
 package com.yiban.javaBase.dev.collections.queue;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * Created by duanwei on 2017/3/13.Ø
@@ -54,9 +51,9 @@ class Business{
             System.out.println(Thread.currentThread().getName() + " : " + i);
         }
         try {
-            subQueue.put(1);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+                subQueue.put(1);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
         }
     }
 

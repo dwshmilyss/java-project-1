@@ -58,5 +58,8 @@ public class PriorityQueueTest {
         priorityQueue.add(t2);
         priorityQueue.add(t4);
         System.out.println(priorityQueue.poll().toString());
+        System.out.println(priorityQueue.poll().toString());
+        System.out.println(priorityQueue.poll().toString());
+        System.out.println(priorityQueue.poll().toString());
     }
 }

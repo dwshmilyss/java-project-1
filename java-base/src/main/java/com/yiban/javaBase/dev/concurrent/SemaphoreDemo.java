@@ -55,20 +55,25 @@ public class SemaphoreDemo {
 
 
     public static void useCountDownLatch() {
-        final CountDownLatch countDownLatch = new CountDownLatch(2);
+//        final CountDownLatch countDownLatch = new CountDownLatch(3);
+        final CountDownLatch startSignal = new CountDownLatch(1);
+        final CountDownLatch doneSignal = new CountDownLatch(3);
         ExecutorService executor1 = Executors.newSingleThreadExecutor();
         ExecutorService executor2 = Executors.newCachedThreadPool();
         ExecutorService executor3 = Executors.newFixedThreadPool(10);
         ExecutorService executor4 = Executors.newWorkStealingPool();
-        for (int i = 0; i < 2; i++) {
-            CountDownLatchDemo countDownLatchDemo = new CountDownLatchDemo(countDownLatch);
+        System.out.println("线程"+Thread.currentThread().getName()+"即将发出任务");
+        startSignal.countDown();
+        for (int i = 0; i < 3; i++) {
+            CountDownLatchDemo countDownLatchDemo = new CountDownLatchDemo(startSignal,doneSignal);
 //            countDownLatchDemo.run();
             executor2.execute(countDownLatchDemo);
         }
 
-
         try {
-            countDownLatch.await();
+            System.out.println("线程"+Thread.currentThread().getName()+"已发出任务，等待完成");
+            doneSignal.await();
+            System.out.println("所有任务都已完成");
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -95,13 +100,27 @@ class ThreadJoinDemo extends Thread {
 class CountDownLatchDemo implements Runnable {
     public static volatile int n = 0;
     CountDownLatch countDownLatch;
+    CountDownLatch startSignal;
+    CountDownLatch doneSignal;
 
     CountDownLatchDemo(CountDownLatch countDownLatch) {
         this.countDownLatch = countDownLatch;
     }
 
+    CountDownLatchDemo(CountDownLatch startSignal,CountDownLatch doneSignal) {
+        this.startSignal = startSignal;
+        this.doneSignal = doneSignal;
+    }
+
     @Override
     public void run() {
+        System.out.println("线程"+Thread.currentThread().getName()+"正在准备");
+        try {
+            startSignal.await();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.println("线程"+Thread.currentThread().getName()+"开始运行");
         for (int i = 0; i < 10; i++) {
             try {
                 Thread.sleep(3);  // 为了使运行结果更随机，延迟3毫秒
@@ -110,8 +129,9 @@ class CountDownLatchDemo implements Runnable {
             }
             n++;
         }
-        countDownLatch.countDown();
-        System.out.println(Thread.currentThread().getName()+",count = " + countDownLatch.getCount());
+        doneSignal.countDown();
+        System.out.println("线程"+Thread.currentThread().getName()+"已运行完");
+        System.out.println(Thread.currentThread().getName()+",count = " + doneSignal.getCount());
     }
 }
 

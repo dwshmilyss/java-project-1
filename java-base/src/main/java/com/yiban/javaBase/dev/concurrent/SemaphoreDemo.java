@@ -87,12 +87,12 @@ public class SemaphoreDemo {
         for (int i = 0; i < 3; i++) {
 //            CountDownLatchDemo countDownLatchDemo = new CountDownLatchDemo(startSignal,doneSignal);
             CountDownLatchDemo countDownLatchDemo = new CountDownLatchDemo(countDownLatch);
-//            countDownLatchDemo.run();
             fixedThreadPool.execute(countDownLatchDemo);
         }
         try {
             System.out.println("线程" + Thread.currentThread().getName() + "已发出任务，等待完成");
 //            doneSignal.await();
+            //阻塞直到所有的线程执行完毕，getCount()为0
             countDownLatch.await();
             System.out.println("CountDownLatch.count = "+countDownLatch.getCount());
             System.out.println("所有任务都已完成");
@@ -110,12 +110,13 @@ public class SemaphoreDemo {
         System.out.println("线程" + Thread.currentThread().getName() + "即将发出任务");
         for (int i = 0; i < 3; i++) {
             SemaphoreExample semaphoreExample = new SemaphoreExample(semaphore);
-//            countDownLatchDemo.run();
+            //启动线程执行任务
             cachedThreadPool.execute(semaphoreExample);
         }
 
         System.out.println("线程" + Thread.currentThread().getName() + "已发出任务，等待完成");
         try {
+            //等待线程池中的线程执行完毕，因为启动了三个线程，每次调用semaphore.release()都会使acquire(permits)增加1，所以这里的参数为3
             semaphore.acquire(3);
             System.out.println("semaphore.availablePermits() = "+semaphore.availablePermits());
             System.out.println("所有任务都已完成");
@@ -126,27 +127,47 @@ public class SemaphoreDemo {
         cachedThreadPool.shutdown();
     }
 
-
+    public static boolean flag = false;
+    public static boolean getFlag() {
+        return flag;
+    }
     public static void useCyclicBarrier(){
-        final CyclicBarrier cyclicBarrier = new CyclicBarrier(4);
-        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+        //因为子线程有三个，外加一个Main线程中的监视器，所以这里的参数要为4
+//        final CyclicBarrier cyclicBarrier = new CyclicBarrier(4);
+        CyclicBarrier cyclicBarrier1 = new CyclicBarrier(3, new Runnable() {
+            @Override
+            public void run() {
+                if (getFlag()){
+                    System.out.println("所有任务都已完成");
+                    System.out.println(Thread.currentThread().getName() + ",n=" + CyclicBarrierDemo.n);
+                }
+            }
+        });
+//        ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+//        ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
+        //用CyclicBarrier最好和newFixedThreadPool一起使用，因为可以控制线程的数目，此数目对应CyclicBarrier的参数
+        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(3);
         System.out.println("线程" + Thread.currentThread().getName() + "即将发出任务");
         for (int i = 0; i < 3; i++) {
-            CyclicBarrierDemo cyclicBarrierDemo = new CyclicBarrierDemo(cyclicBarrier);
-//            countDownLatchDemo.run();
-            cachedThreadPool.execute(cyclicBarrierDemo);
+            CyclicBarrierDemo cyclicBarrierDemo = new CyclicBarrierDemo(cyclicBarrier1);
+            fixedThreadPool.execute(cyclicBarrierDemo);
         }
         System.out.println("线程" + Thread.currentThread().getName() + "已发出任务，等待完成");
-        try {
-            cyclicBarrier.await();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        } catch (BrokenBarrierException e) {
-            e.printStackTrace();
-        }
-        System.out.println("所有任务都已完成");
-        System.out.println(Thread.currentThread().getName() + ",n=" + CyclicBarrierDemo.n);
-        cachedThreadPool.shutdown();
+        flag = true;
+//        try {
+//            TimeUnit.SECONDS.sleep(5);
+//            System.out.println(Thread.currentThread().getName()+" ,before = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
+//            cyclicBarrier.await();
+//            TimeUnit.SECONDS.sleep(5);
+//            System.out.println(Thread.currentThread().getName()+" ,after = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        } catch (BrokenBarrierException e) {
+//            e.printStackTrace();
+//        }
+//        System.out.println("所有任务都已完成");
+//        System.out.println(Thread.currentThread().getName() + ",n=" + CyclicBarrierDemo.n);
+        fixedThreadPool.shutdown();
     }
 }
 
@@ -329,7 +350,10 @@ class CyclicBarrierDemo implements Runnable{
     public void run() {
         method2();
         try {
+            //当前线程执行完任务后阻塞，等待其他任务的完成
+            System.out.println(Thread.currentThread().getName()+",before = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
             cyclicBarrier.await();
+            System.out.println(Thread.currentThread().getName()+",after = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (BrokenBarrierException e) {

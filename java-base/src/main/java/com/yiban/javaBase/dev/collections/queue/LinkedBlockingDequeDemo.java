@@ -1,9 +1,6 @@
 package com.yiban.javaBase.dev.collections.queue;
 
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.*;
 
 /**
  * LinkedBlockingDeque的测试代码
@@ -26,5 +23,10 @@ public class LinkedBlockingDequeDemo {
         BlockingQueue queue = new LinkedBlockingQueue<Integer>();
         queue.offer(1);
         System.out.println(queue.size());
+
+        BlockingQueue array = new ArrayBlockingQueue<Integer>(1);
+        array.offer(1);
+        array.offer(2);
+        System.out.println(array.size()+" : "+array.peek());
     }
 }

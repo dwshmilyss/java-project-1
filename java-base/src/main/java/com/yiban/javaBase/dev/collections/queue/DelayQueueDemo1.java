@@ -53,7 +53,7 @@ public class DelayQueueDemo1 {
         public Student(String name, long workTime, CountDownLatch countDownLatch) {
             this.name = name;
             this.workTime = workTime;
-            this.submitTime = TimeUnit.NANOSECONDS.convert(workTime, TimeUnit.NANOSECONDS) + System.nanoTime();
+            this.submitTime = TimeUnit.NANOSECONDS.convert(workTime, TimeUnit.SECONDS) + System.nanoTime();
             this.countDownLatch = countDownLatch;
         }
 
@@ -96,6 +96,9 @@ public class DelayQueueDemo1 {
 
     }
 
+    /**
+     *
+     */
     static class EndExam extends Student {
 
         private DelayQueue<Student> students;

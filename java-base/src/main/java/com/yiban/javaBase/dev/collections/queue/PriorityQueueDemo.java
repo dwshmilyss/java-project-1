@@ -10,11 +10,11 @@ import java.util.Queue;
  * PriorityQueue是从JDK1.5开始提供的新的数据结构接口。
  * 如果不提供Comparator的话，优先队列中元素默认按自然顺序排列，也就是数字默认是小的在队列头，字符串则按字典序排列。
  */
-public class PriorityQueueTest {
+public class PriorityQueueDemo {
     private String name;
     private int population;
 
-    public PriorityQueueTest(String name, int population) {
+    public PriorityQueueDemo(String name, int population) {
         this.name = name;
         this.population = population;
     }
@@ -33,8 +33,8 @@ public class PriorityQueueTest {
 
 
     public static void main(String args[]) {
-        Comparator<PriorityQueueTest> OrderIsdn = new Comparator<PriorityQueueTest>() {
-            public int compare(PriorityQueueTest o1, PriorityQueueTest o2) {
+        Comparator<PriorityQueueDemo> OrderIsdn = new Comparator<PriorityQueueDemo>() {
+            public int compare(PriorityQueueDemo o1, PriorityQueueDemo o2) {
                 // TODO Auto-generated method stub
                 int numbera = o1.getPopulation();
                 int numberb = o2.getPopulation();
@@ -47,12 +47,12 @@ public class PriorityQueueTest {
                 }
             }
         };
-        Queue<PriorityQueueTest> priorityQueue = new PriorityQueue<PriorityQueueTest>(11, OrderIsdn);
+        Queue<PriorityQueueDemo> priorityQueue = new PriorityQueue<PriorityQueueDemo>(11, OrderIsdn);
 
-        PriorityQueueTest t1 = new PriorityQueueTest("t1", 1);
-        PriorityQueueTest t3 = new PriorityQueueTest("t3", 3);
-        PriorityQueueTest t2 = new PriorityQueueTest("t2", 2);
-        PriorityQueueTest t4 = new PriorityQueueTest("t4", 0);
+        PriorityQueueDemo t1 = new PriorityQueueDemo("t1", 1);
+        PriorityQueueDemo t3 = new PriorityQueueDemo("t3", 3);
+        PriorityQueueDemo t2 = new PriorityQueueDemo("t2", 2);
+        PriorityQueueDemo t4 = new PriorityQueueDemo("t4", 0);
         priorityQueue.add(t1);
         priorityQueue.add(t3);
         priorityQueue.add(t2);

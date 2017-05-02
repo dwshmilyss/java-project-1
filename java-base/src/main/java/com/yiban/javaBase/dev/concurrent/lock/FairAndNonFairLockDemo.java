@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.concurrent;
+package com.yiban.javaBase.dev.concurrent.lock;
 
 import java.util.concurrent.locks.ReentrantLock;
 

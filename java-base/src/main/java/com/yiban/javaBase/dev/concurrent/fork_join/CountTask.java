@@ -1,8 +1,6 @@
 package com.yiban.javaBase.dev.concurrent.fork_join;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.Future;
-import java.util.concurrent.RecursiveTask;
+import java.util.concurrent.*;
 
 /**
  * 利用fork join进行数值求和
@@ -40,11 +38,12 @@ public class CountTask extends RecursiveTask<Integer> {
             CountTask leftTask = new CountTask(start, middle);
             CountTask rightTask = new CountTask(middle + 1, end);
 
-            // 执行子任务
-            leftTask.fork();
-            rightTask.fork();
-
-            //等待任务执行结束合并其结果
+            invokeAll(leftTask,rightTask);
+//            // 执行子任务 等价于上面的invokeAll
+//            leftTask.fork();
+//            rightTask.fork();
+//
+//            //等待任务执行结束合并其结果
             int leftResult = leftTask.join();
             int rightResult = rightTask.join();
 
@@ -52,7 +51,11 @@ public class CountTask extends RecursiveTask<Integer> {
             sum = leftResult + rightResult;
 
         }
-
+//        try {
+//            TimeUnit.SECONDS.sleep(1);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
         return sum;
     }
 
@@ -61,14 +64,25 @@ public class CountTask extends RecursiveTask<Integer> {
 
         //生成一个计算任务，计算1+2+3+4
         CountTask task = new CountTask(1, 100);
-
-        //执行一个任务
-        Future<Integer> result = forkjoinPool.submit(task);
-
+        //同步执行任务
+//        Future<Integer> result = forkjoinPool.submit(task);
+       int res = forkjoinPool.invoke(task);
+        //异步执行任务
+//        forkjoinPool.execute(task);
+//        int res = task.join();
+        //阻塞3秒
         try {
-            System.out.println(result.get());
-        } catch (Exception e) {
-            System.out.println(e);
+            forkjoinPool.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
+        System.out.printf("the result is %s\n",res);
+        forkjoinPool.shutdown();
+        System.out.println("线程池关闭");
+//        try {
+//            System.out.println(result.get());
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
     }
 }

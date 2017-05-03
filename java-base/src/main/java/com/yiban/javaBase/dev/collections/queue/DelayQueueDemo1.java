@@ -1,5 +1,7 @@
 package com.yiban.javaBase.dev.collections.queue;
 
+import org.springframework.util.StopWatch;
+
 import java.util.Iterator;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
@@ -24,6 +26,8 @@ import java.util.concurrent.TimeUnit;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class DelayQueueDemo1 {
+
+    static final StopWatch stopWatch = new StopWatch();
 
     public static void main(String[] args) throws InterruptedException {
         int studentNumber = 20;
@@ -53,6 +57,8 @@ public class DelayQueueDemo1 {
         public Student(String name, long workTime, CountDownLatch countDownLatch) {
             this.name = name;
             this.workTime = workTime;
+            //在初始化对象的时候给过期时间赋值，比如参数workTime=30s 那么就是30秒后过期
+            //这里要加上System.nanoTime()当前时间的纳秒，是因为在getDelay()中会一直不停的减去System.nanoTime()，直到为负值的时候就说明过期了
             this.submitTime = TimeUnit.NANOSECONDS.convert(workTime, TimeUnit.SECONDS) + System.nanoTime();
             this.countDownLatch = countDownLatch;
         }
@@ -71,9 +77,13 @@ public class DelayQueueDemo1 {
             }
         }
 
+        //判断队列中的元素是否已到达延时时间 因为在构造函数中workTime+System.nanoTime()
+        //所以在这里要减去System.nanoTime()
+        // 结果 <= 0 代表已过期
         @Override
         public long getDelay(TimeUnit unit) {
-            return unit.convert(submitTime - System.nanoTime(), TimeUnit.NANOSECONDS);
+//            return unit.convert(submitTime - System.nanoTime(), TimeUnit.NANOSECONDS);
+            return submitTime - System.nanoTime();
         }
 
         @Override
@@ -97,7 +107,9 @@ public class DelayQueueDemo1 {
     }
 
     /**
-     *
+     * 因为考试时间是120分钟，所以delayqueue中offer这个EndExam对象的延时(过期)也就是120分钟
+     * 当这个对象的延时时间到了的时候，该对象被Teacher取出来执行
+     * 运行run之后会取出剩下的student(workTime >= 120)
      */
     static class EndExam extends Student {
 
@@ -139,7 +151,12 @@ public class DelayQueueDemo1 {
             try {
                 System.out.println(" test start");
                 while (!Thread.interrupted()) {
-                    students.take().run();
+                    stopWatch.start();
+                    //这里可以确认take()获取队列中元素的时间就是
+                    Student student = students.take();
+                    stopWatch.stop();
+                    System.out.println(stopWatch.getTotalTimeSeconds());
+                    student.run();
                 }
             } catch (Exception e) {
                 e.printStackTrace();

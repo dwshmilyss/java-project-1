@@ -8,7 +8,7 @@ import java.util.concurrent.Callable;
  * 将直接操作字段和通过getter/setter方法做了对比。如果简单的getters和setters方法没有使用内联的话，那调用它们的代价是相当大的，因为方法调用比直接操作字段代价更高。
  * 1、测试的时候可以通过 添加/去除“-Djava.compiler=none”参数来选择是否使用JIT优化
  * 2、在输出的时候可以加上参数 “-XX:+PrintCompilation” 来查看JIT优化的详细信息
- *
+ *  方法内联
  * @auther WEI.DUAN
  * @date 2017/4/24
  * @website http://blog.csdn.net/dwshmilyss

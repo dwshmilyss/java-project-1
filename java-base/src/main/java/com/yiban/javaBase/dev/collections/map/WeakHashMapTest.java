@@ -1,5 +1,7 @@
 package com.yiban.javaBase.dev.collections.map;
 
+import sun.security.util.BitArray;
+
 import java.util.Map;
 import java.util.WeakHashMap;
 
@@ -29,7 +31,17 @@ public class WeakHashMapTest {
     }
 
     public static void main(String[] args) {
-        init();
-        testWeakHashMap();
+//        init();
+//        testWeakHashMap();
+
+        BitArray bitArray = new BitArray(10);
+        for (int i = 0; i < 10; i++) {
+            System.out.println(bitArray.get(i));
+            bitArray.set(i,true);
+        }
+        System.out.println(" ------------------- ");
+        for (int i = 0; i < 10; i++) {
+            System.out.println(bitArray.get(i));
+        }
     }
 }

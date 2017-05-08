@@ -16,7 +16,7 @@ public class Test {
     private static final double SPLIT_SLOP = 1.1;   // 10% slop
 
     public static void main(String[] args) {
-
+        System.out.println(5&3);
     }
 
     @org.junit.Test

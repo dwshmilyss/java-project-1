@@ -1,6 +1,7 @@
 package com.yiban.javaBase.dev.collections.map;
 
 import java.util.Map;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
@@ -16,7 +17,7 @@ import java.util.TreeMap;
  */
 public class TreeMapTest {
     public static void main(String[] args){
-        Map<String,String> treeMap = new TreeMap<String,String>();
+        Map<String,String> treeMap = new TreeMap();
         treeMap.put("b","b1");
         treeMap.put("a","a1");
         treeMap.put("d","d1");
@@ -26,6 +27,9 @@ public class TreeMapTest {
              treeMap.keySet()) {
             System.out.println(treeMap.get(key));
         }
-        
+
+//        Map<String,String> sortedMap = new SortedMap<String, String>() {
+//        }
+
     }  
 }

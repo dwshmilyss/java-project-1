@@ -1,7 +1,6 @@
 package com.yiban.javaBase.dev.concurrent;
 
 
-import java.util.Random;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;

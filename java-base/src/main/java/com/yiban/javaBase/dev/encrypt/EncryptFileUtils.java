@@ -3,7 +3,9 @@ package com.yiban.javaBase.dev.encrypt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.net.URL;
 import java.security.MessageDigest;
+import java.util.Enumeration;
 
 /**
  * 文件加密工具类
@@ -15,20 +17,14 @@ import java.security.MessageDigest;
 public class EncryptFileUtils {
 
     public static void main(String[] args) {
-//        System.out.println(EncryptFileUtils.class.getClassLoader().getResource("jdbc.properties").getPath());
-        File src = new File(EncryptFileUtils.class.getClassLoader().getResource("jdbc.properties").getPath());
-        File dest = new File(EncryptFileUtils.class.getClassLoader().getResource("jdbc1.properties").getPath());
-        System.out.println(MD5ToFile.getMD5(src,"MD5"));
-        System.out.println(MD5ToFile.getMD5(dest,"MD5"));
-        //0cdadfcc66c59b9c406477a97150e238
-        //0cdadfcc66c59b9c406477a97150e238
-        System.out.println(" =============== ");
-        System.out.println(MD5ToFile.getMD5(src,"SHA1"));
-        System.out.println(MD5ToFile.getMD5(dest,"SHA1"));
-
-        System.out.println(" =============== ");
-        System.out.println(MD5ToFile.getMD5(src,"SHA256"));
-        System.out.println(MD5ToFile.getMD5(dest,"SHA256"));
+        System.out.println(EncryptFileUtils.class.getClassLoader().getResource("jdbc.properties").getPath());
+//        File src = new File(EncryptFileUtils.class.getClassLoader().getResource("conf/jdbc.properties").getPath());
+//        File dest = new File(EncryptFileUtils.class.getClassLoader().getResource("conf/jdbc1.properties").getPath());
+//        System.out.println(MD5ToFile.getMD5(src,"MD5"));
+//        System.out.println(MD5ToFile.getMD5(dest,"MD5"));
+//        System.out.println(" =============== ");
+//        System.out.println(MD5ToFile.getMD5(src,"SHA1"));
+//        System.out.println(MD5ToFile.getMD5(dest,"SHA1"));
     }
 
     static class MD5ToFile {

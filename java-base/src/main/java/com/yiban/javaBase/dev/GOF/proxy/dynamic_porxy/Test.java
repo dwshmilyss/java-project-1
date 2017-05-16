@@ -1,8 +1,6 @@
 package com.yiban.javaBase.dev.GOF.proxy.dynamic_porxy;
 
 
-import com.sun.deploy.net.proxy.ProxyHandler;
-
 import java.lang.reflect.Proxy;
 
 /**

@@ -2,7 +2,6 @@ package com.yiban.javaBase.dev.GOF.proxy.static_proxy.demo1;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.security.Principal;
 
 /**
  * Created by 10000347 on 2017/4/20.

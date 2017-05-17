@@ -1,17 +1,12 @@
 package com.yiban.javaBase.dev.kafka;
 
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.consumer.OffsetAndTimestamp;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * kafka consumer
@@ -23,12 +18,15 @@ import java.util.Properties;
 public class KafkaConsumerDemo1 {
     private static KafkaConsumer kafkaConsumer;
 
+    private static final String GROUP = "MsgConsumer";
+    private static final List TOPICS = Arrays.asList("test");
+
     static {
         Properties props = new Properties();
 //        props.put("bootstrap.servers", "192.168.128.129:9092,192.168.128.129:9093,192.168.128.129:9094");
         props.put("bootstrap.servers", "10.21.3.129:9092");
-        props.put("group.id", "console-consumer-60920");
-//        props.put("group.id", "my-consumer-group-2");
+        props.put("zookeeper.connect", "10.21.3.129:2181");
+        props.put("group.id", "g3");
         //每次最小拉取的消息大小（byte）。Consumer会等待消息积累到一定尺寸后进行批量拉取。默认为1，代表有一条就拉一条
 //        props.put("fetch.min.bytes", "1");
 //        //每次从单个分区中拉取的消息最大尺寸（byte），默认为1M
@@ -44,6 +42,10 @@ public class KafkaConsumerDemo1 {
         props.put("session.timeout.ms", "30000");
         props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
         props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+
+
+
         kafkaConsumer = new KafkaConsumer<String, String>(props);
 
         // 修改kafka日志输出级别(只针对当前的console)
@@ -52,6 +54,60 @@ public class KafkaConsumerDemo1 {
         Logger.getLogger("kafka").setLevel(Level.WARN);
         System.out.println("KafkaConsumer init completed.....");
     }
+
+
+    /**
+     * 自动提交offset
+     */
+    public void autoCommit() {
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//key反序列化方式
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getCanonicalName());//value反系列化方式
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,true);//自动提交
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.59.130:9092,192.168.59.131:9092,192.168.59.132:9092");//指定broker地址，来找到group的coordinator
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG,this.GROUP);//指定用户组
+
+        KafkaConsumer<String,String> consumer = new KafkaConsumer<String, String>(properties);
+        consumer.subscribe(TOPICS);
+
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(100);//100ms 拉取一次数据
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println("topic: "+record.topic() + " key: " + record.key() + " value: " + record.value() + " partition: "+ record.partition());
+            }
+        }
+    }
+
+
+    /**
+     * 手动提交offset
+     */
+    public void consumer() {
+        Properties properties = new Properties();
+        properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//key反序列化方式
+        properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG,StringDeserializer.class.getCanonicalName());//value反系列化方式
+        properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG,false);//手动提交
+        properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG,"192.168.59.130:9092,192.168.59.131:9092,192.168.59.132:9092");//指定broker地址，来找到group的coordinator
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG,this.GROUP);//指定用户组
+
+        KafkaConsumer<String,String> consumer = new KafkaConsumer<String, String>(properties);
+        consumer.subscribe(TOPICS);//指定topic消费
+
+        long i = 0;
+        while (true) {
+            ConsumerRecords<String, String> records = consumer.poll(100);//100ms 拉取一次数据
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println("topic: "+record.topic() + " key: " + record.key() + " value: " + record.value() + " partition: "+ record.partition());
+                i ++;
+            }
+
+            if (i >= 100) {
+                consumer.commitAsync();//手动commit
+                i = 0;
+            }
+        }
+    }
+
 
     public static void main(String[] args) {
         String topic = "test";

@@ -36,7 +36,7 @@ public class KafkaConsumerDemo1 {
         //是否自动提交已拉取消息的offset。提交offset即视为该消息已经成功被消费，该组下的Consumer无法再拉取到该消息（除非手动修改offset）。默认为true
         props.put("enable.auto.commit", "false");
         //和commit=false 配合使用并没有丢失消息
-//        props.put("auto.offset.reset", "earliest");
+        props.put("auto.offset.reset", "earliest");
 //        props.put("auto.offset.reset", "latest");
 //        props.put("enable.auto.commit", "true");
         //自动提交offset的间隔毫秒数，默认5000
@@ -61,19 +61,27 @@ public class KafkaConsumerDemo1 {
         //获取当前topic指定partition的offset(已提交的最后一条)
         System.out.println(kafkaConsumer.position(partition0));
 
-        long time  = 1421849887000l;
-        Map<TopicPartition, Long> timestampsToSearch = new HashMap();
-        timestampsToSearch.put(partition0,time);
+//        long time  = 1421849887000l;
+//        Map<TopicPartition, Long> timestampsToSearch = new HashMap();
+//        timestampsToSearch.put(partition0,time);
+//
+//        //大于指定time的最早的一条
+//        Map<TopicPartition, OffsetAndTimestamp> res = kafkaConsumer.offsetsForTimes(timestampsToSearch);
+//
+//        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry: res.entrySet()
+//             ) {
+//            System.out.println("=======================");
+//            TopicPartition key = entry.getKey();
+//            OffsetAndTimestamp value = entry.getValue();
+//            System.out.println(key.topic()+","+key.partition()+","+value.timestamp()+","+value.offset());
+//        }
 
-        Map<TopicPartition, OffsetAndTimestamp> res = kafkaConsumer.offsetsForTimes(timestampsToSearch);
-
-        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry: res.entrySet()
-             ) {
-            System.out.println("=======================");
-            TopicPartition key = entry.getKey();
-            OffsetAndTimestamp value = entry.getValue();
-            System.out.println(key.topic()+","+key.partition()+","+value.timestamp()+","+value.offset());
-        }
+        //跳到指定offset位置
+//        kafkaConsumer.seek(partition0,122);
+        //从指定partition的未提交的offset的开始位置开始消费 等价于auto.offset.reset => "earliest"
+        kafkaConsumer.seekToBeginning(Arrays.asList(partition0));
+        //跳到指定partition的结束位置 但是不改变kafkaConsumer.position(partition0)，不等价于auto.offset.reset => "latest"
+//        kafkaConsumer.seekToEnd(Arrays.asList(partition0));
 
         /**
          * 可以指定分区，但是这样kafka就不会负载均衡了
@@ -83,20 +91,18 @@ public class KafkaConsumerDemo1 {
 //        kafkaConsumer.assign(Arrays.asList(partition0, partition1));
 
 
-
-
-//        while (true) {
-//            ConsumerRecords<String, String> records = kafkaConsumer.poll(2000);
-//            for (ConsumerRecord<String, String> record : records) {
-//                System.out.println("fetched from partition " + record.partition() + ", offset: " + record.offset() + ", message: " + record.value() + ",time = " + record.timestamp() + ",key = " + record.key());
-//            }
-//            //手动提交offset(manual offset)
-////            kafkaConsumer.commitSync();
-//            try {
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//        }
+        while (true) {
+            ConsumerRecords<String, String> records = kafkaConsumer.poll(2000);
+            for (ConsumerRecord<String, String> record : records) {
+                System.out.println("fetched from partition " + record.partition() + ", offset: " + record.offset() + ", message: " + record.value() + ",time = " + record.timestamp() + ",key = " + record.key());
+            }
+            //手动提交offset(manual offset)
+//            kafkaConsumer.commitSync();
+            try {
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 }

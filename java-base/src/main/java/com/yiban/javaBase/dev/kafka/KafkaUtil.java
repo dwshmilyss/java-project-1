@@ -230,8 +230,13 @@ public class KafkaUtil implements Serializable {
         String partitionId = String.valueOf(0);
         String clientId = "Client_".concat(topicName).concat("_").concat(partitionId);
         try {
-            System.out.println(KafkaUtil.getInstance().getKafkaOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));
-            System.out.println(KafkaUtil.getInstance().getKafkaEarlyOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));
+//            System.out.println(KafkaUtil.getInstance().getKafkaOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));
+//            System.out.println(KafkaUtil.getInstance().getKafkaEarlyOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));
+            Map<String, KafkaTopicOffset> currentEarlyestOffsetMap = KafkaUtil.getInstance().getKafkaOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId);
+            long currentEarlyestOffset = currentEarlyestOffsetMap.get(topicName).getOffsetList().get(Integer.parseInt(partitionId));
+            Map<String, KafkaTopicOffset> currentLatestOffsetMap = KafkaUtil.getInstance().getKafkaEarlyOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId);
+            long currentLatestOffset = currentLatestOffsetMap.get(topicName).getOffsetList().get(Integer.parseInt(partitionId));
+            System.out.println("currentEarlyestOffset = " + currentEarlyestOffset + ",||currentLatestOffset = " + currentLatestOffset);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

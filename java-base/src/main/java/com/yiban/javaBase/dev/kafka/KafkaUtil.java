@@ -12,7 +12,11 @@ import java.io.Serializable;
 import java.util.*;
 
 /**
- * 工具类
+ * 利用kafka的低阶API获取一些topic信息。
+ * 低阶API可以做：
+ *  1、一个消息读取多次
+    2、在一个处理过程中只消费Partition其中的一部分消息
+    3、添加事务管理机制以保证消息被处理且仅被处理一次
  *
  * @auther WEI.DUAN
  * @date 2017/5/17

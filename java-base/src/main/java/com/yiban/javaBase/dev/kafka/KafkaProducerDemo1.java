@@ -1,6 +1,9 @@
 package com.yiban.javaBase.dev.kafka;
 
 
+import kafka.javaapi.producer.Producer;
+import kafka.producer.KeyedMessage;
+import kafka.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -20,66 +23,72 @@ import java.util.Properties;
  */
 public class KafkaProducerDemo1 {
 
+    //0.10.2.0版本
+    private static KafkaProducer kafkaProducer;
+
+    //0.8.2.1版本
+    private static Producer kafkaProducer0820;
 
 
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerDemo1.class);
+
+    static {
+        Properties props = new Properties();
+//        props.put("bootstrap.servers", "192.168.128.129:9092,192.168.128.129:9093,192.168.128.129:9094");
+        props.put("bootstrap.servers", "10.21.3.129:9092");
+        props.put("acks", "1");
+        props.put("retries", 0);
+        props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+
+        kafkaProducer = new KafkaProducer(props);
+
+        Properties props0820 = new Properties();
+        props0820.put("zookeeper.connect", "10.21.3.129:2181");
+        props0820.put("metadata.broker.list", "10.21.3.129:9092");
+        props0820.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props0820.put("serializer.class", "kafka.serializer.StringEncoder");
+        props0820.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
+        props0820.put("request.required.acks", "1");
+        ProducerConfig producerConfig = new ProducerConfig(props0820);
+        kafkaProducer0820 = new Producer(producerConfig);
+
+        // 修改kafka日志输出级别(只针对当前的console)
+        Logger.getLogger("org").setLevel(Level.WARN);
+        Logger.getLogger("akka").setLevel(Level.WARN);
+        Logger.getLogger("kafka").setLevel(Level.WARN);
+        System.out.println("init completed.....");
+    }
 
 
     public static void main(String[] args) {
+        try {
+            String topic = "test1";
+            int i = 0;
+            while (true){
+                System.out.println("send begin.....");
 
-    }
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, String.valueOf(i),"this is message : " + i);
+                kafkaProducer.send(record, new Callback() {
+                    public void onCompletion(RecordMetadata metadata, Exception e) {
+                        System.out.println("callback .....");
+                        if (e != null)
+                            e.printStackTrace();
+                        System.out.println("message send to partition " + metadata.partition() + ", offset: " + metadata.offset());
+                    }
+                });
 
-    static class KafkaProcuderWrap implements Runnable{
-        private static KafkaProducer kafkaProducer1;
+//                KeyedMessage<String,String> keyedMessage = new KeyedMessage<String, String>(topic,String.valueOf(i),"this is message : " + i);
+//                kafkaProducer0820.send(keyedMessage);
 
-        private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerDemo1.class);
-
-        static {
-            Properties props = new Properties();
-
-//        props.put("bootstrap.servers", "192.168.128.129:9092,192.168.128.129:9093,192.168.128.129:9094");
-            props.put("bootstrap.servers", "10.21.3.129:9092");
-            props.put("acks", "1");
-            props.put("retries", 0);
-            props.put("batch.size", 16384);
-            props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-            props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
-            kafkaProducer1 = new KafkaProducer(props);
-
-            // 修改kafka日志输出级别(只针对当前的console)
-            Logger.getLogger("org").setLevel(Level.WARN);
-            Logger.getLogger("akka").setLevel(Level.WARN);
-            Logger.getLogger("kafka").setLevel(Level.WARN);
-            System.out.println("init completed.....");
-        }
-
-
-        public static void pushMsg(){
-            try {
-                String topic = "test";
-                int i = 0;
-                while (true){
-                    ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, String.valueOf(i),"this is message : " + i);
-                    System.out.println("send begin.....");
-                    kafkaProducer1.send(record, new Callback() {
-                        public void onCompletion(RecordMetadata metadata, Exception e) {
-                            System.out.println("callback .....");
-                            if (e != null)
-                                e.printStackTrace();
-                            System.out.println("message send to partition " + metadata.partition() + ", offset: " + metadata.offset());
-                        }
-                    });
-                    i++;
-                    Thread.sleep(2000);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+                i++;
+                Thread.sleep(2000);
             }
-        }
 
-        @Override
-        public void run() {
-            pushMsg();
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

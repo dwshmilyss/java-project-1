@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.kafka;
+package com.yiban.kafka;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -184,19 +184,24 @@ public class SimpleAPIDemo {
 
     private PartitionMetadata findLeader(List<String> a_seedBrokers, int a_port, String a_topic, int a_partition) {
         PartitionMetadata returnMetaData = null;
-        loop: for (String seed : a_seedBrokers) {
+        loop: for (String seed : a_seedBrokers) {//遍历每个broker
             SimpleConsumer consumer = null;
             try {
+                // 创建Simple Consumer
                 consumer = new SimpleConsumer(seed, a_port, 100000, 64 * 1024, "leaderLookup");
                 List<String> topics = Collections.singletonList(a_topic);
                 TopicMetadataRequest req = new TopicMetadataRequest(topics);
+                //发送TopicMetadata Request请求
                 kafka.javaapi.TopicMetadataResponse resp = consumer.send(req);
-
+                //取到Topic的Metadata
                 List<TopicMetadata> metaData = resp.topicsMetadata();
+                //遍历每个partition的metadata
                 for (TopicMetadata item : metaData) {
                     for (PartitionMetadata part : item.partitionsMetadata()) {
+                        // 判断是否是要找的partition
                         if (part.partitionId() == a_partition) {
                             returnMetaData = part;
+                            //这里break loop 可以直接退出两层循环
                             break loop;
                         }
                     }

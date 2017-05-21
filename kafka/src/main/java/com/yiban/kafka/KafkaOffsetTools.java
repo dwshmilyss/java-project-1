@@ -1,6 +1,8 @@
-package com.yiban.javaBase.dev.kafka;
+package com.yiban.kafka;
 
 
+import kafka.network.BlockingChannel;
+import org.apache.log4j.Level;
 import kafka.api.ConsumerMetadataRequest;
 import kafka.cluster.Broker;
 import kafka.common.ErrorMapping;
@@ -12,7 +14,6 @@ import kafka.javaapi.OffsetFetchResponse;
 import kafka.network.BlockingChannel;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-
 import java.util.ArrayList;
 import java.util.List;
 

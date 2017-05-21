@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.kafka;
+package com.yiban.kafka;
 
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.ConsumerRecord;

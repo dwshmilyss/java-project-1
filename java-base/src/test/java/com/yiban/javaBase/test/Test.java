@@ -63,7 +63,16 @@ public class Test {
 
     @org.junit.Test
     public void test(){
-        System.out.println("test");
+        int temp = 50;
+        loop:for (int i = 0; i < 100; i++) {
+            System.out.println("i = "+i);
+            for (int j = 0; j < 100; j++) {
+                if(temp == j){
+                    break loop;
+                }
+                System.out.println("j = "+j);
+            }
+        }
     }
 
     @org.junit.Test

@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.kafka;
+package com.yiban.kafka;
 
 /**
  * 常量类

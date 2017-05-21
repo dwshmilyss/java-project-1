@@ -1,23 +1,17 @@
-package com.yiban.javaBase.dev.kafka;
+package com.yiban.kafka;
 
-import com.alibaba.fastjson.serializer.ObjectSerializer;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.message.MessageAndMetadata;
 import kafka.serializer.StringDecoder;
 import kafka.utils.VerifiableProperties;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
+import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import scala.None;
 
 import java.util.*;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * kafka consumer
@@ -81,6 +75,7 @@ public class KafkaConsumerDemo1 {
 
         long i = 0;
         while (true) {
+            //每100条提交一次
             ConsumerRecords<String, String> records = consumer.poll(100);//100ms 拉取一次数据
             for (ConsumerRecord<String, String> record : records) {
                 System.out.println("topic: " + record.topic() + " key: " + record.key() + " value: " + record.value() + " partition: " + record.partition());
@@ -90,6 +85,17 @@ public class KafkaConsumerDemo1 {
             if (i >= 100) {
                 consumer.commitAsync();//手动commit
                 i = 0;
+            }
+
+            //获取该topic下所有partition的所有记录，每消费完一个partition提交一次
+            for (TopicPartition partition : records.partitions()) {
+                List<ConsumerRecord<String, String>> partitionRecords = records.records(partition);
+                for (ConsumerRecord<String, String> record : partitionRecords) {
+                    System.out.println("now consumer the message it's offset is :"+record.offset() + " and the value is :" + record.value());
+                }
+                long lastOffset = partitionRecords.get(partitionRecords.size() - 1).offset();
+                System.out.println("now commit the partition[ "+partition.partition()+"] offset");
+                consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
             }
         }
     }

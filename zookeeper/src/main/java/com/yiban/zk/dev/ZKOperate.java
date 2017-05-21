@@ -31,7 +31,7 @@ public class ZKOperate {
      */
     public boolean createZNode(String path, String data) {
         try {
-            String zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+            String zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
             logger.info("ZooKeeper创建节点成功，节点地址：" + zkPath);
             return true;
         } catch (KeeperException e) {

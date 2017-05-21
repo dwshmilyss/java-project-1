@@ -1,4 +1,4 @@
-package com.yiban.kafka;
+package com.yiban.kafka.oldAPI;
 
 import java.io.Serializable;
 import java.util.HashMap;

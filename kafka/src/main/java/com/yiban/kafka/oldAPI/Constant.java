@@ -1,4 +1,4 @@
-package com.yiban.kafka;
+package com.yiban.kafka.oldAPI;
 
 /**
  * 常量类

@@ -1,4 +1,4 @@
-package com.yiban.kafka;
+package com.yiban.kafka.oldAPI;
 
 import kafka.api.PartitionOffsetRequestInfo;
 import kafka.common.TopicAndPartition;

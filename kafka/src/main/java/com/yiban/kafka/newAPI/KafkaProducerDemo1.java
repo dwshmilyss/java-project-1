@@ -1,8 +1,7 @@
-package com.yiban.kafka;
+package com.yiban.kafka.newAPI;
 
 
 import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;

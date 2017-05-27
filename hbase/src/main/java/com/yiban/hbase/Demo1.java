@@ -27,8 +27,8 @@ public class Demo1 {
         String zklist = "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77";
         //建立hbase连接
         configuration = HBaseConfiguration.create(); // 获得配置文件对象
-//        configuration.set("hbase.zookeeper.quorum", zklist);
-//        configuration.set("hbase.zookeeper.property.clientPort", "2181");
+        configuration.set("hbase.zookeeper.quorum", zklist);
+        configuration.set("hbase.zookeeper.property.clientPort", "2181");
 //        configuration.set("hbase.master", "10.21.3.73:60000");
 //        configuration.set("zookeeper.session.timeout", "10000");
 //        configuration.set("hbase.rootdir", "hdfs://master01:9000/hbase");
@@ -36,9 +36,9 @@ public class Demo1 {
 //        configuration.addResource("core-site.xml");
 //        configuration.addResource("hdfs-site.xml");
 
-        configuration.addResource(new Path(System.getenv("HBASE_CONF_DIR"), "hbase-site.xml"));
-        configuration.addResource(new Path(System.getenv("HADOOP_CONF_DIR"), "core-site.xml"));
-        configuration.addResource(new Path(System.getenv("HADOOP_CONF_DIR"), "hdfs-site.xml"));
+//        configuration.addResource(new Path(System.getenv("HBASE_CONF_DIR"), "hbase-site.xml"));
+//        configuration.addResource(new Path(System.getenv("HADOOP_CONF_DIR"), "core-site.xml"));
+//        configuration.addResource(new Path(System.getenv("HADOOP_CONF_DIR"), "hdfs-site.xml"));
         try {
             connection = ConnectionFactory.createConnection(configuration);
             admin = connection.getAdmin();

@@ -68,9 +68,13 @@ public class KafkaProducerThreadDemo {
                 while (true){
                     ProducerRecord<String, String> record = new ProducerRecord<String, String>(topicName, String.valueOf(i),"this is message : " + i);
                     kafkaProducer.send(record, new Callback() {
+                        //注册回调方法
                         public void onCompletion(RecordMetadata metadata, Exception e) {
                             if (e != null)
                                 e.printStackTrace();
+//                            System.out.printf("Send record partition:%d, offset:%d, keysize:%d, valuesize:%d %n",
+//                                    metadata.partition(), metadata.offset(), metadata.serializedKeySize(),
+//                                    metadata.serializedValueSize());
                             System.out.println(Thread.currentThread().getName()+" -- message send to partition " + metadata.partition() + ", offset: " + metadata.offset());
                         }
                     });

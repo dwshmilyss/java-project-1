@@ -20,8 +20,8 @@ public class DelayQueueDemo2 {
         DelayQueue dq = new DelayQueue();
         DeleyedTest ob1 = new DeleyedTest(10);
         DeleyedTest ob2 = new DeleyedTest(5);
-        DeleyedTest ob3 = new DeleyedTest(15);
 
+        DeleyedTest ob3 = new DeleyedTest(15);
         dq.offer(ob1);
         dq.offer(ob2);
         dq.offer(ob3);
@@ -67,8 +67,8 @@ public class DelayQueueDemo2 {
 
         @Override
         public long getDelay(TimeUnit unit) {
-//            return unit.convert(tempTime - System.nanoTime(), TimeUnit.NANOSECONDS);
-            return 0;
+            return unit.convert(tempTime - System.nanoTime(), TimeUnit.NANOSECONDS);
+//            return 1;
         }
 
     }

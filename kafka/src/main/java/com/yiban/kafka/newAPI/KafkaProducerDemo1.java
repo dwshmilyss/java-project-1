@@ -39,7 +39,6 @@ public class KafkaProducerDemo1 {
         props.put("retries", 0);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-
         kafkaProducer = new KafkaProducer(props);
 
         Properties props0820 = new Properties();
@@ -62,7 +61,7 @@ public class KafkaProducerDemo1 {
 
     public static void main(String[] args) {
         try {
-            String topic = "test1";
+            String topic = "test4";
             int i = 0;
             while (true){
                 System.out.println("send begin.....");

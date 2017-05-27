@@ -1,5 +1,6 @@
 package com.yiban.kafka.newAPI;
 
+
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.message.MessageAndMetadata;
@@ -126,10 +127,10 @@ public class KafkaConsumerDemo1 {
              */
             props.put("auto.offset.reset", "earliest");
 //            props.put("auto.offset.reset", "latest");
-//            props.put("enable.auto.commit", "true");
             props.put("enable.auto.commit", "false");
+//            props.put("enable.auto.commit", "false");
             //自动提交offset的间隔毫秒数，默认5000
-//            props.put("auto.commit.interval.ms", "1000");
+            props.put("auto.commit.interval.ms", "100");
             props.put("session.timeout.ms", "30000");
             props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
             props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -192,9 +193,10 @@ public class KafkaConsumerDemo1 {
     }
 
     private static void test_0_10_2_0(String topic) {
-        TopicPartition partition0 = new TopicPartition(topic, 0);
-        kafkaConsumer.subscribe(Arrays.asList(topic));
-//        kafkaConsumer.assign(Arrays.asList(partition0));
+        TopicPartition partition0 = new TopicPartition(topic, 1);
+//        kafkaConsumer.subscribe(Arrays.asList(topic));
+        kafkaConsumer.assign(Arrays.asList(partition0));
+//        kafkaConsumer.pause(Arrays.asList(partition0));
         //获取当前topic指定partition的offset
 //        System.out.println(kafkaConsumer.position(partition0));
 
@@ -214,7 +216,7 @@ public class KafkaConsumerDemo1 {
 //        }
 
         //跳到指定offset位置
-//        kafkaConsumer.seek(partition0,122);
+        kafkaConsumer.seek(partition0,0);
         //从指定partition的未提交的offset的开始位置开始消费 等价于auto.offset.reset => "earliest"
 //        kafkaConsumer.seekToBeginning(Arrays.asList(partition0));
         //跳到指定partition的结束位置 但是不改变kafkaConsumer.position(partition0)，不等价于auto.offset.reset => "latest"
@@ -227,18 +229,19 @@ public class KafkaConsumerDemo1 {
 //        TopicPartition partition1 = new TopicPartition(topic, 1);
 //        kafkaConsumer.assign(Arrays.asList(partition0, partition1));
 
+        int i = 0;
         while (true) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
-                System.out.println(Thread.currentThread().getName()+",fetched from partition " + record.partition() + ", offset: " + record.offset() + ", message: " + record.value() + ",time = " + record.timestamp() + ",key = " + record.key());
+                System.out.println("fetched from partition " + record.partition() + ", offset: " + record.offset() + ", message: " + record.value() + ",time = " + record.timestamp() + ",key = " + record.key());
             }
-            //手动提交offset(manual offset)
-//            kafkaConsumer.commitSync();
-            try {
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+//            手动提交offset(manual offset)
+            kafkaConsumer.commitSync();
+//            try {
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
     }
 }

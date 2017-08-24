@@ -28,7 +28,25 @@ public class ThreadDemo {
 //        testThreadUnCaughtException();
 //        testThreadLocal();
 
-        testThreadGroup();
+//        testThreadGroup();
+
+        class TT implements Runnable{
+
+            @Override
+            public void run() {
+                while (true){
+                    System.out.println("aa");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        TT tt = new TT();
+        tt.run();
+        System.out.println("bbb");
     }
 
     /**

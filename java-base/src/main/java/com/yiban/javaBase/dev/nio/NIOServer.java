@@ -20,6 +20,12 @@ public class NIOServer {
     //通道管理器
     private Selector selector;
 
+    // 创建读取的缓冲区(1024kb)
+    private ByteBuffer buffer = ByteBuffer.allocate(1024);
+
+    //声明通道
+    private ServerSocketChannel serverChannel;
+
     /**
      * 获得一个ServerSocket通道，并对该通道做一些初始化的工作
      *
@@ -28,7 +34,7 @@ public class NIOServer {
      */
     public void initServer(int port) throws IOException {
         // 获得一个ServerSocket通道
-        ServerSocketChannel serverChannel = ServerSocketChannel.open();
+        serverChannel = ServerSocketChannel.open();
         // 设置通道为非阻塞
         serverChannel.configureBlocking(false);
         // 将该通道对应的ServerSocket绑定到port端口
@@ -85,15 +91,26 @@ public class NIOServer {
     private void read(SelectionKey key) throws IOException {
         // 服务器可读取消息:得到事件发生的Socket通道
         SocketChannel channel = (SocketChannel) key.channel();
-        // 创建读取的缓冲区(10byte)
-        ByteBuffer buffer = ByteBuffer.allocate(10);
+//        buffer.clear();
         //将管道中的字节流读取到缓冲区中
-        channel.read(buffer);
-        byte[] data = buffer.array();
-        String msg = new String(data).trim();
-        System.out.println("服务端收到信息：" + msg);
-        ByteBuffer outBuffer = ByteBuffer.wrap(msg.getBytes());
-        channel.write(outBuffer);// 将消息回送给客户端
+        int cn = channel.read(buffer);
+        buffer.flip();
+        //如果读到的客户端数据不为空
+        if (cn > 0) {
+            byte[] data = buffer.array();
+            String msg = new String(data).trim();
+            System.out.println("服务端收到信息：" + msg);
+            System.out.println("[系统消息提示]服务器发现[" + msg + "]玩家上线");
+            String returnMsg = "[系统消息提示][" + msg + "]玩家上线成功";
+            ByteBuffer outBuffer = ByteBuffer.wrap(returnMsg.getBytes("UTF-8"));
+            while (outBuffer.hasRemaining()) {
+                channel.write(outBuffer);// 将消息回送给客户端
+            }
+        } else {
+            System.out.println("[系统消息提示]玩家下线");
+            //检测到客户端关闭（玩家下线），删除该selectionKey监听事件，否则会一直收到这个selectionKey的动作
+            key.cancel();
+        }
     }
 
     public static void main(String[] args) {

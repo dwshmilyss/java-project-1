@@ -9,7 +9,9 @@ import java.util.EnumSet;
  * compareTo(E o) : 比较枚举元素的顺序
  * equals(Object obj) : 判断枚举元素是否相同
  * name() :  获取元素定义时的名称
- * ordinal() : 获取枚举元素被定义时的顺序，从0开始计算
+ * ordinal() : 获取枚举元素被定义时的顺序，从0开始计算。枚举值默认为从0开始的有序数值
+ * values()：返回enum实例的数组，而且该数组中的元素严格保持在enum中声明时的顺序。
+ * java.lang.Enum实现了Comparable和 Serializable 接口，所以也提供 compareTo() 方法。
  *
  * @auther WEI.DUAN
  * @create 2017/5/1
@@ -19,7 +21,9 @@ public class EnumDemo {
 
     public static void main(String[] args) {
 //        testSwitch(ColorValues.BLUE);
-        getEnumSet();
+//        getEnumSet();
+//        printColor();
+        printColorValues();
     }
 
     /**
@@ -88,7 +92,6 @@ public class EnumDemo {
 
     /**
      * 获取元素信息并打印输出
-     *
      * @param enumSet
      */
     public static void getElement(EnumSet<ColorValues> enumSet) {
@@ -98,7 +101,6 @@ public class EnumDemo {
             for (ColorValues colorValues2 : enumSet) {
                 strName.append("\t" + colorValues2.getDescription() + "\n");
             }
-
             System.out.println(strName.toString().split("\n")[j]);
         }
     }
@@ -106,7 +108,7 @@ public class EnumDemo {
     /**
      * EnumSet方法的具体使用实例
      * 1.枚举集合，和Set集合一样，保证每一个元素的唯一性，不可重复性；
-     * 2.当创建EnumSet对象时，需要显式或隐士指明元素的枚举类型；
+     * 2.当创建EnumSet对象时，需要显式或隐式指明元素的枚举类型；
      * 3.此对象中的元素仅能取自同一枚举类
      * 4.在EnumSet内部以"位向量"的形式表示,这种结构紧凑而高效，使得类的时间、控件性能非常优越。
      * <p>
@@ -239,7 +241,7 @@ public class EnumDemo {
     }
 
     public enum ColorValues {
-        //属性的值只能是String类型
+        //因为声明的description是string，所以属性的值只能是String类型
         BLUE("蓝色"), YELLOW("黄色"), RED("红色"), GREEN("绿色"), WHITE("白色"), BRACK("黑色"), PURPLE(
                 "紫色");
         private String description;

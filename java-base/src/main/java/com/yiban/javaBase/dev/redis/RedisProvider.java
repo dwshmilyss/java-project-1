@@ -30,12 +30,12 @@ public class RedisProvider {
         EXPIRE = Integer.valueOf(bundle.getString("redis.expire"));
 
         JedisPoolConfig jedisconfig = new JedisPoolConfig();
-        jedisconfig.setMaxTotal(Integer.valueOf(bundle
-                .getString("redis.pool.maxActive")));
+//        jedisconfig.setMaxTotal(Integer.valueOf(bundle
+//                .getString("redis.pool.maxActive")));
         jedisconfig.setMaxIdle(Integer.valueOf(bundle
                 .getString("redis.pool.maxIdle")));
-        jedisconfig.setMaxWaitMillis(Long.valueOf(bundle
-                .getString("redis.pool.maxWait")));
+//        jedisconfig.setMaxWaitMillis(Long.valueOf(bundle
+//                .getString("redis.pool.maxWait")));
         jedisconfig.setTestOnBorrow(Boolean.valueOf(bundle
                 .getString("redis.pool.testOnBorrow")));
         jedisconfig.setTestOnReturn(Boolean.valueOf(bundle

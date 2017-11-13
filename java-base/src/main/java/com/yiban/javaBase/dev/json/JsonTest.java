@@ -15,8 +15,8 @@ public class JsonTest {
     public static void main(String[] args) {
         StopWatch stopWatch = new StopWatch();
         stopWatch.start();
-        testFastJson();
-//        testOrgJson();
+//        testFastJson();
+        testOrgJson();
         stopWatch.stop();
         System.out.println(stopWatch.getTotalTimeMillis());
     }

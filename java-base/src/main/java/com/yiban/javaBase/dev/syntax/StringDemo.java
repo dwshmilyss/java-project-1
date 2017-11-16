@@ -14,6 +14,13 @@ package com.yiban.javaBase.dev.syntax;
  */
 public class StringDemo {
     public static void main(String[] args){
+
+    }
+
+    /**
+     * 测试String.intern()
+     */
+    public static void test1(){
         //new String 只在堆中生成对象数据，不会放入常量池，所以两个地址明显不同（一个是对象地址，一个是常量池地址），返回false
         //这里如果没有调用append()也是返回false 可能append就会把字符串放入常量池
         //如果是java关键字("java"和"java1"返回结果就不同) 返回false  因为默认在常量池中已经存在。所以调用append的时候其实并没有放入常量池，还是返回的对象的地址

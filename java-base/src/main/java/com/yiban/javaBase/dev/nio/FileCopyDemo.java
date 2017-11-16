@@ -15,7 +15,7 @@ import java.nio.channels.FileChannel;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class FileCopyDemo {
-    private static final Logger logger = LoggerFactory.getLogger(FileCopyDemo.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileCopyDemo.class);
 
     /**
      * 不考虑多线程优化，单线程文件复制最快的方法是(文件越大该方法越有优势，一般比常用方法快30+%):
@@ -127,11 +127,11 @@ public class FileCopyDemo {
 
         // 判断源文件是否存在
         if (!srcFile.exists()) {
-            logger.error("源文件：" + srcFileName + "不存在！");
+            LOGGER.error("源文件：" + srcFileName + "不存在！");
             return false;
         }
         if (!srcFile.isFile()) {
-            logger.error("复制文件失败，源文件：" + srcFileName + "不是一个文件！");
+            LOGGER.error("复制文件失败，源文件：" + srcFileName + "不是一个文件！");
             return false;
         }
 
@@ -198,10 +198,10 @@ public class FileCopyDemo {
         // 判断源目录是否存在
         File srcDir = new File(srcDirName);
         if (!srcDir.exists()) {
-            logger.error("复制目录失败：源目录" + srcDirName + "不存在！");
+            LOGGER.error("复制目录失败：源目录" + srcDirName + "不存在！");
             return false;
         } else if (!srcDir.isDirectory()) {
-            logger.error("复制目录失败：" + srcDirName + "不是目录！");
+            LOGGER.error("复制目录失败：" + srcDirName + "不是目录！");
             return false;
         }
 
@@ -216,7 +216,7 @@ public class FileCopyDemo {
             if (overlay) {
                 new File(destDirName).delete();
             } else {
-                logger.error("复制目录失败：目的目录" + destDirName + "已存在！");
+                LOGGER.error("复制目录失败：目的目录" + destDirName + "已存在！");
                 return false;
             }
         } else {
@@ -245,7 +245,7 @@ public class FileCopyDemo {
             }
         }
         if (!flag) {
-            logger.error("复制目录" + srcDirName + "至" + destDirName + "失败！");
+            LOGGER.error("复制目录" + srcDirName + "至" + destDirName + "失败！");
             return false;
         } else {
             return true;

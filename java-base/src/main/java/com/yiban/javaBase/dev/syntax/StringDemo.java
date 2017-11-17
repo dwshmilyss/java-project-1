@@ -14,7 +14,6 @@ package com.yiban.javaBase.dev.syntax;
  */
 public class StringDemo {
     public static void main(String[] args){
-
     }
 
     /**

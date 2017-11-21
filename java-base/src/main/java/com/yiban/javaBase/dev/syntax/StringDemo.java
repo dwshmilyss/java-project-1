@@ -1,5 +1,8 @@
 package com.yiban.javaBase.dev.syntax;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * string demo
  * String.intern() 如果常量池中没有 则放入常量池 并返回常量池中的地址
@@ -13,6 +16,8 @@ package com.yiban.javaBase.dev.syntax;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class StringDemo {
+    /** slf4j logger */
+    private static final Logger LOGGER = LoggerFactory.getLogger(StringDemo.class);
     public static void main(String[] args){
     }
 
@@ -27,5 +32,10 @@ public class StringDemo {
         //这里会放入常量池，因为都是常量池地址 所以返回true。如果是jdk1.6 因为
 //        String str1 = "bbb";
         System.out.println(str1.intern() == str1);
+    }
+
+
+    public static void test2(String a,String b){
+        LOGGER.info(" " + "a = [" + a + "], b = [" + b + "]");
     }
 }

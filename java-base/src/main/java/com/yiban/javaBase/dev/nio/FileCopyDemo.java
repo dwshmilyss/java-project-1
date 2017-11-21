@@ -65,8 +65,14 @@ public class FileCopyDemo {
             out = outStream.getChannel();
             ByteBuffer buffer = ByteBuffer.allocate(4096);
             while (in.read(buffer) != -1) {
+                //切换模式（由读模式切换为写模式）
                 buffer.flip();
+                while(buffer.hasRemaining()){
+                    System.out.print((char) buffer.get());
+                }
+                //写入数据
                 out.write(buffer);
+                //清空缓存
                 buffer.clear();
             }
         } catch (IOException e) {

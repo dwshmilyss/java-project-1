@@ -23,24 +23,24 @@ public class FileCopyDemo {
      * @param dest
      */
     public static void copyByNIO(File src, File dest) {
-        FileInputStream fi = null;
-        FileOutputStream fo = null;
-        FileChannel in = null;
-        FileChannel out = null;
+        FileInputStream fis = null;
+        FileOutputStream fos = null;
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
         try {
-            fi = new FileInputStream(src);
-            fo = new FileOutputStream(dest);
-            in = fi.getChannel();//得到对应的文件通道
-            out = fo.getChannel();//得到对应的文件通道
-            in.transferTo(0, in.size(), out);//连接两个通道，并且从in通道读取，然后写入out通道
+            fis = new FileInputStream(src);
+            fos = new FileOutputStream(dest);
+            inChannel = fis.getChannel();//得到对应的文件通道
+            outChannel = fos.getChannel();//得到对应的文件通道
+            inChannel.transferTo(0, inChannel.size(), outChannel);//连接两个通道，并且从in通道读取，然后写入out通道
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             try {
-                fi.close();
-                in.close();
-                fo.close();
-                out.close();
+                fis.close();
+                inChannel.close();
+                fos.close();
+                outChannel.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -54,24 +54,28 @@ public class FileCopyDemo {
      * @param target
      */
     public static void nioBufferCopy(File source, File target) {
-        FileChannel in = null;
-        FileChannel out = null;
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
         FileInputStream inStream = null;
         FileOutputStream outStream = null;
         try {
             inStream = new FileInputStream(source);
             outStream = new FileOutputStream(target);
-            in = inStream.getChannel();
-            out = outStream.getChannel();
+            inChannel = inStream.getChannel();
+            outChannel = outStream.getChannel();
             ByteBuffer buffer = ByteBuffer.allocate(4096);
-            while (in.read(buffer) != -1) {
+            while (inChannel.read(buffer) != -1) {
                 //切换模式（由读模式切换为写模式）
+                /**
+                 * Buffer有两种模式，写模式和读模式。在写模式下调用flip()之后，Buffer从写模式变成读模式。
+                 *
+                 */
                 buffer.flip();
                 while(buffer.hasRemaining()){
                     System.out.print((char) buffer.get());
                 }
                 //写入数据
-                out.write(buffer);
+                outChannel.write(buffer);
                 //清空缓存
                 buffer.clear();
             }
@@ -80,9 +84,9 @@ public class FileCopyDemo {
         } finally {
             try {
                 inStream.close();
-                in.close();
-                out.close();
-                out.close();
+                inChannel.close();
+                outChannel.close();
+                outChannel.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }

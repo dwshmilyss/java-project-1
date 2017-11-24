@@ -39,10 +39,18 @@ public class NIOServer {
         serverChannel.configureBlocking(false);
         // 将该通道对应的ServerSocket绑定到port端口
         serverChannel.socket().bind(new InetSocketAddress(port));
-        // 获得一个通道管理器
+        /**
+         * 获得一个通道管理器
+         * 当调用Selector.open()时，选择器通过专门的工厂SelectorProvider来创建Selector的实现，SelectorProvider屏蔽了不同操作系统及版本创建实现的差异性
+         */
         this.selector = Selector.open();
         //将通道管理器和该通道绑定，并为该通道注册SelectionKey.OP_ACCEPT事件,注册该事件后，
         //当该事件到达时，selector.select()会返回，如果该事件没到达selector.select()会一直阻塞。
+        /**
+         * 选择器为通道服务，通道事先告诉选择器：“我对某些事件感兴趣，如可读、可写等“，
+         * 选择器在接受了一个或多个通道的委托后，开始选择工作，它的选择工作就完全交给操作系统，
+         * linux下即为poll或epoll
+         */
         serverChannel.register(selector, SelectionKey.OP_ACCEPT);
     }
 

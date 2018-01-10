@@ -1,8 +1,10 @@
 package com.yiban.javaBase.dev.algorithm.topK;
 
 import java.util.Random;
+
 /**
  * TOP K堆就是堆，只是TOP K堆只用维护固定数量的元素，每次加进来新的，都要判断是否替换掉堆顶元素，如果需要，则删除堆顶元素，放入新元素，并重新构造堆
+ *
  * @auther WEI.DUAN
  * @date 2018/1/9
  * @website http://blog.csdn.net/dwshmilyss
@@ -134,7 +136,7 @@ public class TopNHeap<T extends Comparable<? super T>> {
         }
     }
 
-    public boolean isFull(){
+    public boolean isFull() {
         return this.maxSize == this.size;
     }
 
@@ -147,7 +149,7 @@ public class TopNHeap<T extends Comparable<? super T>> {
      * @param args
      */
     public static void main(String[] args) {
-        Integer[] data = { 7, 12, 13, 24, 8, 6, 4, 27, 14, 8, 12, 56, 22 };
+        Integer[] data = {7, 12, 13, 24, 8, 6, 4, 27, 14, 8, 12, 56, 22};
         TopNHeap<Integer> heap = new TopNHeap<Integer>(data);
         while (heap.hasNext()) {
             System.out.print(heap.removeTop());

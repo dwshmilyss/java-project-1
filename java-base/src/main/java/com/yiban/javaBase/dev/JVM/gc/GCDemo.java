@@ -2,7 +2,7 @@ package com.yiban.javaBase.dev.JVM.gc;
 
 /**
  * gc demo
- *
+ * ### 二、 默认参数
  * @auther WEI.DUAN
  * @date 2018/1/9
  * @website http://blog.csdn.net/dwshmilyss

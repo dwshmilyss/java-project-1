@@ -30,7 +30,7 @@ With a tabbed document interface, PDF export, a built-in image uploader, session
 
 
 ##java8中的stream##
-
+    
 Java8中，流性能的提升是通过**并行化（parallelism）、惰性（Laziness）和短路操作（short-circuit operations）**来实现的。但它也有一个缺点，在选择流的时候需要非常小心，因为这可能会降低应用程序的性能。
 
 ###并行化###

@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.nio;
+package com.yiban.javaBase.dev.IO;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.nio;
+package com.yiban.javaBase.dev.IO;
 
 import java.io.*;
 import java.nio.ByteBuffer;

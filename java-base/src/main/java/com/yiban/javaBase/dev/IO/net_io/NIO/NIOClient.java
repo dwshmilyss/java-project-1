@@ -1,16 +1,15 @@
-package com.yiban.javaBase.dev.nio;
+package com.yiban.javaBase.dev.IO.net_io.NIO;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.InetSocketAddress;
 import java.nio.ByteBuffer;
-import java.nio.channels.ClosedChannelException;
 import java.nio.channels.SelectionKey;
 import java.nio.channels.Selector;
 import java.nio.channels.SocketChannel;
 import java.util.Arrays;
 import java.util.Iterator;
-import java.util.Set;
+
 /**
  * NIOClient
  *
@@ -69,15 +68,38 @@ public class NIOClient extends Thread{
                     ByteBuffer buffer = ByteBuffer.allocate(1024);
                     channel.read(buffer);
 //                    byte[] data = buffer.array();
+                    //用这样的方式读取就不用调用buffer.flip()
                     byte[] data = Arrays.copyOfRange(buffer.array(),0 , buffer.position());
                     String message = new String(data,"UTF-8");
                     System.out.println("recevie message from server:, size:" + buffer.position() + " msg: " + message);
+                    //写消息到服务端(另外还有一种方法可以写数据)
 //                    ByteBuffer outbuffer = ByteBuffer.wrap(("client.".concat(msg)).getBytes());
 //                    channel.write(outbuffer);
+                    //
                 }
             }
         }
     }
+
+    /**
+     * 另外一种写消息的方式
+     * @param socketChannel
+     * @param msg
+     * @throws IOException
+     */
+    private void doWrite(SocketChannel socketChannel,String msg) throws IOException {
+        //将消息转换为字节数组
+        byte[] bytes = msg.getBytes("UTF-8");
+        //根据数组的长度创建缓冲区
+        ByteBuffer writeBuffer = ByteBuffer.allocate(bytes.length);
+        //将字节数组复制到缓冲区
+        writeBuffer.put(bytes);
+        //转换读写模式
+        writeBuffer.flip();
+        //发送缓冲区中的数据
+        socketChannel.write(writeBuffer);
+    }
+
 
     public static void main(String[] args) throws IOException {
         new NIOClient().init("127.0.0.1", 8000).listen();

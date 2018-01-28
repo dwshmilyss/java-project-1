@@ -29,11 +29,11 @@ MarkdownPad supports multiple Markdown processing engines, including standard Ma
 With a tabbed document interface, PDF export, a built-in image uploader, session management, spell check, auto-save, syntax highlighting and a built-in CSS management interface, there's no limit to what you can do with MarkdownPad.
 
 
-##java8中的stream##
+##java8中的stream
     
 Java8中，流性能的提升是通过**并行化（parallelism）、惰性（Laziness）和短路操作（short-circuit operations）**来实现的。但它也有一个缺点，在选择流的时候需要非常小心，因为这可能会降低应用程序的性能。
 
-###并行化###
+###并行化
 
 在Java的流中，并行化是通过**Fork-Join**原理来实现的。根据Fork-Join原理，系统会将较大的任务切分成较小的子任务（称之为forking），然后并行处理这些子任务以充分利用所有可用的硬件资源，最后将结果合并起来（称之为Join）组成完整的结果。
 

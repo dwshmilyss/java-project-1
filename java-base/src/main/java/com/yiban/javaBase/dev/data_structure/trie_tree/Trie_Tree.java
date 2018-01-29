@@ -1,5 +1,7 @@
 package com.yiban.javaBase.dev.data_structure.trie_tree;
 
+import sun.security.util.Length;
+
 /**
  * Created by Administrator on 2018/1/28 0028.
  */
@@ -39,9 +41,24 @@ public class Trie_Tree {
         words = words.toLowerCase();
         //
         char[] chars = words.toCharArray();
-        for (int i = 0; i < chars.length; i++) {
+        for (int i = 0 ,length = chars.length; i < length; i++) {
             //用相对于a字母的值作为下标索引，也隐式地记录了该字母的值
             int index = chars[i] - 'a';
+            if (root.childs[index] != null) {//如果子节点存在 则前缀个数+1
+                root.childs[index].prefix_num++;
+            } else {//否则就new一个新的node
+                root.childs[index] = new Node();
+                root.childs[index].prefix_num++;
+            }
+
+            //如果到了字符串结尾，则标记
+            if (i == length-1){
+                root.childs[index].isLeaf = true;
+                root.childs[index].dumpli_num ++;
+            }
+            //root指向子节点，继续处理
+            root = root.childs[index];
+
         }
     }
 

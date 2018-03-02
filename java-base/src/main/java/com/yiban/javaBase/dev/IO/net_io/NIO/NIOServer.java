@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.nio;
+package com.yiban.javaBase.dev.IO.net_io.NIO;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -20,7 +20,7 @@ public class NIOServer {
     //通道管理器
     private Selector selector;
 
-    // 创建读取的缓冲区(1024kb)
+    // 创建读取的缓冲区(1kb)
     private ByteBuffer buffer = ByteBuffer.allocate(1024);
 
     //声明通道
@@ -37,8 +37,8 @@ public class NIOServer {
         serverChannel = ServerSocketChannel.open();
         // 设置通道为非阻塞
         serverChannel.configureBlocking(false);
-        // 将该通道对应的ServerSocket绑定到port端口
-        serverChannel.socket().bind(new InetSocketAddress(port));
+        // 将该通道对应的ServerSocket绑定到port端口，1024代表请求挂起的最大连接数
+        serverChannel.socket().bind(new InetSocketAddress(port),1024);
         /**
          * 获得一个通道管理器
          * 当调用Selector.open()时，选择器通过专门的工厂SelectorProvider来创建Selector的实现，SelectorProvider屏蔽了不同操作系统及版本创建实现的差异性
@@ -64,7 +64,11 @@ public class NIOServer {
         System.out.println("服务端启动成功！");
         //轮询访问selector
         for (; ; ) {
-            //当注册的事件到达时，方法返回；否则该方法会一直阻塞
+            /**
+             * 带参数的方法
+             */
+//            selector.select(1000);
+            //只有当注册的事件到达时才会继续；否则该方法会一直阻塞
             selector.select();
             //获取selector中注册的事件的迭代器
             Iterator ite = this.selector.selectedKeys().iterator();
@@ -102,6 +106,13 @@ public class NIOServer {
 //        buffer.clear();
         //将管道中的字节流读取到缓冲区中
         int cn = channel.read(buffer);
+        //切换读写模式，读取缓冲区中的数据。此行代码一定要有
+        /**
+         * buffer 中的capacity、position、limit三个概念
+         *      capacity：在读/写模式下都是固定的，就是我们分配的缓冲大小（容量）。
+                position：类似于读/写指针，表示当前读(写)到什么位置。
+                limit：在写模式下表示最多能写入多少数据，此时和capacity相同。在读模式下表示最多能读多少数据，此时和缓存中的实际数据大小相同。
+         */
         buffer.flip();
         //如果读到的客户端数据不为空
         if (cn > 0) {

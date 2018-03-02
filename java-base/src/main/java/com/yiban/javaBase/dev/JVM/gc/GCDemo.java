@@ -3,6 +3,7 @@ package com.yiban.javaBase.dev.JVM.gc;
 /**
  * gc demo
  * ### 二、 默认参数
+ *
  * @auther WEI.DUAN
  * @date 2018/1/9
  * @website http://blog.csdn.net/dwshmilyss
@@ -10,28 +11,30 @@ package com.yiban.javaBase.dev.JVM.gc;
 public class GCDemo {
 
     //单位 M
-    public static final int M = 1024*2014*1;
+    public static final int M = 1024 * 2014 * 1;
+    private static final int _1M = 1024 * 1024;
 
     public static void main(String[] args) {
         test();
     }
 
     /**
+     * server模式默认的gc算法：Parallel Scavenge(Young) + Parallel Old (old)
      * -verbose:gc 显示GC信息
      * -verbose:class 显示类加载信息
      * -verbose:jni 显示jni调用信息 用于native方法调试
-     -Xms60m
-     -Xmx60m
-     -Xmn20m
-     -XX:NewRatio=2 ( 若 Xms = Xmx, 并且设定了 Xmn, 那么该项配置就不需要配置了 )
-     -XX:SurvivorRatio=8
-     -XX:PermSize=30m
-     -XX:MaxPermSize=30m
-     -XX:+PrintGCDetails
+     * -Xms60m
+     * -Xmx60m
+     * -Xmn20m
+     * -XX:NewRatio=2 ( 若 Xms = Xmx, 并且设定了 Xmn, 那么该项配置就不需要配置了 )
+     * -XX:SurvivorRatio=8
+     * -XX:PermSize=30m
+     * -XX:MaxPermSize=30m
+     * -XX:+PrintGCDetails
      */
-    static void test(){
+    static void test() {
         //申请1M的内存空间
-        byte[] bytes = new byte[1*M];
+        byte[] bytes = new byte[1 * M];
         bytes = null;//断开引用链
         System.gc();//通知GC
         System.out.println();
@@ -41,4 +44,11 @@ public class GCDemo {
         System.gc();
         System.out.println();
     }
+
+    static void test1() {
+        byte[] b1 = new byte[_1M]; // allocate 1M
+        byte[] b2 = new byte[_1M * 2]; // allocate 2M
+        byte[] b3 = new byte[_1M]; // allocate 1M, 发生年轻代GC(Minor GC)
+    }
+
 }

@@ -19,6 +19,10 @@ public class StringDemo {
     /** slf4j logger */
     private static final Logger LOGGER = LoggerFactory.getLogger(StringDemo.class);
     public static void main(String[] args){
+        String s = new String("1");
+        s = s.intern();
+        String s2 = "1";
+        System.out.println(s == s2);
     }
 
     /**
@@ -38,4 +42,6 @@ public class StringDemo {
     public static void test2(String a,String b){
         LOGGER.info(" " + "a = [" + a + "], b = [" + b + "]");
     }
+
+
 }

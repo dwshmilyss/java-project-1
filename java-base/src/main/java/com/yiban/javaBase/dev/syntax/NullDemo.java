@@ -11,6 +11,10 @@ public class NullDemo {
     public static void main(String[] args) {
         String s = null;
         s = s + "!";
-        System.out.print(s);
+        //输出null! (null被隐式转换成字符串)
+        System.out.println(s);
+
+        int a = 0;
+        System.out.println(a == 0 ? (a = 1) + (a + 1) : 0);
     }
 }

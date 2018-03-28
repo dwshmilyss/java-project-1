@@ -14,7 +14,8 @@ public class GCDemo {
     private static final int _1M = 1024 * 1024;
 
     public static void main(String[] args) {
-        test3();
+        System.out.println(System.getProperty("java.vm.name"));
+        test2();
     }
 
     /**
@@ -52,8 +53,15 @@ public class GCDemo {
 
     /**
      * 测试对象在Eden区的分配
-     * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8
+     * VM参数：-verbose:gc -XX:+PrintTLAB -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8
      * Eden:8m 2个survivor为1m
+     *      * -XX:+PrintTLAB 查看TLAB(Thread-Local Allocation Buffers)
+     *HotSpot虚拟机使用了两种技术来加快内存分配。他们分别是是”bump-the-pointer“和“TLABs（Thread-Local Allocation Buffers）”。
+     Bump-the-pointer技术跟踪在伊甸园空间创建的最后一个对象。这个对象会被放在伊甸园空间的顶部。如果之后再需要创建对象，只需要检查伊甸园空间是否有足够的剩余空间。
+     如果有足够的空间，对象就会被创建在伊甸园空间，并且被放置在顶部。这样以来，每次创建新的对象时，只需要检查最后被创建的对象。这将极大地加快内存分配速度。
+     但是，如果我们在多线程的情况下，事情将截然不同。如果想要以线程安全的方式以多线程在伊甸园空间存储对象，不可避免的需要加锁，而这将极大地的影响性能。
+     TLABs 是HotSpot虚拟机针对这一问题的解决方案。该方案为每一个线程在伊甸园空间分配一块独享的空间，这样每个线程只访问他们自己的TLAB空间，
+     再与bump-the-pointer技术结合可以在不加锁的情况下分配内存。
      */
     static void test2(){
         byte[] a1,a2,a3,a4;

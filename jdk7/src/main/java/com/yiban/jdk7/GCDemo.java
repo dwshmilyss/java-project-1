@@ -14,6 +14,7 @@ public class GCDemo {
     private static final int _1M = 1024 * 1024;
 
     public static void main(String[] args) {
+        System.out.println(System.getProperty("java.vm.name"));
         test3();
     }
 
@@ -65,12 +66,13 @@ public class GCDemo {
 
     /**
      * 设定阈值 超过阈值直接进入年老代
-     * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:PretenureSizeThreshold=3145728
-     * PretenureSizeThreshold在Paralle Scavenge中无效
+     * VM参数：-verbose:gc -XX:+UseParNewGC -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:PretenureSizeThreshold=3145728
+     * PretenureSizeThreshold在Parallel Scavenge + Parallel Old 收集器中无效
+     * 所以指定使用-XX:+UseParNewGC 启用ParNew收集器
      */
     static void test3(){
         System.out.println("aa");
-        byte[] a1 = new byte[4*_1M];
+        byte[] a1 = new byte[3*_1M];
     }
 
 }

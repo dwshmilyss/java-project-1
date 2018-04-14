@@ -15,6 +15,25 @@ import java.util.concurrent.atomic.AtomicLong;
  */
 public class CacheDemo {
 
+    // 测试入口函数
+    public static void main(String[] args) throws Exception {
+        Cache<Integer, String> cache = new Cache<Integer, String>();
+        cache.put(1, "aaaa", 5, TimeUnit.SECONDS);
+        cache.put(1, "bbbb", 3, TimeUnit.SECONDS);
+
+        Thread.sleep(1000 * 2);
+        {
+            String str = cache.get(1);
+            System.out.println(str);
+        }
+
+        Thread.sleep(1000 * 2);
+        {
+            String str = cache.get(1);
+            System.out.println(str);
+        }
+    }
+
     static class DelayItem<T> implements Delayed {
         //Sequence number to break scheduling ties, and in turn to guarantee FIFO order among tied entries.
         private static final AtomicLong sequencer = new AtomicLong(0);
@@ -71,7 +90,6 @@ public class CacheDemo {
             return false;
         }
     }
-
 
     static class Cache<K, V> {
         private static final Logger logger = Logger.getLogger(Cache.class.getName());
@@ -140,25 +158,6 @@ public class CacheDemo {
             return cacheObjMap.get(key);
         }
 
-    }
-
-    // 测试入口函数
-    public static void main(String[] args) throws Exception {
-        Cache<Integer, String> cache = new Cache<Integer, String>();
-        cache.put(1, "aaaa", 5, TimeUnit.SECONDS);
-        cache.put(1, "bbbb", 3, TimeUnit.SECONDS);
-
-        Thread.sleep(1000 * 2);
-        {
-            String str = cache.get(1);
-            System.out.println(str);
-        }
-
-        Thread.sleep(1000 * 2);
-        {
-            String str = cache.get(1);
-            System.out.println(str);
-        }
     }
 
 }

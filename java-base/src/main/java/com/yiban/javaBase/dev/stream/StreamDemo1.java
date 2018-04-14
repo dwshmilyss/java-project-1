@@ -1,10 +1,12 @@
 package com.yiban.javaBase.dev.stream;
 
+import org.springframework.util.StopWatch;
+
 import java.util.ArrayList;
 import java.util.List;
-import org.springframework.util.StopWatch;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 /**
  * java8 stream demo
  *
@@ -13,68 +15,50 @@ import java.util.stream.Stream;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class StreamDemo1 {
+    static final StopWatch stopWatch = new StopWatch();
     static List<Integer> myList = new ArrayList<>();
 
-    static final StopWatch stopWatch = new StopWatch();
-
-    static class Employee {
-        int id;
-        String name;
-        public Employee(int id, String name) {
-            this.id = id;
-            this.name = name;
-        }
-        public String getName() {
-            return this.name;
-        }
-        public int getId() {
-            return this.id;
-        }
-    }
-
-
-    public static void main(String[] args){
+    public static void main(String[] args) {
         test3();
     }
-
 
     /**
      * 某些情况下，for循环的性能更好，所以不要用流随意代替for循环。
      * 但是一般来讲，并行流比普通流更高效
      */
-    public static void test1(){
-        for (int i=0;i<5000000;i++){
+    public static void test1() {
+        for (int i = 0; i < 5000000; i++) {
             myList.add(i);
         }
         int result = 0;
         stopWatch.start();
-        for (int i:myList
-             ) {
-            if (i % 2 == 0){
+        for (int i : myList
+                ) {
+            if (i % 2 == 0) {
                 result += 1;
             }
         }
         stopWatch.stop();
         System.out.println(result);
-        System.out.println("loop total time = "+stopWatch.getTotalTimeSeconds());
+        System.out.println("loop total time = " + stopWatch.getTotalTimeSeconds());
         stopWatch.start();
         System.out.println(myList.stream().filter(value -> value % 2 == 0).mapToInt(Integer::intValue).sum());
         stopWatch.stop();
-        System.out.println("stream total time = "+stopWatch.getTotalTimeSeconds());
+        System.out.println("stream total time = " + stopWatch.getTotalTimeSeconds());
         stopWatch.start();
         System.out.println(myList.parallelStream().filter(value -> value % 2 == 0).mapToInt(Integer::intValue).sum());
         stopWatch.stop();
-        System.out.println("Parallel Stream total time = "+stopWatch.getTotalTimeSeconds());
+        System.out.println("Parallel Stream total time = " + stopWatch.getTotalTimeSeconds());
     }
 
     /**
      * 和spark的transform和action一样
      * 只有遇到action的操作时，计算才会被触发
      */
-    public static void test2(){
+    public static void test2() {
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 1000000; i++) {
-            employees.add(new Employee(i,"name_"+i));
+            employees.add(new Employee(i, "name_" + i));
         }
         Stream<String> employeeNameStreams = employees.parallelStream().filter(employee -> employee.id % 2 == 0)
                 .map(employee -> {
@@ -92,16 +76,16 @@ public class StreamDemo1 {
         //collect触发之前的操作
         employeeNameStreams.collect(Collectors.toList());
         stopWatch.stop();
-        System.out.println("cost time = "+stopWatch.getTotalTimeMillis());
+        System.out.println("cost time = " + stopWatch.getTotalTimeMillis());
     }
 
     /**
      * 短路行为
      */
-    public static void test3(){
+    public static void test3() {
         List<Employee> employees = new ArrayList<>();
         for (int i = 0; i < 1000000; i++) {
-            employees.add(new Employee(i,"name_"+i));
+            employees.add(new Employee(i, "name_" + i));
         }
         Stream<String> employeeNameStreams = employees.parallelStream().filter(employee -> employee.id % 2 == 0)
                 .map(employee -> {
@@ -112,6 +96,24 @@ public class StreamDemo1 {
         // 在这里，limit()方法在满足条件的时候会中断运行。 可以和test2()做对比
         employeeNameStreams.limit(100).collect(Collectors.toList());
         stopWatch.stop();
-        System.out.println("cost time = "+stopWatch.getTotalTimeMillis());
+        System.out.println("cost time = " + stopWatch.getTotalTimeMillis());
+    }
+
+    static class Employee {
+        int id;
+        String name;
+
+        public Employee(int id, String name) {
+            this.id = id;
+            this.name = name;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        public int getId() {
+            return this.id;
+        }
     }
 }

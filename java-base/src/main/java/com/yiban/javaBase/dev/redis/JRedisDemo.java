@@ -14,6 +14,8 @@ import java.util.concurrent.Executors;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class JRedisDemo extends RedisProvider {
+    volatile static boolean flag = false;
+
     public static String set(String key, String value) {
         Jedis jedis = null;
         String rtn = null;
@@ -419,7 +421,6 @@ public class JRedisDemo extends RedisProvider {
         return set;
     }
 
-
     public static long incrBy(String dateKey, long offset) {
         Jedis jedis = null;
         long value = 0;
@@ -436,9 +437,6 @@ public class JRedisDemo extends RedisProvider {
         return value;
     }
 
-    volatile static boolean flag = false;
-
-
     public static void main(String[] args) {
         final String key = "aa";
         ExecutorService es = Executors.newFixedThreadPool(10);
@@ -447,7 +445,7 @@ public class JRedisDemo extends RedisProvider {
                 long temp = 0;
                 for (int i = 0; i < 1000; i++) {
                     temp = incrBy(key, 2);
-                    if (!flag){
+                    if (!flag) {
                         System.out.println(Thread.currentThread().getName() + " : " + temp);
                     }
                     if (temp >= 2000) {

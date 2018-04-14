@@ -7,7 +7,7 @@ package com.yiban.javaBase.dev.GOF.proxy.static_proxy.demo2;
  * @date 2017/5/8
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class CountImpl implements ICount{
+public class CountImpl implements ICount {
     @Override
     public void query() {
         System.out.println("实现query方法");

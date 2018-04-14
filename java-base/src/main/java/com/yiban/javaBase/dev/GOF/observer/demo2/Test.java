@@ -8,7 +8,7 @@ package com.yiban.javaBase.dev.GOF.observer.demo2;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class Test {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         IObserver obs = new Observer();
         Subject subject = new Subject();
         subject.register(obs);

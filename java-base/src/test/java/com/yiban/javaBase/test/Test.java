@@ -22,6 +22,9 @@ public class Test {
 
 
     private static Unsafe theUnsafe;
+    private static sun.misc.Unsafe UNSAFE;
+    private int a;
+    private int b;
 
     //使用方法
     private static Unsafe getUnsafeInstance() throws SecurityException,
@@ -31,10 +34,6 @@ public class Test {
         theUnsafeInstance.setAccessible(true);
         return (Unsafe) theUnsafeInstance.get(Unsafe.class);
     }
-
-    private int a;
-    private int b;
-    private static sun.misc.Unsafe UNSAFE;
 
     //    static
 //    {

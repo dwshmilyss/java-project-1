@@ -8,16 +8,16 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * 对比 Semaphore，CountDownLatch，Thread.join()的使用场景及异同
  * 要求：启动3个线程同时对一个数进行累加1，每个线程累加10次，最终的结果要求是30
- * <p>
+ * <p/>
  * CountDownLatch与join的区别：
  * 调用thread.join() 方法必须等thread 执行完毕，当前线程才能继续往下执行，
  * 而CountDownLatch通过计数器提供了更灵活的控制，只要检测到计数器为0当前线程就可以往下执行而不用管相应的thread是否执行完毕。
- *
+ * <p/>
  * Semaphore 主要是用在线程池 连接池等一些服务器资源上，控制资源的并发访问数量。一般情况下，会给予Semaphore(N) ： N = 连接池资源数
  * CyclicBarrier 也能实现同样的效果 有2种方式
- *  1、 在其构造函数中定义一个Runnable() 该Runnable()是在所有子线程结束之后运行
- *  2、 如果要在main中运行，则permits数应该=子线程数+main线程数，即子线程数+1
- *
+ * 1、 在其构造函数中定义一个Runnable() 该Runnable()是在所有子线程结束之后运行
+ * 2、 如果要在main中运行，则permits数应该=子线程数+main线程数，即子线程数+1
+ * <p/>
  * phaser
  *
  * @auther WEI.DUAN
@@ -25,6 +25,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class ConcurrentWaitDemo {
+    /**
+     * 利用 CyclicBarrier 实现主线程等待子线程执行完再运行
+     */
+    public static boolean flag = false;
+
     public static void main(String[] args) {
         //测试不同的线程池的使用效果
         ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
@@ -71,7 +76,6 @@ public class ConcurrentWaitDemo {
 
     }
 
-
     /**
      * 利用Thread.join()实现主线程等待子线程执行完再运行
      * 其实并没有实现真正意义上的并行执行，因为线程是依次创建，也是依次运行的，从打印结果就能看出来
@@ -92,7 +96,6 @@ public class ConcurrentWaitDemo {
         System.out.println("所有任务都已完成");
         System.out.println(Thread.currentThread().getName() + ",n=" + ThreadJoinDemo.n);
     }
-
 
     /**
      * Executors.newFixedThreadPool(1) ==  Executors.newSingleThreadExecutor()
@@ -127,7 +130,7 @@ public class ConcurrentWaitDemo {
         final ReentrantLock lock = new ReentrantLock();
         System.out.println("线程" + Thread.currentThread().getName() + "即将发出任务");
         for (int i = 0; i < 3; i++) {
-            SemaphoreDemo semaphoreDemo = new SemaphoreDemo(semaphore,lock);
+            SemaphoreDemo semaphoreDemo = new SemaphoreDemo(semaphore, lock);
             //启动线程执行任务
             cachedThreadPool.execute(semaphoreDemo);
         }
@@ -135,9 +138,9 @@ public class ConcurrentWaitDemo {
         System.out.println("线程" + Thread.currentThread().getName() + "已发出任务，等待完成");
         try {
             //等待线程池中的线程执行完毕，因为启动了三个线程，每次调用semaphore.release()都会使acquire(permits)增加1，所以这里的参数为3
-            System.out.println(Thread.currentThread().getName()+",begin semaphore.availablePermits() = " + semaphore.availablePermits());
+            System.out.println(Thread.currentThread().getName() + ",begin semaphore.availablePermits() = " + semaphore.availablePermits());
             semaphore.acquire(3);
-            System.out.println(Thread.currentThread().getName()+",end semaphore.availablePermits() = " + semaphore.availablePermits());
+            System.out.println(Thread.currentThread().getName() + ",end semaphore.availablePermits() = " + semaphore.availablePermits());
             System.out.println("所有任务都已完成");
             System.out.println(Thread.currentThread().getName() + ",n=" + SemaphoreDemo.n);
         } catch (InterruptedException e) {
@@ -146,13 +149,10 @@ public class ConcurrentWaitDemo {
         cachedThreadPool.shutdown();
     }
 
-    /**
-     * 利用 CyclicBarrier 实现主线程等待子线程执行完再运行
-     */
-    public static boolean flag = false;
     public static boolean getFlag() {
         return flag;
     }
+
     public static void useCyclicBarrier(ExecutorService fixedThreadPool) {
         //因为子线程有三个，外加一个Main线程中的监视器，所以这里的参数要为4
         final CyclicBarrier cyclicBarrier = new CyclicBarrier(4);
@@ -177,10 +177,10 @@ public class ConcurrentWaitDemo {
         flag = true;
         try {
             TimeUnit.SECONDS.sleep(5);
-            System.out.println(Thread.currentThread().getName()+" ,before = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
+            System.out.println(Thread.currentThread().getName() + " ,before = " + cyclicBarrier.getNumberWaiting() + " : " + cyclicBarrier.getParties());
             cyclicBarrier.await();
             TimeUnit.SECONDS.sleep(5);
-            System.out.println(Thread.currentThread().getName()+" ,after = "+cyclicBarrier.getNumberWaiting()+" : "+cyclicBarrier.getParties());
+            System.out.println(Thread.currentThread().getName() + " ,after = " + cyclicBarrier.getNumberWaiting() + " : " + cyclicBarrier.getParties());
         } catch (InterruptedException e) {
             e.printStackTrace();
         } catch (BrokenBarrierException e) {
@@ -205,7 +205,7 @@ public class ConcurrentWaitDemo {
         //对应下文中，主线程可以等待所有的parties到达后再解除阻塞（类似与CountDownLatch）
         phaser.register();
         for (int i = 0; i < 3; i++) {
-            PhaserDemo phaserDemo = new PhaserDemo(phaser,lock);
+            PhaserDemo phaserDemo = new PhaserDemo(phaser, lock);
             phaser.register();//每创建一个task，我们就注册一个party
             //启动线程执行任务
             cachedThreadPool.execute(phaserDemo);
@@ -213,16 +213,31 @@ public class ConcurrentWaitDemo {
 
         System.out.println("线程" + Thread.currentThread().getName() + "已发出任务，等待完成");
         int flag = phaser.getPhase();
-        System.out.println(phaser.getArrivedParties() + ","+phaser.getUnarrivedParties()+","+phaser.getRegisteredParties());
+        System.out.println(phaser.getArrivedParties() + "," + phaser.getUnarrivedParties() + "," + phaser.getRegisteredParties());
 //        phaser.awaitAdvance(flag);
         //主线程到达，且注销自己 此后线程池中的线程即可开始按照周期，同步执行。
         phaser.arriveAndDeregister();
         System.out.println("所有任务都已完成");
-        System.out.println(phaser.getArrivedParties() + ","+phaser.getUnarrivedParties()+","+phaser.getRegisteredParties());
+        System.out.println(phaser.getArrivedParties() + "," + phaser.getUnarrivedParties() + "," + phaser.getRegisteredParties());
         System.out.println(Thread.currentThread().getName() + ",n=" + PhaserDemo.n);
         cachedThreadPool.shutdown();
     }
 
+    /**
+     * 用于测试线程等待的方法 每次累加10后睡眠3秒
+     *
+     * @param n
+     */
+    public static void testMethon(AtomicInteger n) {
+        for (int i = 0; i < 10; i++, n.getAndIncrement()) {
+        }
+        System.out.println(n.get());
+        try {
+            Thread.sleep(3000);  // 为了使运行结果更随机，延迟3秒
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * 利用Thread.join()实现主线程等待子线程执行完再运行
@@ -236,7 +251,6 @@ public class ConcurrentWaitDemo {
             System.out.println("线程 : " + Thread.currentThread().getName() + ",结束运行。。。。" + "，n = " + n.get());
         }
     }
-
 
     /**
      * 利用CountDownLatch实现主线程等待子线程执行完再运行
@@ -276,7 +290,7 @@ public class ConcurrentWaitDemo {
             this.semaphore = semaphore;
         }
 
-        public SemaphoreDemo(Semaphore semaphore,ReentrantLock lock) {
+        public SemaphoreDemo(Semaphore semaphore, ReentrantLock lock) {
             this.semaphore = semaphore;
             this.lock = lock;
         }
@@ -287,10 +301,10 @@ public class ConcurrentWaitDemo {
                 lock.lock();
                 //这里锁住之后打印结果会更清新
 //                synchronized (CountDownLatchDemo.class){
-                    testMethon(n);
-                    semaphore.release();
-                    //当前Semaphore的可用资源数，即允许几个线程获取资源
-                    System.out.println(Thread.currentThread().getName()+",left -----------------" + semaphore.availablePermits());
+                testMethon(n);
+                semaphore.release();
+                //当前Semaphore的可用资源数，即允许几个线程获取资源
+                System.out.println(Thread.currentThread().getName() + ",left -----------------" + semaphore.availablePermits());
 //                }
                 lock.unlock();
             } catch (Exception e) {
@@ -315,7 +329,7 @@ public class ConcurrentWaitDemo {
 
         @Override
         public void run() {
-            if (!cyclicBarrier.isBroken()){
+            if (!cyclicBarrier.isBroken()) {
                 testMethon(n);
                 try {
                     //当前线程执行完任务后阻塞，等待其他任务的完成
@@ -334,15 +348,16 @@ public class ConcurrentWaitDemo {
     /**
      * 利用 Phaser 实现主线程等待子线程执行完再运行
      */
-    static class PhaserDemo implements Runnable{
+    static class PhaserDemo implements Runnable {
         public static AtomicInteger n = new AtomicInteger(0);
         Phaser phaser;
         ReentrantLock lock;
+
         public PhaserDemo(Phaser phaser) {
             this.phaser = phaser;
         }
 
-        public PhaserDemo(Phaser phaser,ReentrantLock lock) {
+        public PhaserDemo(Phaser phaser, ReentrantLock lock) {
             this.phaser = phaser;
             this.lock = lock;
         }
@@ -350,7 +365,7 @@ public class ConcurrentWaitDemo {
         @Override
         public void run() {
             try {
-                if (!phaser.isTerminated()){
+                if (!phaser.isTerminated()) {
 //            lock.lock();
                     testMethon(n);
 //            int a = phaser.arrive();
@@ -362,27 +377,11 @@ public class ConcurrentWaitDemo {
 //            int b = phaser.register();
 //            lock.unlock();
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
-            }finally {
+            } finally {
                 phaser.arriveAndDeregister();
             }
-        }
-    }
-
-    /**
-     * 用于测试线程等待的方法 每次累加10后睡眠3秒
-     *
-     * @param n
-     */
-    public static void testMethon(AtomicInteger n) {
-        for (int i = 0; i < 10; i++, n.getAndIncrement()) {
-        }
-        System.out.println(n.get());
-        try {
-            Thread.sleep(3000);  // 为了使运行结果更随机，延迟3秒
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
 }

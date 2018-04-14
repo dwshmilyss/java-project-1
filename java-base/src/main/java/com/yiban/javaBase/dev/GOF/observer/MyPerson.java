@@ -5,11 +5,12 @@ import java.util.Observable;
 /**
  * MyPerson是被观察者
  * setXXX();数据改变，通过notifyObservers();发送信号通知观察者。
+ *
  * @auther WEI.DUAN
  * @date 2017/4/20
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class MyPerson extends Observable{
+public class MyPerson extends Observable {
     private String name;
     private int age;
     private String sex;

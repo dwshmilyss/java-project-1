@@ -42,11 +42,11 @@ public class Demo1 {
 
         // 获取Method对象
         Method method = classType.getDeclaredMethod("sayHello",
-                new Class[]{String.class,Integer.class});
+                new Class[]{String.class, Integer.class});
 
         method.setAccessible(true); // 抑制Java的访问控制检查
         // 如果不加上上面这句，将会Error: TestPrivate can not access a member of class PrivateClass with modifiers "private"
-        String str = (String) method.invoke(p, new Object[]{"zhangsan",18});
+        String str = (String) method.invoke(p, new Object[]{"zhangsan", 18});
 
         System.out.println(str);
     }
@@ -107,16 +107,15 @@ class PrivateClass2 {
         return name;
     }
 
-    private String sayHello(String name,Integer age) {
-        return "Hello: " + name+",age = "+age;
+    private String sayHello(String name, Integer age) {
+        return "Hello: " + name + ",age = " + age;
     }
 }
 
 class Test {
+    public String gender = "male";
     private String name = "aa";
     private int age = 18;
-    public String gender = "male";
-
 
     public String getName() {
         return name;

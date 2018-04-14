@@ -29,6 +29,23 @@ public class MultiPortServer {
         listen();
     }
 
+    public static void main(String[] args2) {
+        String args[] = {"9001", "9002", "9003"};
+        if (args.length <= 0) {
+            System.err.println("Usage: java MultiPortEcho port [port port ...]");
+            System.exit(1);
+        }
+        int ports[] = new int[args.length];
+        for (int i = 0; i < args.length; ++i) {
+            ports[i] = Integer.parseInt(args[i]);
+        }
+        try {
+            new MultiPortServer(ports);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void listen() throws IOException {
         Selector selector = Selector.open();
         for (int i = 0; i < ports.length; i++) {
@@ -88,23 +105,6 @@ public class MultiPortServer {
                 }
 
             }
-        }
-    }
-
-    public static void main(String[] args2) {
-        String args[] = {"9001", "9002", "9003"};
-        if (args.length <= 0) {
-            System.err.println("Usage: java MultiPortEcho port [port port ...]");
-            System.exit(1);
-        }
-        int ports[] = new int[args.length];
-        for (int i = 0; i < args.length; ++i) {
-            ports[i] = Integer.parseInt(args[i]);
-        }
-        try {
-            new MultiPortServer(ports);
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

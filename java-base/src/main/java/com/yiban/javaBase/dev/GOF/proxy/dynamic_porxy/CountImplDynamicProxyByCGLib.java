@@ -20,10 +20,11 @@ public class CountImplDynamicProxyByCGLib implements MethodInterceptor {
 
     /**
      * 绑定委托对象并返回一个代理类
+     *
      * @param target
      * @return
      */
-    public Object getInstance(Object target){
+    public Object getInstance(Object target) {
         this.target = target;
         Enhancer enhancer = new Enhancer();
         enhancer.setSuperclass(this.target.getClass());
@@ -36,7 +37,7 @@ public class CountImplDynamicProxyByCGLib implements MethodInterceptor {
     @Override
     public Object intercept(Object target, Method method, Object[] args, MethodProxy methodProxy) throws Throwable {
         System.out.println("开始事务");
-        methodProxy.invokeSuper(target,args);
+        methodProxy.invokeSuper(target, args);
         System.out.println("结束事务");
         return null;
     }

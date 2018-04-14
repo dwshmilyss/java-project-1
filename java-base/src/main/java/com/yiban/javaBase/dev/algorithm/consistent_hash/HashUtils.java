@@ -7,10 +7,15 @@ import java.security.NoSuchAlgorithmException;
  * Created by Administrator on 2018/1/28 0028.
  */
 public class HashUtils {
+    /**
+     * 使用MD5实现hash
+     */
+    private static MessageDigest md5 = null;
+
     //使用FNV1_32_HASH算法计算服务器的Hash值,这里不使用重写hashCode的方法，最终效果没区别
-    public static int getHash(String str){
+    public static int getHash(String str) {
         final int p = 16777619;
-        int hash = (int)2166136261L;
+        int hash = (int) 2166136261L;
         for (int i = 0; i < str.length(); i++)
             hash = (hash ^ str.charAt(i)) * p;
         hash += hash << 13;
@@ -24,12 +29,6 @@ public class HashUtils {
             hash = Math.abs(hash);
         return hash;
     }
-
-
-    /**
-     * 使用MD5实现hash
-     */
-    private static MessageDigest md5 = null;
 
     public static long hash(String key) {
         if (md5 == null) {

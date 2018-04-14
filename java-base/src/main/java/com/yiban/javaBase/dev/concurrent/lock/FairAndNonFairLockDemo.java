@@ -30,7 +30,15 @@ public class FairAndNonFairLockDemo {
         }
     }
 
-    // 非公平锁  
+    public int getNum() {
+        return n;
+    }
+
+    public void setNum(int n) {
+        this.n = n;
+    }
+
+    // 非公平锁
     static class NonFairTestThread implements Runnable {
         private FairAndNonFairLockDemo rlt;
 
@@ -50,7 +58,7 @@ public class FairAndNonFairLockDemo {
         }
     }
 
-    // 公平锁  
+    // 公平锁
     static class FairTestThread implements Runnable {
         private FairAndNonFairLockDemo rlt;
 
@@ -72,13 +80,5 @@ public class FairAndNonFairLockDemo {
             }
 
         }
-    }
-
-    public void setNum(int n) {
-        this.n = n;
-    }
-
-    public int getNum() {
-        return n;
     }
 }

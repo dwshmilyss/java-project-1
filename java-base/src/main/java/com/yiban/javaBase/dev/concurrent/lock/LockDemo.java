@@ -54,6 +54,9 @@ public class LockDemo {
     }
 
     static class TestReEnterLock implements Runnable {
+        private String name;
+        private MyLock lock;
+
         public TestReEnterLock(String name) {
             this.name = name;
         }
@@ -61,13 +64,9 @@ public class LockDemo {
         public TestReEnterLock() {
 
         }
-
         public TestReEnterLock(MyLock lock) {
             this.lock = lock;
         }
-
-        private String name;
-        private MyLock lock;
 
         public String getName() {
 //            synchronized (TestReEnterLock.class){

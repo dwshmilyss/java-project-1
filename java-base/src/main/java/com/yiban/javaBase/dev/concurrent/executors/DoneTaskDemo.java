@@ -12,6 +12,37 @@ import java.util.concurrent.*;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class DoneTaskDemo {
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        ResultTask[] resultTasks = new ResultTask[5];
+        for (int i = 0; i < 5; i++) {
+            ExecutableTask executableTask = new ExecutableTask("Task " + i);
+            resultTasks[i] = new ResultTask(executableTask);
+            executorService.submit(resultTasks[i]);
+        }
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < resultTasks.length; i++) {
+            resultTasks[i].cancel(true);
+        }
+
+        for (int i = 0; i < resultTasks.length; i++) {
+            try {
+                if (!resultTasks[i].isCancelled()) {
+                    //这里调用resultTasks[i].get()获取到的值 其实就是ExecutableTask.call()的返回值
+                    System.out.printf("%s\n", resultTasks[i].get());
+                }
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
+        }
+        executorService.shutdown();
+
+    }
+
     static class ExecutableTask implements Callable<String> {
         private String name;
 
@@ -57,36 +88,5 @@ public class DoneTaskDemo {
                 System.out.printf("%s: Has finished\n", name);
             }
         }
-    }
-
-    public static void main(String[] args) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        ResultTask[] resultTasks = new ResultTask[5];
-        for (int i = 0; i < 5; i++) {
-            ExecutableTask executableTask = new ExecutableTask("Task " + i);
-            resultTasks[i] = new ResultTask(executableTask);
-            executorService.submit(resultTasks[i]);
-        }
-        try {
-            TimeUnit.SECONDS.sleep(5);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        for (int i = 0; i < resultTasks.length; i++) {
-            resultTasks[i].cancel(true);
-        }
-
-        for (int i = 0; i < resultTasks.length; i++) {
-            try {
-                if (!resultTasks[i].isCancelled()) {
-                    //这里调用resultTasks[i].get()获取到的值 其实就是ExecutableTask.call()的返回值
-                    System.out.printf("%s\n", resultTasks[i].get());
-                }
-            } catch (InterruptedException | ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-        executorService.shutdown();
-
     }
 }

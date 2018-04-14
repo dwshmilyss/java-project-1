@@ -32,6 +32,7 @@ public class ConcurrentLinkedQueueDemo {
 
     private static class Node {
 
+        private static final long nextOffset;
         /**
          * 获取Unsafe的方法
          * 获取了以后就可以愉快的使用CAS啦
@@ -40,8 +41,29 @@ public class ConcurrentLinkedQueueDemo {
          */
         private static Unsafe theUnsafe;
 
+        static {
+            try {
+                theUnsafe = getUnsafeInstance();
+                Class<?> k = Node.class;
+                nextOffset = theUnsafe.objectFieldOffset(k.getDeclaredField("next"));
+                System.out.println("nextOffset = " + nextOffset);
+                System.out.println("nextOffset = " + theUnsafe.objectFieldOffset(k.getDeclaredField("next1")));
+            } catch (Exception e) {
+                throw new Error(e);
+            }
+        }
+
         volatile Node next;
         volatile Node next1;
+
+        //使用方法
+        private static Unsafe getUnsafeInstance() throws SecurityException,
+                NoSuchFieldException, IllegalArgumentException,
+                IllegalAccessException {
+            Field theUnsafeInstance = Unsafe.class.getDeclaredField("theUnsafe");
+            theUnsafeInstance.setAccessible(true);
+            return (Unsafe) theUnsafeInstance.get(Unsafe.class);
+        }
 
         /**
          * 使用Unsafe CAS方法
@@ -60,29 +82,6 @@ public class ConcurrentLinkedQueueDemo {
              */
             boolean flag = theUnsafe.compareAndSwapObject(this, nextOffset, cmp, val);
             return flag;
-        }
-
-        private static final long nextOffset;
-
-        static {
-            try {
-                theUnsafe = getUnsafeInstance();
-                Class<?> k = Node.class;
-                nextOffset = theUnsafe.objectFieldOffset(k.getDeclaredField("next"));
-                System.out.println("nextOffset = "+nextOffset);
-                System.out.println("nextOffset = "+theUnsafe.objectFieldOffset(k.getDeclaredField("next1")));
-            } catch (Exception e) {
-                throw new Error(e);
-            }
-        }
-
-        //使用方法
-        private static Unsafe getUnsafeInstance() throws SecurityException,
-                NoSuchFieldException, IllegalArgumentException,
-                IllegalAccessException {
-            Field theUnsafeInstance = Unsafe.class.getDeclaredField("theUnsafe");
-            theUnsafeInstance.setAccessible(true);
-            return (Unsafe) theUnsafeInstance.get(Unsafe.class);
         }
     }
 }

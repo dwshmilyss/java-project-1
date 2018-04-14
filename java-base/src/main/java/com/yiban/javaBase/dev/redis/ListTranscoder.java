@@ -28,7 +28,7 @@ public class ListTranscoder<M extends Serializable> extends SerializeTranscoder 
                 is = new ObjectInputStream(bis);
                 while (bis.available() > 0) {
                     // while(true) will throw EOFException
-                    M m = (M)is.readObject();
+                    M m = (M) is.readObject();
                     if (m == null) {
                         break;
                     }
@@ -45,12 +45,12 @@ public class ListTranscoder<M extends Serializable> extends SerializeTranscoder 
         } catch (ClassNotFoundException e) {
             logger.error(String.format("Caught CNFE decoding %d bytes of data",
                     in == null ? 0 : in.length) + e);
-        }  finally {
+        } finally {
             close(is);
             close(bis);
         }
 
-        return  list;
+        return list;
     }
 
 

@@ -92,6 +92,7 @@ public class EnumDemo {
 
     /**
      * 获取元素信息并打印输出
+     *
      * @param enumSet
      */
     public static void getElement(EnumSet<ColorValues> enumSet) {
@@ -111,7 +112,7 @@ public class EnumDemo {
      * 2.当创建EnumSet对象时，需要显式或隐式指明元素的枚举类型；
      * 3.此对象中的元素仅能取自同一枚举类
      * 4.在EnumSet内部以"位向量"的形式表示,这种结构紧凑而高效，使得类的时间、控件性能非常优越。
-     * <p>
+     * <p/>
      * allOf(Class<E> elementType): 创建一个EnumSet，它包含了elementType 中所有枚举元素
      * complementOf(EnumSet<E> s):    创建一个EnumSet，其中的元素是s的补集
      * noneOf(Class<E> elementType): 创建一个EnumSet，其中的元素的类型是elementType，但是没有元素

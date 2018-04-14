@@ -13,6 +13,7 @@ import java.nio.channels.WritableByteChannel;
  * 自定义类加载器
  * 1、要继承ClassLoader
  * 2、要实现findClass函数
+ *
  * @auther WEI.DUAN
  * @create 2017/11/18
  * @blog http://blog.csdn.net/dwshmilyss
@@ -25,6 +26,26 @@ public class MyClassLoaderDemo extends ClassLoader {
 
     public MyClassLoaderDemo(ClassLoader parent) {
         super(parent);
+    }
+
+    public static void main(String[] args) {
+        MyClassLoaderDemo mcl = new MyClassLoaderDemo();
+        Object obj = null;
+        try {
+            //note:这里一定要用全限定名
+            Class<?> clazz = Class.forName("People", true, mcl);
+            obj = clazz.newInstance();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println(obj);
+        System.out.println(obj.getClass().getClassLoader());//打印出我们的自定义类加载器
+
     }
 
     //
@@ -64,24 +85,4 @@ public class MyClassLoaderDemo extends ClassLoader {
         fis.close();
         return baos.toByteArray();
     }
-    
-    public static void main(String[] args){
-        MyClassLoaderDemo mcl = new MyClassLoaderDemo();
-        Object obj = null;
-        try {
-            //note:这里一定要用全限定名
-            Class<?> clazz = Class.forName("People", true, mcl);
-            obj = clazz.newInstance();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        System.out.println(obj);
-        System.out.println(obj.getClass().getClassLoader());//打印出我们的自定义类加载器
-
-    }  
 }

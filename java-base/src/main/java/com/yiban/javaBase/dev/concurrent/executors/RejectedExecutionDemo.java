@@ -8,23 +8,12 @@ import java.util.concurrent.TimeUnit;
 /**
  * 执行者控制被拒绝的任务
  * 创建线程池默认的拒绝策略是AbortPolicy 直接抛一个异常出来
+ *
  * @auther WEI.DUAN
  * @date 2017/5/2
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class RejectedExecutionDemo {
-    //1.创建RejectedTaskController类，实现RejectedExecutionHandler接口。实现这个接口的rejectedExecution()方法。写入被拒绝任务的名称和执行者的名称与状态到控制台。
-    static class RejectedTaskController implements RejectedExecutionHandler {
-
-        @Override
-        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
-            System.out.printf("RejectedTaskController: The task %s has been rejected\n", r.toString());
-            System.out.printf("RejectedTaskController: %s\n", executor.toString());
-            System.out.printf("RejectedTaskController: Terminating:%s\n", executor.isTerminating());
-            System.out.printf("RejectedTaksController: Terminated:%s\n", executor.isTerminated());
-        }
-    }
-
     public static void main(String[] args) {
         RejectedTaskController controller = new RejectedTaskController();
         ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newCachedThreadPool();
@@ -50,12 +39,24 @@ public class RejectedExecutionDemo {
 
     }
 
+    //1.创建RejectedTaskController类，实现RejectedExecutionHandler接口。实现这个接口的rejectedExecution()方法。写入被拒绝任务的名称和执行者的名称与状态到控制台。
+    static class RejectedTaskController implements RejectedExecutionHandler {
+
+        @Override
+        public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
+            System.out.printf("RejectedTaskController: The task %s has been rejected\n", r.toString());
+            System.out.printf("RejectedTaskController: %s\n", executor.toString());
+            System.out.printf("RejectedTaskController: Terminating:%s\n", executor.isTerminating());
+            System.out.printf("RejectedTaksController: Terminated:%s\n", executor.isTerminated());
+        }
+    }
+
     private static class Task implements Runnable {
+        private String name;
+
         public Task(String name) {
             this.name = name;
         }
-
-        private String name;
 
         @Override
         public void run() {

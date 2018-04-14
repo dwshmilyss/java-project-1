@@ -16,6 +16,16 @@ public class CalPriceFactory {
     private ClassLoader classLoader = getClass().getClassLoader();
     private List<Class<? extends CalPrice>> calPriceList; // 策略列表
 
+    //单例
+    private CalPriceFactory() {
+        init();
+    }
+
+    //单例
+    public static CalPriceFactory getInstance() {
+        return CalPriceFactoryInstance.instance;
+    }
+
     //根据玩家的总金额产生相应的策略
     public CalPrice createCalPrice(Player player) {
         //在策略列表查找策略
@@ -46,11 +56,6 @@ public class CalPriceFactory {
             }
         }
         return null;
-    }
-
-    //单例
-    private CalPriceFactory() {
-        init();
     }
 
     //在工厂初始化时要初始化策略列表
@@ -92,11 +97,6 @@ public class CalPriceFactory {
         } catch (URISyntaxException e) {
             throw new RuntimeException("未找到策略资源");
         }
-    }
-
-    //单例
-    public static CalPriceFactory getInstance() {
-        return CalPriceFactoryInstance.instance;
     }
 
     private static class CalPriceFactoryInstance {

@@ -37,7 +37,7 @@ public class WeakHashMapTest {
         BitArray bitArray = new BitArray(10);
         for (int i = 0; i < 10; i++) {
             System.out.println(bitArray.get(i));
-            bitArray.set(i,true);
+            bitArray.set(i, true);
         }
         System.out.println(" ------------------- ");
         for (int i = 0; i < 10; i++) {

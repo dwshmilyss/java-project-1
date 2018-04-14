@@ -20,7 +20,8 @@ public class RedisProvider {
     protected static final Logger LOG = LoggerFactory.getLogger(RedisProvider.class);
     protected static JedisPool jedispool;
     protected static int EXPIRE = 130;
-    static{
+
+    static {
         ResourceBundle bundle = ResourceBundle.getBundle("redis");
         if (bundle == null) {
             throw new IllegalArgumentException(

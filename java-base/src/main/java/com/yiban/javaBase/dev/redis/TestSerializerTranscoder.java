@@ -20,13 +20,33 @@ public class TestSerializerTranscoder implements Serializable {
 
     }
 
+    private static List<TestUser> buildTestData() {
+        TestSerializerTranscoder tst = new TestSerializerTranscoder();
+        TestUser userA = tst.new TestUser();
+        userA.setName("lily");
+        userA.setAge(25);
+
+
+        TestUser userB = tst.new TestUser();
+
+
+        userB.setName("Josh Wang");
+        userB.setAge(28);
+
+        List<TestUser> list = new ArrayList<TestUser>();
+        list.add(userA);
+        list.add(userB);
+
+        return list;
+    }
+
     @Test
     public void testObject() {
         List<TestUser> lists = buildTestData();
 
         TestUser userA = lists.get(0);
 
-        ObjectsTranscoder<TestUser> objTranscoder =  new ObjectsTranscoder<>();
+        ObjectsTranscoder<TestUser> objTranscoder = new ObjectsTranscoder<>();
 
         byte[] result1 = objTranscoder.serialize(userA);
 
@@ -50,26 +70,6 @@ public class TestSerializerTranscoder implements Serializable {
             System.out.println(user.getName() + "\t" + user.getAge());
         }
 
-    }
-
-    private static List<TestUser> buildTestData() {
-        TestSerializerTranscoder tst = new TestSerializerTranscoder();
-        TestUser userA =  tst.new TestUser();
-        userA.setName("lily");
-        userA.setAge(25);
-
-
-        TestUser userB = tst.new TestUser();
-
-
-        userB.setName("Josh Wang");
-        userB.setAge(28);
-
-        List<TestUser> list = new ArrayList<TestUser>();
-        list.add(userA);
-        list.add(userB);
-
-        return list;
     }
 
     class TestUser implements Serializable {

@@ -31,7 +31,7 @@ public class DynamicProgrammingDemo {
     public static void main(String[] args) {
 //        System.out.println(cut_rod(prices, 4));
 //        System.out.println(memoized_cut_rod(prices,4));
-        System.out.println(bottom_up_cut_rod(prices,4));
+        System.out.println(bottom_up_cut_rod(prices, 4));
     }
 
     /**
@@ -55,20 +55,21 @@ public class DynamicProgrammingDemo {
     }
 
 
-    public static int memoized_cut_rod(Map<Integer, Integer> prices, int n){
+    public static int memoized_cut_rod(Map<Integer, Integer> prices, int n) {
         Map<Integer, Integer> memo = new HashMap<Integer, Integer>();
         for (int i = 0; i < n; i++) {
-            memo.put(i,Integer.MIN_VALUE);
+            memo.put(i, Integer.MIN_VALUE);
         }
-        return memoized_cut_rod_aux(prices,n,memo);
+        return memoized_cut_rod_aux(prices, n, memo);
     }
 
     /**
      * 动态规划算法1：添加备忘录(优化算法)
-     *   先判断某一个子任务是否已经计算过，有则直接返回。这样可以大大减少重复任务的计算
+     * 先判断某一个子任务是否已经计算过，有则直接返回。这样可以大大减少重复任务的计算
+     *
      * @param prices 价格对应表
-     * @param n 长度
-     * @param memo 备忘录
+     * @param n      长度
+     * @param memo   备忘录
      * @return 最优值
      */
     private static int memoized_cut_rod_aux(Map<Integer, Integer> prices, int n, Map<Integer, Integer> memo) {
@@ -91,19 +92,20 @@ public class DynamicProgrammingDemo {
 
     /**
      * 自底向上的动态规划算法 即：计算每个子任务下的所有子子任务
+     *
      * @param prices 价格表
-     * @param n 长度
+     * @param n      长度
      * @return 最优解
      */
-    public static int bottom_up_cut_rod(Map<Integer, Integer> prices, int n){
+    public static int bottom_up_cut_rod(Map<Integer, Integer> prices, int n) {
         Map<Integer, Integer> memo = new HashMap();
-        memo.put(0,0);
+        memo.put(0, 0);
         for (int j = 1; j <= n; j++) {
             int q = Integer.MIN_VALUE;
             for (int i = 1; i <= j; i++) {
-                q = Math.max(q,prices.get(i) + memo.get(j-i));
+                q = Math.max(q, prices.get(i) + memo.get(j - i));
             }
-            memo.put(j,q);
+            memo.put(j, q);
         }
         return memo.get(n);
     }

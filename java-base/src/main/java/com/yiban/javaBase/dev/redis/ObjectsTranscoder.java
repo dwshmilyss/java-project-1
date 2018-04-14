@@ -15,6 +15,10 @@ import java.io.*;
 public class ObjectsTranscoder<M extends Serializable> extends SerializeTranscoder {
     private static final Logger logger = LoggerFactory.getLogger(ObjectsTranscoder.class);
 
+    public static ObjectsTranscoder getObjectsTranscoder() {
+        return new ObjectsTranscoder();
+    }
+
     @SuppressWarnings("unchecked")
     @Override
     public byte[] serialize(Object value) {
@@ -66,9 +70,5 @@ public class ObjectsTranscoder<M extends Serializable> extends SerializeTranscod
             close(bis);
         }
         return result;
-    }
-
-    public static ObjectsTranscoder getObjectsTranscoder() {
-        return new ObjectsTranscoder();
     }
 }

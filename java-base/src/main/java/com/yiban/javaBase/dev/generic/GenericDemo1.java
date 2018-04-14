@@ -19,24 +19,24 @@ public class GenericDemo1 {
 
     }
 
-    public static void getData(Box<Number> data){
-        System.out.println("data = "+data.getData());
+    public static void getData(Box<Number> data) {
+        System.out.println("data = " + data.getData());
     }
 
     //如果想要通用的表示方法，可以使用?定义通配
-    public static void getData1(Box<?> data){
-        System.out.println("data = "+data.getData());
+    public static void getData1(Box<?> data) {
+        System.out.println("data = " + data.getData());
     }
 
     //或者使用上下界的方式定义 这样就是只能是Number和Number的子类
-    public static void getData2(Box<? extends Number> data){
-        System.out.println("data = "+data.getData());
+    public static void getData2(Box<? extends Number> data) {
+        System.out.println("data = " + data.getData());
     }
 
 }
 
 
-class Box<T>{
+class Box<T> {
 
     private T data;
 

@@ -24,7 +24,7 @@ public class ThreadFactoryDemo {
         });
         pool.shutdownNow();
 
-        ExecutorService myPool = Executors.newFixedThreadPool(1,new MyThreadFactory("dw"));
+        ExecutorService myPool = Executors.newFixedThreadPool(1, new MyThreadFactory("dw"));
         myPool.execute(new Runnable() {
             @Override
             public void run() {
@@ -36,7 +36,7 @@ public class ThreadFactoryDemo {
 //        new ThreadFactoryBuilder().setDaemon(true).setNameFormat("aa" + "-%d").build();
     }
 
-    static class MyThreadFactory implements ThreadFactory{
+    static class MyThreadFactory implements ThreadFactory {
 
         private static final AtomicInteger poolNumber = new AtomicInteger(1);
         private final ThreadGroup group;
@@ -56,7 +56,7 @@ public class ThreadFactoryDemo {
             SecurityManager s = System.getSecurityManager();
             group = (s != null) ? s.getThreadGroup() :
                     Thread.currentThread().getThreadGroup();
-            namePrefix = threadName+ "-" +
+            namePrefix = threadName + "-" +
                     poolNumber.getAndIncrement() +
                     "-thread-";
         }

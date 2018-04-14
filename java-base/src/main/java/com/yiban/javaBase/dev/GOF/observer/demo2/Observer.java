@@ -11,6 +11,6 @@ public class Observer implements IObserver {
     @Override
     public void refresh(ISubject obj) {
         Subject subject = (Subject) obj;
-        System.out.println("数据正在更新为:"+subject.getData());
+        System.out.println("数据正在更新为:" + subject.getData());
     }
 }

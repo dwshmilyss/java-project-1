@@ -11,7 +11,7 @@ import java.lang.reflect.Proxy;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class Test {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         /**
          * 测试JDK的动态代理
          */
@@ -19,7 +19,7 @@ public class Test {
         CountImpl countImpl = new CountImpl();
         //下面两种生成动态代理对象的方式等价
 //        ICount countProxy = (ICount) proxyInstance.bind(new CountImpl());
-        ICount countProxy = (ICount) Proxy.newProxyInstance(ICount.class.getClassLoader(),new Class[]{ICount.class},new CountImplDynamicProxyByJDK(countImpl));
+        ICount countProxy = (ICount) Proxy.newProxyInstance(ICount.class.getClassLoader(), new Class[]{ICount.class}, new CountImplDynamicProxyByJDK(countImpl));
         countProxy.query();
 
         System.out.println(" ============================== ");

@@ -10,17 +10,17 @@ public class Client {
     private static int DEFAULT_PORT = 12345;
     private static AsyncClientHandler clientHandler;
 
-    public static void start(){
-        start(DEFAULT_IP,DEFAULT_PORT);
+    public static void start() {
+        start(DEFAULT_IP, DEFAULT_PORT);
     }
 
-    private static synchronized void start(String ip,int port){
+    private static synchronized void start(String ip, int port) {
         if (clientHandler != null) return;
-        clientHandler = new AsyncClientHandler(ip,port);
-        new Thread(clientHandler,"Client").start();
+        clientHandler = new AsyncClientHandler(ip, port);
+        new Thread(clientHandler, "Client").start();
     }
 
-    public static boolean sendMsg(String msg){
+    public static boolean sendMsg(String msg) {
         if ("q".equals(msg)) return false;
         clientHandler.sendMsg(msg);
         return true;

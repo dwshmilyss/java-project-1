@@ -9,7 +9,7 @@ import java.util.Observable;
  * @date 2017/4/20
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class Subject extends Observable{
+public class Subject extends Observable {
     private String data;
 
     public String getData() {

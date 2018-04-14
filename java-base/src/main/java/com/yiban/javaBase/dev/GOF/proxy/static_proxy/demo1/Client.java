@@ -14,7 +14,7 @@ public class Client {
         dynamiccProxyTest();
     }
 
-    public static void staticProxyTest(){
+    public static void staticProxyTest() {
         //static proxy
         IShop xiaoMing = new XiaoMing();
         //创建代购者并将xiaoMing作为构造函数传
@@ -23,7 +23,7 @@ public class Client {
         proxyBuyer.buy();
     }
 
-    public static void dynamiccProxyTest(){
+    public static void dynamiccProxyTest() {
         //构造被代理类小明
         IShop xiaoMing = new XiaoMing();
         //构造一个动态代理
@@ -31,7 +31,7 @@ public class Client {
         //获取被代理类小明的classLoader
         ClassLoader classLoader = xiaoMing.getClass().getClassLoader();
         //动态构建代购的人
-        IShop proxyBuyer = (IShop) Proxy.newProxyInstance(classLoader,new Class[]{IShop.class},dynamicProxy);
+        IShop proxyBuyer = (IShop) Proxy.newProxyInstance(classLoader, new Class[]{IShop.class}, dynamicProxy);
         //进行代购
         proxyBuyer.buy();
     }

@@ -11,6 +11,7 @@ import java.util.ArrayList;
  */
 public class AbstractSubject implements ISubject {
     private ArrayList<IObserver> observers = new ArrayList<IObserver>();
+
     @Override
     public void register(IObserver obs) {
         observers.add(obs);

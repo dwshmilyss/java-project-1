@@ -1,8 +1,6 @@
 package com.yiban.javaBase.dev.algorithm.topK;
 
 
-import com.yiban.javaBase.dev.algorithm.topK.FileUtils;
-
 import java.io.*;
 import java.util.HashMap;
 import java.util.Iterator;

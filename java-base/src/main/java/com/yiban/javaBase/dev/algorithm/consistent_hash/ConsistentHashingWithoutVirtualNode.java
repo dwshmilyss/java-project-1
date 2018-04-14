@@ -15,6 +15,15 @@ public class ConsistentHashingWithoutVirtualNode {
     //key表示服务器的hash值，value表示服务器的IP地址
     private static SortedMap<Integer, String> sortedMap = new TreeMap<Integer, String>();
 
+    //程序初始化，将所有的服务器放入sortedMap中
+    static {
+        for (int i = 0; i < servers.length; i++) {
+            //对每个服务器进行hash，获取hash值
+            int hash = HashUtils.getHash(servers[i]);
+            System.out.println("服务器:" + servers[i] + "的hash值为:" + hash);
+            sortedMap.put(hash, servers[i]);
+        }
+    }
 
     //给定一个Key，计算应当路由到的服务器结点，因为按顺时针获取，所以应该获取到的服务器节点的hash值都要比该key的hash值大
     private static String getServer(String key) {
@@ -32,16 +41,6 @@ public class ConsistentHashingWithoutVirtualNode {
             Integer i = subMap.firstKey();
             //返回对应的服务器
             return subMap.get(i);
-        }
-    }
-
-    //程序初始化，将所有的服务器放入sortedMap中
-    static {
-        for (int i = 0; i < servers.length; i++) {
-            //对每个服务器进行hash，获取hash值
-            int hash = HashUtils.getHash(servers[i]);
-            System.out.println("服务器:" + servers[i] + "的hash值为:" + hash);
-            sortedMap.put(hash, servers[i]);
         }
     }
 

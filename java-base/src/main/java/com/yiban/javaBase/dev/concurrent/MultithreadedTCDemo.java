@@ -13,6 +13,20 @@ import java.util.concurrent.LinkedTransferQueue;
  * @blog http://blog.csdn.net/dwshmilyss
  */
 public class MultithreadedTCDemo {
+    public static void main(String[] args) {
+        //9.   创建 ProducerConsumerTest 对象，名为 test。
+        ProducerConsumerTest test = new ProducerConsumerTest();
+        //10. 使用 TestFramework 类的 runOnce()方法来执行测试。
+        System.out.printf("Main: Starting the test\n");
+        try {
+            TestFramework.runOnce(test);
+        } catch (Throwable throwable) {
+            throwable.printStackTrace();
+        }
+        System.out.printf("Main: The test has finished\n");
+
+    }
+
     static class ProducerConsumerTest extends MultithreadedTestCase {
         private LinkedTransferQueue<String> queue;
 
@@ -54,20 +68,6 @@ public class MultithreadedTCDemo {
             assertEquals(true, queue.size() == 0);
             System.out.printf("Test: Result: The queue is empty\n");
         }
-
-    }
-
-    public static void main(String[] args) {
-        //9.   创建 ProducerConsumerTest 对象，名为 test。
-        ProducerConsumerTest test = new ProducerConsumerTest();
-        //10. 使用 TestFramework 类的 runOnce()方法来执行测试。
-        System.out.printf("Main: Starting the test\n");
-        try {
-            TestFramework.runOnce(test);
-        } catch (Throwable throwable) {
-            throwable.printStackTrace();
-        }
-        System.out.printf("Main: The test has finished\n");
 
     }
 }

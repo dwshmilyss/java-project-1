@@ -22,21 +22,23 @@ public class CountImplDynamicProxyByJDK implements InvocationHandler {
     public CountImplDynamicProxyByJDK(Object target) {
         this.target = target;
     }
+
     /**
      * 绑定委托对象并返回一个代理类
+     *
      * @param target
      * @return
      */
-    public Object bind(Object target){
+    public Object bind(Object target) {
         this.target = target;
-        return Proxy.newProxyInstance(target.getClass().getClassLoader(),target.getClass().getInterfaces(),this);
+        return Proxy.newProxyInstance(target.getClass().getClassLoader(), target.getClass().getInterfaces(), this);
     }
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         Object result = null;
         System.out.println("开始事务");
-        result = method.invoke(target,args);
+        result = method.invoke(target, args);
         System.out.println("结束事务");
         //返回代理类
         return result;

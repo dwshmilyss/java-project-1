@@ -55,7 +55,7 @@ public class GCDemo {
      * VM参数：-vervose:gc -Xms20M -Xmx20M -Xmn10M -XX:PrintGCDetails -XX:SurvivorRatio=8
      * Eden:8m 2个survivor为1m
      */
-    static void test2(){
+    static void test2() {
         byte[] alloc1, alloc2, alloc3, alloc4;
         alloc1 = new byte[2 * _1M];
         System.out.println("alloc1 " + printAddressOf(alloc1));
@@ -67,7 +67,7 @@ public class GCDemo {
         System.out.println("alloc4 " + printAddressOf(alloc4));
     }
 
-    static String printAddressOf(Object object){
+    static String printAddressOf(Object object) {
         return Integer.toHexString(System.identityHashCode(object));
     }
 
@@ -76,8 +76,8 @@ public class GCDemo {
      * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:+PrintGCDetails -XX:SurvivorRatio=8 -XX:PretenureSizeThreshold=3145728
      * PretenureSizeThreshold在Paralle Scavenge中无效
      */
-    static void test3(){
+    static void test3() {
         System.out.println("aa");
-        byte[] a1 = new byte[4*_1M];
+        byte[] a1 = new byte[4 * _1M];
     }
 }

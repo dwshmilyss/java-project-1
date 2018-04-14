@@ -15,8 +15,9 @@ import org.apache.log4j.Logger;
  * @blog http://blog.csdn.net/dwshmilyss
  */
 public class XiaoMing implements IShop {
-//    Logger logger = LoggerFactory.getLogger(XiaoMing.class);
+    //    Logger logger = LoggerFactory.getLogger(XiaoMing.class);
     private static Logger logger = Logger.getLogger(XiaoMing.class);
+
     public void buy() {
         logger.info("小明进行购买");
         System.out.println("小明进行购买");

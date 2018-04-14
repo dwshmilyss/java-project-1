@@ -26,10 +26,10 @@ public class TestClient {
 //        } catch (InterruptedException e) {
 //            e.printStackTrace();
 //        }
-        char operators[] = {'+','-','*','/'};
+        char operators[] = {'+', '-', '*', '/'};
         Random random = new Random(System.currentTimeMillis());
 
-        String expression = random.nextInt(10)+""+operators[random.nextInt(4)]+""+random.nextInt(10);
+        String expression = random.nextInt(10) + "" + operators[random.nextInt(4)] + "" + random.nextInt(10);
         Client.send(expression);
 //        try {
 //            Thread.currentThread().sleep(random.nextInt(1000));

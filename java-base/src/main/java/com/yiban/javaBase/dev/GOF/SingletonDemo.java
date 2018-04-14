@@ -7,17 +7,19 @@ package com.yiban.javaBase.dev.GOF;
  * 饥汉模式 声明的实例成员变量初始化
  */
 public class SingletonDemo {
-    /**
-     * 第一种实现方式(懒汉模式)
-     */
-    private SingletonDemo(){}
     //防止jvm指令重排序
     public static volatile SingletonDemo instance;
 
-    public static SingletonDemo getInstance(){
+    /**
+     * 第一种实现方式(懒汉模式)
+     */
+    private SingletonDemo() {
+    }
+
+    public static SingletonDemo getInstance() {
         //双重检查 第一次判断是为了减少阻塞，因为下面是一个同步代码块
-        if (instance == null){
-            synchronized (SingletonDemo.class){
+        if (instance == null) {
+            synchronized (SingletonDemo.class) {
                 //第二次检查是因为jdk会乱序执行一个非原子的操作，例如：new JDBCToHiveUtils();
                 //这个new 会被jvm分为三个CPU指令
                 //1、memory =allocate();    //1：分配对象的内存空间
@@ -29,7 +31,7 @@ public class SingletonDemo {
                 ctorInstance(memory);  //2：初始化对象
                 所以在多线程的情况下，一个线程在执行完第三步后，另外一个线程就会判断到instance!=null，这时候返回的话就会报错
                 */
-                if (null == instance){
+                if (null == instance) {
                     instance = new SingletonDemo();
                 }
             }

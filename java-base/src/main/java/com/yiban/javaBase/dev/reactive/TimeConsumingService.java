@@ -14,6 +14,6 @@ public class TimeConsumingService implements Callable<String> {
     @Override
     public String call() throws Exception {
         Thread.sleep(wait_ms);
-        return String.format("service %s exec time is: %d", service_name,wait_ms);
+        return String.format("service %s exec time is: %d", service_name, wait_ms);
     }
 }

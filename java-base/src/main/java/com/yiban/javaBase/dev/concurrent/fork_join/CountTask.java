@@ -13,15 +13,41 @@ import java.util.concurrent.TimeUnit;
  */
 public class CountTask extends RecursiveTask<Integer> {
 
-    private static final long serialVersionUID = -7694721454271199763L;
-
     public static final int threshold = 2;
+    private static final long serialVersionUID = -7694721454271199763L;
     private int start;
     private int end;
 
     public CountTask(int start, int end) {
         this.start = start;
         this.end = end;
+    }
+
+    public static void main(String[] args) {
+        ForkJoinPool forkjoinPool = new ForkJoinPool();
+
+        //生成一个计算任务，计算1+2+3+4
+        CountTask task = new CountTask(1, 100);
+        //同步执行任务
+//        Future<Integer> result = forkjoinPool.submit(task);
+        int res = forkjoinPool.invoke(task);
+        //异步执行任务
+//        forkjoinPool.execute(task);
+//        int res = task.join();
+        //阻塞3秒
+        try {
+            forkjoinPool.awaitTermination(1, TimeUnit.SECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        System.out.printf("the result is %s\n", res);
+        forkjoinPool.shutdown();
+        System.out.println("线程池关闭");
+//        try {
+//            System.out.println(result.get());
+//        } catch (Exception e) {
+//            System.out.println(e);
+//        }
     }
 
     @Override
@@ -40,7 +66,7 @@ public class CountTask extends RecursiveTask<Integer> {
             CountTask leftTask = new CountTask(start, middle);
             CountTask rightTask = new CountTask(middle + 1, end);
 
-            invokeAll(leftTask,rightTask);
+            invokeAll(leftTask, rightTask);
 //            // 执行子任务 等价于上面的invokeAll
 //            leftTask.fork();
 //            rightTask.fork();
@@ -59,32 +85,5 @@ public class CountTask extends RecursiveTask<Integer> {
 //            e.printStackTrace();
 //        }
         return sum;
-    }
-
-    public static void main(String[] args) {
-        ForkJoinPool forkjoinPool = new ForkJoinPool();
-
-        //生成一个计算任务，计算1+2+3+4
-        CountTask task = new CountTask(1, 100);
-        //同步执行任务
-//        Future<Integer> result = forkjoinPool.submit(task);
-       int res = forkjoinPool.invoke(task);
-        //异步执行任务
-//        forkjoinPool.execute(task);
-//        int res = task.join();
-        //阻塞3秒
-        try {
-            forkjoinPool.awaitTermination(1, TimeUnit.SECONDS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        System.out.printf("the result is %s\n",res);
-        forkjoinPool.shutdown();
-        System.out.println("线程池关闭");
-//        try {
-//            System.out.println(result.get());
-//        } catch (Exception e) {
-//            System.out.println(e);
-//        }
     }
 }

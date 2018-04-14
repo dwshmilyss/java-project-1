@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
  */
 public class UnsafeDemo {
     private static Unsafe theUnsafe;
+
     static {
         try {
             theUnsafe = getUnsafeInstance();
@@ -22,6 +23,7 @@ public class UnsafeDemo {
     /**
      * 正常情况下，程序员是无法直接获取Unsafe的实例的
      * 但是可以通过反射的方式获取
+     *
      * @return
      * @throws SecurityException
      * @throws NoSuchFieldException
@@ -71,6 +73,10 @@ final class SampleClass extends SampleBaseClass {
         this.l = l;
     }
 
+    public static byte getB() {
+        return b;
+    }
+
     public int getI() {
         return i;
     }
@@ -85,9 +91,5 @@ final class SampleClass extends SampleBaseClass {
 
     public void setL(long l) {
         this.l = l;
-    }
-
-    public static byte getB() {
-        return b;
     }
 }

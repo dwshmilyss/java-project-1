@@ -1,8 +1,6 @@
 package com.yiban.javaBase.dev.annotations.lombok;
 
-import lombok.extern.java.Log;
 import lombok.extern.log4j.Log4j;
-import lombok.extern.log4j.Log4j2;
 
 /**
  * test for lombok
@@ -13,7 +11,7 @@ import lombok.extern.log4j.Log4j2;
  */
 @Log4j
 public class Test {
-    public static void main(String[] args){
+    public static void main(String[] args) {
         Person person1 = new Person();
         person1.setId("1");
         person1.setName("dw");

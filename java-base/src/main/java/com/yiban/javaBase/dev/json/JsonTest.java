@@ -21,24 +21,24 @@ public class JsonTest {
         System.out.println(stopWatch.getTotalTimeMillis());
     }
 
-    static void testOrgJson(){
+    static void testOrgJson() {
         org.json.JSONArray jsonArray = new org.json.JSONArray();
         for (int i = 0; i < 100000; i++) {
             JSONObject jsonObject = new JSONObject();
-            jsonObject.put("name","dw");
-            jsonObject.put("age",18);
+            jsonObject.put("name", "dw");
+            jsonObject.put("age", 18);
             String output = jsonObject.toString();
             jsonArray.put(jsonObject);
         }
         System.out.println(jsonArray.length());
     }
 
-    static void testFastJson(){
+    static void testFastJson() {
         com.alibaba.fastjson.JSONArray jsonArray = new JSONArray();
         for (int i = 0; i < 100000; i++) {
             com.alibaba.fastjson.JSONObject jsonObject = new com.alibaba.fastjson.JSONObject();
-            jsonObject.put("name","dw");
-            jsonObject.put("age",18);
+            jsonObject.put("name", "dw");
+            jsonObject.put("age", 18);
             String output = jsonObject.toString();
             jsonArray.add(jsonObject);
         }

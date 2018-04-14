@@ -1,7 +1,5 @@
 package com.yiban.javaBase.dev.algorithm.consistent_hash;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class ConsistentHash<T> {
@@ -13,6 +11,33 @@ public class ConsistentHash<T> {
         for (T node : nodes) {
             add(node);
         }
+    }
+
+    public static void main(String[] args) {
+        Set<String> nodes = new HashSet<>();
+        nodes.add("A");
+        nodes.add("B");
+        nodes.add("C");
+
+        ConsistentHash<String> consistentHash = new ConsistentHash<String>(2, nodes);
+
+        consistentHash.add("D");
+        System.out.println("hash circle size : " + consistentHash.getSize());
+//        System.out.println("location of each node are follows : ");
+//        consistentHash.testBalance();
+        /**
+         * hash circle size : 8
+         D
+         D
+         D
+         B
+         B
+         */
+        System.out.println(consistentHash.get("test1"));
+        System.out.println(consistentHash.get("test2"));
+        System.out.println(consistentHash.get("test3"));
+        System.out.println(consistentHash.get("test4"));
+        System.out.println(consistentHash.get("test5"));
     }
 
     /**
@@ -89,38 +114,11 @@ public class ConsistentHash<T> {
         Iterator<Long> it2 = sortedSet.iterator();
         if (it2.hasNext())
             it2.next();
-        long keyPre,keyAfter;
-        while (it1.hasNext() && it2.hasNext()){
+        long keyPre, keyAfter;
+        while (it1.hasNext() && it2.hasNext()) {
             keyPre = it1.next();
             keyAfter = it2.next();
-            System.out.println("subtraction = "+(keyAfter - keyPre));
+            System.out.println("subtraction = " + (keyAfter - keyPre));
         }
-    }
-
-    public static void main(String[] args) {
-        Set<String> nodes = new HashSet<>();
-        nodes.add("A");
-        nodes.add("B");
-        nodes.add("C");
-
-        ConsistentHash<String> consistentHash = new ConsistentHash<String>(2,nodes);
-
-        consistentHash.add("D");
-        System.out.println("hash circle size : " + consistentHash.getSize());
-//        System.out.println("location of each node are follows : ");
-//        consistentHash.testBalance();
-        /**
-         * hash circle size : 8
-         D
-         D
-         D
-         B
-         B
-         */
-        System.out.println(consistentHash.get("test1"));
-        System.out.println(consistentHash.get("test2"));
-        System.out.println(consistentHash.get("test3"));
-        System.out.println(consistentHash.get("test4"));
-        System.out.println(consistentHash.get("test5"));
     }
 }

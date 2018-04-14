@@ -19,6 +19,7 @@ public class FileCopyDemo {
 
     /**
      * 不考虑多线程优化，单线程文件复制最快的方法是(文件越大该方法越有优势，一般比常用方法快30+%):
+     *
      * @param src
      * @param dest
      */
@@ -50,6 +51,7 @@ public class FileCopyDemo {
 
     /**
      * 如果需要监测复制进度，可以用第二快的方法(留意buffer的大小，对速度有很大影响):
+     *
      * @param source
      * @param target
      */
@@ -71,7 +73,7 @@ public class FileCopyDemo {
                  *
                  */
                 buffer.flip();
-                while(buffer.hasRemaining()){
+                while (buffer.hasRemaining()) {
                     System.out.print((char) buffer.get());
                 }
                 //写入数据
@@ -92,7 +94,6 @@ public class FileCopyDemo {
             }
         }
     }
-
 
 
     public static void copyByIO(File src, File dest) {

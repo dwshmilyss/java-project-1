@@ -26,6 +26,16 @@ public class NIOServer {
     //声明通道
     private ServerSocketChannel serverChannel;
 
+    public static void main(String[] args) {
+        try {
+            NIOServer server = new NIOServer();
+            server.initServer(8000);
+            server.listen();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * 获得一个ServerSocket通道，并对该通道做一些初始化的工作
      *
@@ -38,7 +48,7 @@ public class NIOServer {
         // 设置通道为非阻塞
         serverChannel.configureBlocking(false);
         // 将该通道对应的ServerSocket绑定到port端口，1024代表请求挂起的最大连接数
-        serverChannel.socket().bind(new InetSocketAddress(port),1024);
+        serverChannel.socket().bind(new InetSocketAddress(port), 1024);
         /**
          * 获得一个通道管理器
          * 当调用Selector.open()时，选择器通过专门的工厂SelectorProvider来创建Selector的实现，SelectorProvider屏蔽了不同操作系统及版本创建实现的差异性
@@ -110,8 +120,8 @@ public class NIOServer {
         /**
          * buffer 中的capacity、position、limit三个概念
          *      capacity：在读/写模式下都是固定的，就是我们分配的缓冲大小（容量）。
-                position：类似于读/写指针，表示当前读(写)到什么位置。
-                limit：在写模式下表示最多能写入多少数据，此时和capacity相同。在读模式下表示最多能读多少数据，此时和缓存中的实际数据大小相同。
+         position：类似于读/写指针，表示当前读(写)到什么位置。
+         limit：在写模式下表示最多能写入多少数据，此时和capacity相同。在读模式下表示最多能读多少数据，此时和缓存中的实际数据大小相同。
          */
         buffer.flip();
         //如果读到的客户端数据不为空
@@ -129,16 +139,6 @@ public class NIOServer {
             System.out.println("[系统消息提示]玩家下线");
             //检测到客户端关闭（玩家下线），删除该selectionKey监听事件，否则会一直收到这个selectionKey的动作
             key.cancel();
-        }
-    }
-
-    public static void main(String[] args) {
-        try {
-            NIOServer server = new NIOServer();
-            server.initServer(8000);
-            server.listen();
-        } catch (IOException e) {
-            e.printStackTrace();
         }
     }
 }

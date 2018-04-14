@@ -20,7 +20,7 @@ public class AsyncServerHandler implements Runnable {
             channel = AsynchronousServerSocketChannel.open();
             //绑定端口
             channel.bind(new InetSocketAddress(port));
-            System.out.println("服务端已启动，端口："+port);
+            System.out.println("服务端已启动，端口：" + port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -34,7 +34,7 @@ public class AsyncServerHandler implements Runnable {
          */
         countDownLatch = new CountDownLatch(1);
         //用于接收客户端的连接
-        channel.accept(this,new AcceptHandler());
+        channel.accept(this, new AcceptHandler());
         try {
             countDownLatch.await();
         } catch (InterruptedException e) {

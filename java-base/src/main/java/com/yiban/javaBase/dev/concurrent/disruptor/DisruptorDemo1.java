@@ -1,7 +1,6 @@
 package com.yiban.javaBase.dev.concurrent.disruptor;
 
 import com.lmax.disruptor.EventFactory;
-import com.lmax.disruptor.EventHandler;
 import com.lmax.disruptor.EventTranslatorOneArg;
 
 /**
@@ -10,6 +9,12 @@ import com.lmax.disruptor.EventTranslatorOneArg;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class DisruptorDemo1 {
+    private EventFactory<LongEvent> eventFactory = new EventFactory<LongEvent>() {
+        public LongEvent newInstance() {
+            return new LongEvent();
+        }
+    };
+
     //声明disruptor中事件类型及对应的事件工厂
     private class LongEvent {
         private long value;
@@ -27,14 +32,8 @@ public class DisruptorDemo1 {
         }
     }
 
-    private EventFactory<LongEvent> eventFactory = new EventFactory<LongEvent>() {
-        public LongEvent newInstance() {
-            return new LongEvent();
-        }
-    };
-
     //pubisher逻辑，将原始数据转换为event，publish到ringbuffer
-    private class Publisher implements EventTranslatorOneArg<LongEvent , String> {
+    private class Publisher implements EventTranslatorOneArg<LongEvent, String> {
 
         public void translateTo(LongEvent event, long sequence, String arg0) {
             event.set(Long.parseLong(arg0));

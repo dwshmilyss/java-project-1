@@ -63,8 +63,8 @@ public class FutureTest {
         for (int i = 0; i < 10; i++) {
             tasks.add(new CallableClass(i));
         }
-        long begin =0;
-        long end =0;
+        long begin = 0;
+        long end = 0;
         begin = System.currentTimeMillis();
         try {
             /**
@@ -82,14 +82,14 @@ public class FutureTest {
                     Object obj = future.get();
                     System.out.println(obj);
                 } catch (ExecutionException e) {
-                    System.out.println("ExecutionException task id = "+task.id);
-                } catch (CancellationException e){
-                    System.out.println("CancellationException task id = "+task.id);
+                    System.out.println("ExecutionException task id = " + task.id);
+                } catch (CancellationException e) {
+                    System.out.println("CancellationException task id = " + task.id);
                 }
             }
-        }catch (InterruptedException e){
+        } catch (InterruptedException e) {
             e.printStackTrace();
-        }finally{
+        } finally {
             try {
 //                pool.awaitTermination(5, TimeUnit.SECONDS);
                 pool.shutdownNow();
@@ -98,7 +98,7 @@ public class FutureTest {
                 e.printStackTrace();
             }
         }
-        System.out.println("total cost time = "+ (end - begin) / 1000);
+        System.out.println("total cost time = " + (end - begin) / 1000);
     }
 
     /**
@@ -121,7 +121,7 @@ public class FutureTest {
             long time = (r.nextInt(10) + 1) * 1000;
             Thread.sleep(time);
             //这个返回值返回给future接收
-            return "cost time = " + time / 1000 + "s,"+Thread.currentThread().getName() +" 完成工作,id : " + id;
+            return "cost time = " + time / 1000 + "s," + Thread.currentThread().getName() + " 完成工作,id : " + id;
         }
     }
 

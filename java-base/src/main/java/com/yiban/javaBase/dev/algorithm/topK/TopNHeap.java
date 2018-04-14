@@ -25,6 +25,43 @@ public class TopNHeap<T extends Comparable<? super T>> {
         this.maxSize = fixedSize;
     }
 
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        Integer[] data = {7, 12, 13, 24, 8, 6, 4, 27, 14, 8, 12, 56, 22};
+        TopNHeap<Integer> heap = new TopNHeap<Integer>(data);
+        while (heap.hasNext()) {
+            System.out.print(heap.removeTop());
+            System.out.print("  ");
+        }
+
+        System.out.println("  ");
+        heap.initHeap(data);
+        for (int i = 0; i < 10; i++) {
+            heap.addToHeap(i);
+        }
+        while (heap.hasNext()) {
+            System.out.print(heap.removeTop());
+            System.out.print("  ");
+        }
+
+        System.out.println("  ");
+        heap = new TopNHeap<Integer>(10);
+        Random rd = new Random();
+        for (int i = 0; i < 20; i++) {
+            int value = rd.nextInt(100);
+//          System.out.print(value);
+//          System.out.print("  ");
+            heap.addToHeap(value);
+        }
+        System.out.println("  ");
+        while (heap.hasNext()) {
+            System.out.print(heap.removeTop());
+            System.out.print("  ");
+        }
+
+    }
 
     @SuppressWarnings("unchecked")
     public void initHeap(T[] data) {
@@ -140,46 +177,7 @@ public class TopNHeap<T extends Comparable<? super T>> {
         return this.maxSize == this.size;
     }
 
-
     public int getMaxSize() {
         return maxSize;
-    }
-
-    /**
-     * @param args
-     */
-    public static void main(String[] args) {
-        Integer[] data = {7, 12, 13, 24, 8, 6, 4, 27, 14, 8, 12, 56, 22};
-        TopNHeap<Integer> heap = new TopNHeap<Integer>(data);
-        while (heap.hasNext()) {
-            System.out.print(heap.removeTop());
-            System.out.print("  ");
-        }
-
-        System.out.println("  ");
-        heap.initHeap(data);
-        for (int i = 0; i < 10; i++) {
-            heap.addToHeap(i);
-        }
-        while (heap.hasNext()) {
-            System.out.print(heap.removeTop());
-            System.out.print("  ");
-        }
-
-        System.out.println("  ");
-        heap = new TopNHeap<Integer>(10);
-        Random rd = new Random();
-        for (int i = 0; i < 20; i++) {
-            int value = rd.nextInt(100);
-//          System.out.print(value);
-//          System.out.print("  ");
-            heap.addToHeap(value);
-        }
-        System.out.println("  ");
-        while (heap.hasNext()) {
-            System.out.print(heap.removeTop());
-            System.out.print("  ");
-        }
-
     }
 }

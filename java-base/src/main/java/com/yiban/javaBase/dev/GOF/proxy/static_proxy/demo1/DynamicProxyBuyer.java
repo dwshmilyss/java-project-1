@@ -19,7 +19,7 @@ public class DynamicProxyBuyer implements InvocationHandler {
         System.out.println("DynamicProxyBuyer.invoke start.....");
 
         //调用被代理对象的方法
-        Object obj =  method.invoke(mTarget,args);
+        Object obj = method.invoke(mTarget, args);
 
         //可以在调用目标方法后做一些事情 例如 日志，事务控制
         System.out.println("DynamicProxyBuyer.invoke end.....");

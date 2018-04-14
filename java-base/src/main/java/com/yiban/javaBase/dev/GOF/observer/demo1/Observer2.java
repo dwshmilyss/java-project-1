@@ -13,9 +13,9 @@ import java.util.Observer;
 public class Observer2 implements Observer {
     @Override
     public void update(Observable o, Object arg) {
-        if (o instanceof Subject){
+        if (o instanceof Subject) {
             Subject subject = (Subject) o;
-            System.out.println(this.getClass().getName()+" :观察到数据正在更新为："+subject.getData());
+            System.out.println(this.getClass().getName() + " :观察到数据正在更新为：" + subject.getData());
         }
     }
 }

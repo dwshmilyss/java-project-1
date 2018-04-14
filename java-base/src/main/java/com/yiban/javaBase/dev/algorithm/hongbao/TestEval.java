@@ -59,14 +59,14 @@ public class TestEval {
         Jedis jedis = new Jedis(host);
         jedis.flushAll();
         final CountDownLatch latch = new CountDownLatch(threadCount);
-        for(int i = 0; i < threadCount; ++i) {
+        for (int i = 0; i < threadCount; ++i) {
             final int temp = i;
             Thread thread = new Thread() {
                 public void run() {
                     Jedis jedis = new Jedis(host);
-                    int per = honBaoCount/threadCount;
+                    int per = honBaoCount / threadCount;
                     JSONObject object = new JSONObject();
-                    for(int j = temp * per; j < (temp+1) * per; j++) {
+                    for (int j = temp * per; j < (temp + 1) * per; j++) {
                         object.put("id", j);
                         object.put("money", j);
                         jedis.lpush(hongBaoList, object.toJSONString());
@@ -81,23 +81,23 @@ public class TestEval {
 
     static public void testTryGetHongBao() throws InterruptedException {
         final CountDownLatch latch = new CountDownLatch(threadCount);
-        System.err.println("start:" + System.currentTimeMillis()/1000);
+        System.err.println("start:" + System.currentTimeMillis() / 1000);
         watch.start();
-        for(int i = 0; i < threadCount; ++i) {
+        for (int i = 0; i < threadCount; ++i) {
             final int temp = i;
             Thread thread = new Thread() {
                 public void run() {
                     Jedis jedis = new Jedis(host);
                     String sha = jedis.scriptLoad(tryGetHongBaoScript);
-                    int j = honBaoCount/threadCount * temp;
-                    while(true) {
+                    int j = honBaoCount / threadCount * temp;
+                    while (true) {
                         Object object = jedis.eval(tryGetHongBaoScript, 4, hongBaoList, hongBaoConsumedList, hongBaoConsumedMap, "" + j);
                         j++;
                         if (object != null) {
 //                          System.out.println("get hongBao:" + object);
-                        }else {
+                        } else {
                             //已经取完了
-                            if(jedis.llen(hongBaoList) == 0)
+                            if (jedis.llen(hongBaoList) == 0)
                                 break;
                         }
                     }
@@ -111,7 +111,7 @@ public class TestEval {
         watch.stop();
 
         System.err.println("time:" + watch.getTotalTimeSeconds());
-        System.err.println("speed:" + honBaoCount/watch.getTotalTimeSeconds());
-        System.err.println("end:" + System.currentTimeMillis()/1000);
+        System.err.println("speed:" + honBaoCount / watch.getTotalTimeSeconds());
+        System.err.println("end:" + System.currentTimeMillis() / 1000);
     }
 }

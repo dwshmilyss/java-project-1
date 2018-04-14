@@ -11,7 +11,8 @@ public class People {
     //而只会用AppClassLoader
     private String name;
 
-    public People() {}
+    public People() {
+    }
 
     public People(String name) {
         this.name = name;

@@ -49,6 +49,7 @@ public class AsyncClientHandler implements CompletionHandler<Void, AsyncClientHa
 
     /**
      * 向服务端发送消息
+     *
      * @param msg
      */
     public void sendMsg(String msg) {
@@ -59,7 +60,7 @@ public class AsyncClientHandler implements CompletionHandler<Void, AsyncClientHa
         writeBuffer.put(request);
         writeBuffer.flip();
         //异步写
-        clientChannel.write(writeBuffer,writeBuffer,new WriteHandler(clientChannel,countDownLatch));
+        clientChannel.write(writeBuffer, writeBuffer, new WriteHandler(clientChannel, countDownLatch));
     }
 
     /**

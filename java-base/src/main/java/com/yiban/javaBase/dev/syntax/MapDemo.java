@@ -1,7 +1,5 @@
 package com.yiban.javaBase.dev.syntax;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Setter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,9 +13,15 @@ import java.util.*;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class MapDemo {
-    
 
-    /** Logger */
+
+    /**
+     * HashMap 初始化默认16(必须是2的整数倍)，每次resize就double长度(增加一倍的capacity)
+     */
+    static final int MAXIMUM_CAPACITY = 1 << 30;
+    /**
+     * Logger
+     */
     private static final Logger logger = LoggerFactory.getLogger(MapDemo.class);
     public static Map<Integer, Integer> map = new HashMap<>();
 
@@ -31,10 +35,6 @@ public class MapDemo {
         System.out.println(tableSizeFor(16));
     }
 
-    /**
-     * HashMap 初始化默认16(必须是2的整数倍)，每次resize就double长度(增加一倍的capacity)
-     */
-    static final int MAXIMUM_CAPACITY = 1 << 30;
     static final int tableSizeFor(int cap) {
         int n = cap - 1;
         n |= n >>> 1;

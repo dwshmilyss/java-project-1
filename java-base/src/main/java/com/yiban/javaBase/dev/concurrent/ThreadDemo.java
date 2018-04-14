@@ -30,11 +30,11 @@ public class ThreadDemo {
 
 //        testThreadGroup();
 
-        class TT implements Runnable{
+        class TT implements Runnable {
 
             @Override
             public void run() {
-                while (true){
+                while (true) {
                     System.out.println("aa");
                     try {
                         Thread.sleep(1000);
@@ -357,12 +357,12 @@ public class ThreadDemo {
                 this.date = date;
             }
 
-            public void setEvent(String event) {
-                this.event = event;
-            }
-
             public String getEvent() {
                 return this.event;
+            }
+
+            public void setEvent(String event) {
+                this.event = event;
             }
         }
     }

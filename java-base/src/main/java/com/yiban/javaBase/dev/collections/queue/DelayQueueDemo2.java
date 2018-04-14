@@ -37,9 +37,9 @@ public class DelayQueueDemo2 {
 //            e.printStackTrace();
 //        }
 
-        Iterator itr=dq.iterator();
-        while(itr.hasNext()){
-            DeleyedTest dt=(DeleyedTest)itr.next();
+        Iterator itr = dq.iterator();
+        while (itr.hasNext()) {
+            DeleyedTest dt = (DeleyedTest) itr.next();
             System.out.println(dt.deleyTime);
         }
 
@@ -52,7 +52,7 @@ public class DelayQueueDemo2 {
 
         DeleyedTest(long deleyTime) {
             this.deleyTime = deleyTime;
-            this.tempTime = TimeUnit.NANOSECONDS.convert(deleyTime,TimeUnit.SECONDS) + System.nanoTime();
+            this.tempTime = TimeUnit.NANOSECONDS.convert(deleyTime, TimeUnit.SECONDS) + System.nanoTime();
         }
 
         @Override

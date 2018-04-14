@@ -18,6 +18,7 @@ public interface MyList<E> extends Collection<E> {
 
     /**
      * 声明一个泛型类型需要用<>
+     *
      * @param a
      * @param <T> 声明的泛型类型
      * @return
@@ -27,18 +28,18 @@ public interface MyList<E> extends Collection<E> {
 
 }
 
-class Test<E>{
-    E test1(E a){
-        return a;
-    }
-
+class Test<E> {
     /**
      * 静态方法不能访问类中定义的泛型类型
      *
      * @param b
      * @return
      */
-    static <T> T test2(T b){
+    static <T> T test2(T b) {
         return b;
+    }
+
+    E test1(E a) {
+        return a;
     }
 }

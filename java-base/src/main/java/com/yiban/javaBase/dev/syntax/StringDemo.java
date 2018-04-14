@@ -16,9 +16,12 @@ import org.slf4j.LoggerFactory;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class StringDemo {
-    /** slf4j logger */
+    /**
+     * slf4j logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(StringDemo.class);
-    public static void main(String[] args){
+
+    public static void main(String[] args) {
         String s = new String("1");
         s = s.intern();
         String s2 = "1";
@@ -28,7 +31,7 @@ public class StringDemo {
     /**
      * 测试String.intern()
      */
-    public static void test1(){
+    public static void test1() {
         //new String 只在堆中生成对象数据，不会放入常量池，所以两个地址明显不同（一个是对象地址，一个是常量池地址），返回false
         //这里如果没有调用append()也是返回false 可能append就会把字符串放入常量池
         //如果是java关键字("java"和"java1"返回结果就不同) 返回false  因为默认在常量池中已经存在。所以调用append的时候其实并没有放入常量池，还是返回的对象的地址
@@ -39,7 +42,7 @@ public class StringDemo {
     }
 
 
-    public static void test2(String a,String b){
+    public static void test2(String a, String b) {
         LOGGER.info(" " + "a = [" + a + "], b = [" + b + "]");
     }
 

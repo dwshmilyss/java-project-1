@@ -13,5 +13,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)//这个必须要将注解保留在运行时
 public @interface PriceRegion {
     int max() default Integer.MAX_VALUE;
+
     int min() default Integer.MIN_VALUE;
 }

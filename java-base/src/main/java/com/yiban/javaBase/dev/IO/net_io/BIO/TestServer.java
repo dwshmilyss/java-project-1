@@ -26,15 +26,15 @@ public class TestServer {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        char operators[] = {'+','-','*','/'};
+        char operators[] = {'+', '-', '*', '/'};
         Random random = new Random(System.currentTimeMillis());
 
         //启动客户端
         new Thread(new Runnable() {
             @Override
             public void run() {
-                while (true){
-                    String expression = random.nextInt(10)+""+operators[random.nextInt(4)]+""+random.nextInt(10);
+                while (true) {
+                    String expression = random.nextInt(10) + "" + operators[random.nextInt(4)] + "" + random.nextInt(10);
                     Client.send(expression);
                     try {
                         Thread.currentThread().sleep(random.nextInt(1000));

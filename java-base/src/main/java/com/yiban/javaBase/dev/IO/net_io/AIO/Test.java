@@ -24,6 +24,6 @@ public class Test {
         Client.start();
         System.out.println("请输入要计算的表达式：");
         Scanner scanner = new Scanner(System.in);
-        while (Client.sendMsg(scanner.nextLine()));
+        while (Client.sendMsg(scanner.nextLine())) ;
     }
 }

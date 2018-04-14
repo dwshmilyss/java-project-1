@@ -11,9 +11,10 @@ import java.util.concurrent.CountDownLatch;
  * @date 2018/1/25
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class ReadHandler implements CompletionHandler<Integer,ByteBuffer> {
+public class ReadHandler implements CompletionHandler<Integer, ByteBuffer> {
     private AsynchronousSocketChannel clientChannel;
     private CountDownLatch countDownLatch;
+
     public ReadHandler(AsynchronousSocketChannel clientChannel, CountDownLatch countDownLatch) {
         this.clientChannel = clientChannel;
         this.countDownLatch = countDownLatch;
@@ -26,9 +27,9 @@ public class ReadHandler implements CompletionHandler<Integer,ByteBuffer> {
         buffer.get(bytes);
         String body;
         try {
-            body = new String(bytes,"UTF-8");
-            System.out.println("客户端收到的消息为："+body);
-        }catch (Exception e){
+            body = new String(bytes, "UTF-8");
+            System.out.println("客户端收到的消息为：" + body);
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

@@ -33,6 +33,24 @@ public class SortTask extends RecursiveAction {
         this.end = end;
     }
 
+    public static void main(String[] args) throws InterruptedException {
+        ForkJoinPool forkJoinPool = new ForkJoinPool();
+        Random rnd = new Random();
+        int SIZE = 10000;
+        long[] array = new long[SIZE];
+        for (int i = 0; i < SIZE; i++) {
+            array[i] = rnd.nextInt(SIZE);
+        }
+        forkJoinPool.submit(new SortTask(array));
+
+        forkJoinPool.shutdown();
+        forkJoinPool.awaitTermination(1000, TimeUnit.SECONDS);
+
+        for (int i = 1; i < SIZE; i++) {
+            System.out.println(array[i]);
+        }
+    }
+
     protected void compute() {
         if (end - start < THRESHOLD)
             sequentiallySort(array, start, end);
@@ -66,25 +84,6 @@ public class SortTask extends RecursiveAction {
 
     private void sequentiallySort(long[] array, int lo, int hi) {
         Arrays.sort(array, lo, hi + 1);
-    }
-
-
-    public static void main(String[] args) throws InterruptedException {
-        ForkJoinPool forkJoinPool = new ForkJoinPool();
-        Random rnd = new Random();
-        int SIZE = 10000;
-        long[] array = new long[SIZE];
-        for (int i = 0; i < SIZE; i++) {
-            array[i] = rnd.nextInt(SIZE);
-        }
-        forkJoinPool.submit(new SortTask(array));
-
-        forkJoinPool.shutdown();
-        forkJoinPool.awaitTermination(1000, TimeUnit.SECONDS);
-
-        for (int i = 1; i < SIZE; i++) {
-            System.out.println(array[i]);
-        }
     }
 
 }

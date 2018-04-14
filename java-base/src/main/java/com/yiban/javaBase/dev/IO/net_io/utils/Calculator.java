@@ -7,9 +7,6 @@ import javax.script.ScriptException;
 public enum Calculator {
     Instance;
     private final static ScriptEngine jse = new ScriptEngineManager().getEngineByName("JavaScript");
-    public Object cal(String expression) throws ScriptException{
-        return jse.eval(expression);
-    }
 
     public static void main(String[] args) {
         try {
@@ -17,5 +14,9 @@ public enum Calculator {
         } catch (ScriptException e) {
             e.printStackTrace();
         }
+    }
+
+    public Object cal(String expression) throws ScriptException {
+        return jse.eval(expression);
     }
 }

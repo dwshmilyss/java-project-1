@@ -3,6 +3,8 @@ package com.yiban.javaBase.dev.syntax;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
+
 /**
  * string demo
  * String.intern() 如果常量池中没有 则放入常量池 并返回常量池中的地址
@@ -15,11 +17,16 @@ import org.slf4j.LoggerFactory;
  * @date 2017/11/15
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class StringDemo {
+public class StringDemo implements Serializable {
+
+    public static final long serialVersionUID = 1l;
     /**
      * slf4j logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(StringDemo.class);
+
+    public StringDemo() {
+    }
 
     public static void main(String[] args) {
         String s = new String("1");

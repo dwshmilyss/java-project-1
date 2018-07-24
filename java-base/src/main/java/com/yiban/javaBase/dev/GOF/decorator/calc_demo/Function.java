@@ -1,7 +1,7 @@
-package com.yiban.javaBase.dev.GOF.decorator;
+package com.yiban.javaBase.dev.GOF.decorator.calc_demo;
 
 /**
- * sources 是被装饰的内层函数运算。
+ * 计算函数的抽象类。sources：是被装饰的内层函数运算。
  *
  * @auther WEI.DUAN
  * @date 2018/7/23

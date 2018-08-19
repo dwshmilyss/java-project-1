@@ -4,6 +4,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 
 /**
  * string demo
@@ -33,6 +35,14 @@ public class StringDemo implements Serializable {
         s = s.intern();
         String s2 = "1";
         System.out.println(s == s2);
+
+        String s1 = new String(new byte[10], Charset.forName("utf-8"));
+        System.out.println("s1 = " + s1);
+
+        String s3 = "abc";
+        CharSequence cs = s3.subSequence(1,2);
+        System.out.println(cs.getClass());
+
     }
 
     /**

@@ -22,8 +22,10 @@ import java.util.*;
  * @blog http://blog.csdn.net/dwshmilyss
  */
 public class KafkaConsumerDemo1 {
+    //0.10.1.0
     private static KafkaConsumer kafkaConsumer;
 
+    //0.8.0
     private static kafka.javaapi.consumer.ConsumerConnector consumer;
 
     private static final String GROUP = "MsgConsumer";

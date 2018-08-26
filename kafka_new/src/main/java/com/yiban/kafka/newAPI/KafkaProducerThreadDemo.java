@@ -25,6 +25,10 @@ public class KafkaProducerThreadDemo {
 
     private static final String BOOTSTRAP = "10.21.3.129:9092";
     private static final String TOPICNAME = "test1";
+    //多个副本的确认方式
+    // 0 不确认，即发送给broker就不管了，也不知道是否成功
+    // 1 只有leader确认，不管其他slave
+    // 2 leader和所有的slave都确认才算成功，这种方式性能最差，但是数据可靠性最高
     private static final int ACKS = 1;
     private static final int RETRIES = 0;
     private static final int BATCHSIZE = 0;

@@ -134,6 +134,7 @@ public class KafkaConsumerDemo1 {
             //自动提交offset的间隔毫秒数，默认5000
             props.put("auto.commit.interval.ms", "100");
             props.put("session.timeout.ms", "30000");
+            // 指定序列化处理类，默认为kafka.serializer.DefaultEncoder,即byte[]
             props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
             props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
 
@@ -164,7 +165,7 @@ public class KafkaConsumerDemo1 {
 //            props.put("auto.offset.reset", "largest");
             props.put("enable.auto.commit", "true");
             props.put("auto.commit.interval.ms", "100");
-            // 序列化类
+            // // 指定序列化处理类，默认为kafka.serializer.DefaultEncoder,即byte[]
             props.put("serializer.class", "kafka.serializer.StringEncoder");
             kafka.consumer.ConsumerConfig config = new kafka.consumer.ConsumerConfig(props);
 
@@ -180,9 +181,11 @@ public class KafkaConsumerDemo1 {
         Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
         topicCountMap.put(topic, new Integer(1));
 
+        //因为createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>，如果要解析成String，则需要加上解码器StringDecoder
         StringDecoder keyDecoder = new StringDecoder(new VerifiableProperties());
         StringDecoder valueDecoder = new StringDecoder(new VerifiableProperties());
 
+        // 如果不带keyDecoder, valueDecoder 则createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>
         Map<String, List<KafkaStream<String, String>>> consumerMap = consumer.createMessageStreams(topicCountMap,
                 keyDecoder, valueDecoder);
         KafkaStream<String, String> stream = consumerMap.get(topic).get(0);

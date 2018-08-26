@@ -1,4 +1,4 @@
-package com.yiban.kafka.newAPI;
+package com.yiban.kafka.partitioner;
 
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;

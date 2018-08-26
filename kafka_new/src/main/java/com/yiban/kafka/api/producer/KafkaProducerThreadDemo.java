@@ -1,4 +1,4 @@
-package com.yiban.kafka.newAPI;
+package com.yiban.kafka.api.producer;
 
 
 import org.apache.kafka.clients.producer.Callback;

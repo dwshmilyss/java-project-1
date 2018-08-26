@@ -1,4 +1,4 @@
-package com.yiban.kafka.newAPI;
+package com.yiban.kafka.api.consumer;
 
 import org.apache.kafka.clients.consumer.*;
 import org.apache.kafka.common.TopicPartition;
@@ -7,7 +7,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 
-import java.security.cert.TrustAnchor;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

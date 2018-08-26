@@ -1,4 +1,4 @@
-package com.yiban.kafka.newAPI;
+package com.yiban.kafka.api.producer;
 
 
 import kafka.javaapi.producer.Producer;
@@ -25,10 +25,6 @@ public class KafkaProducerDemo1 {
     //0.10.2.0版本
     private static KafkaProducer kafkaProducer;
 
-    //0.8.2.1版本
-    private static Producer kafkaProducer0820;
-
-
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerDemo1.class);
 
     static {
@@ -40,16 +36,6 @@ public class KafkaProducerDemo1 {
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         kafkaProducer = new KafkaProducer(props);
-
-        Properties props0820 = new Properties();
-        props0820.put("zookeeper.connect", "10.21.3.129:2181");
-        props0820.put("metadata.broker.list", "10.21.3.129:9092");
-        props0820.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props0820.put("serializer.class", "kafka.serializer.StringEncoder");
-        props0820.put("value.serializer", "org.apache.kafka.common.serialization.StringSerializer");
-        props0820.put("request.required.acks", "1");
-        ProducerConfig producerConfig = new ProducerConfig(props0820);
-        kafkaProducer0820 = new Producer(producerConfig);
 
         // 修改kafka日志输出级别(只针对当前的console)
         Logger.getLogger("org").setLevel(Level.WARN);

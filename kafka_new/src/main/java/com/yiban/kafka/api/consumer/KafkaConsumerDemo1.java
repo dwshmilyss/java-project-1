@@ -1,4 +1,4 @@
-package com.yiban.kafka.newAPI;
+package com.yiban.kafka.api.consumer;
 
 
 import kafka.consumer.ConsumerIterator;

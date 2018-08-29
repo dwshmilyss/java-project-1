@@ -155,47 +155,9 @@ public class KafkaConsumerDemo1 {
             kafkaConsumer = new KafkaConsumer<String, String>(props);
             System.out.println("KafkaConsumer 0.10.2.0 init completed.....");
             test_0_10_2_0(topic);
-        } else if (version == 8) {
-            // zookeeper 配置
-            props.put("zookeeper.connect", "10.21.3.129:2181");
-            // zk连接超时
-            props.put("zookeeper.session.timeout.ms", "4000");
-            props.put("zookeeper.sync.time.ms", "200");
-            props.put("auto.offset.reset", "smallest");
-//            props.put("auto.offset.reset", "largest");
-            props.put("enable.auto.commit", "true");
-            props.put("auto.commit.interval.ms", "100");
-            // // 指定序列化处理类，默认为kafka.serializer.DefaultEncoder,即byte[]
-            props.put("serializer.class", "kafka.serializer.StringEncoder");
-            kafka.consumer.ConsumerConfig config = new kafka.consumer.ConsumerConfig(props);
-
-            consumer = kafka.consumer.Consumer.createJavaConsumerConnector(config);
-            System.out.println("KafkaConsumer 0.8.2.0 init completed.....");
-            test_0_8_2_1(topic);
-        }
-
-    }
-
-
-    private static void test_0_8_2_1(String topic) {
-        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-        topicCountMap.put(topic, new Integer(1));
-
-        //因为createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>，如果要解析成String，则需要加上解码器StringDecoder
-        StringDecoder keyDecoder = new StringDecoder(new VerifiableProperties());
-        StringDecoder valueDecoder = new StringDecoder(new VerifiableProperties());
-
-        // 如果不带keyDecoder, valueDecoder 则createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>
-        Map<String, List<KafkaStream<String, String>>> consumerMap = consumer.createMessageStreams(topicCountMap,
-                keyDecoder, valueDecoder);
-        KafkaStream<String, String> stream = consumerMap.get(topic).get(0);
-        ConsumerIterator<String, String> it = stream.iterator();
-        System.out.println(it.hasNext());
-        while (it.hasNext()) {
-            MessageAndMetadata metadata = it.next();
-            System.out.println("offset = " + metadata.offset() + ",partition = " + metadata.partition() + ",message = " + metadata.message());
         }
     }
+
 
     private static void test_0_10_2_0(String topic) {
         TopicPartition partition0 = new TopicPartition(topic, 1);

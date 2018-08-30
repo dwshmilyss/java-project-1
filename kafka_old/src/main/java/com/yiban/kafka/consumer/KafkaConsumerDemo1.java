@@ -27,6 +27,7 @@ public class KafkaConsumerDemo1 {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerDemo1.class);
     private final ConsumerConnector consumer;
+    private static final ConsumerConnector consumer1 = null;
     private final String topic;
 
 //    public static final String TOPIC_NAME = "test_10_3";
@@ -48,6 +49,10 @@ public class KafkaConsumerDemo1 {
     }
 
 
+    /**
+     * 多线程消费 最好的情况就是一个线程消费一个partition
+     * @param a_numThreads
+     */
     public void run(int a_numThreads) {
         Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
         topicCountMap.put(topic, new Integer(a_numThreads));
@@ -55,7 +60,6 @@ public class KafkaConsumerDemo1 {
         StringDecoder valueDecoder = new StringDecoder(new VerifiableProperties());
         Map<String, List<KafkaStream<String, String>>> consumerMap = consumer.createMessageStreams(topicCountMap, keyDecoder, valueDecoder);
         List<KafkaStream<String, String>> streams = consumerMap.get(topic);
-
         // now launch all the threads
         //
         executor = Executors.newFixedThreadPool(a_numThreads);
@@ -83,7 +87,7 @@ public class KafkaConsumerDemo1 {
         props.put("zookeeper.session.timeout.ms", "400");
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
-        props.put("enable.auto.commit", "false");
+        props.put("auto.commit.enable", "false");
         return new ConsumerConfig(props);
     }
 
@@ -109,6 +113,8 @@ public class KafkaConsumerDemo1 {
 //        System.out.println("KafkaConsumer 0.8.2.0 init completed.....");
 //
 //        test1(TOPIC_NAME,numPartitions);
+
+
         String zooKeeper = "10.21.3.74:2181";
         String groupId = "test";
         String topic = "test_10_3";
@@ -128,25 +134,27 @@ public class KafkaConsumerDemo1 {
      * @param topic
      * @param numConsumers stream的个数 即Consumer的个数
      */
-//    private static void test1(String topic, int numConsumers) {
-//        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
-//        topicCountMap.put(topic, numConsumers);
-//
-//        //因为createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>，如果要解析成String，则需要加上解码器StringDecoder
-//        StringDecoder keyDecoder = new StringDecoder(new VerifiableProperties());
-//        StringDecoder valueDecoder = new StringDecoder(new VerifiableProperties());
-//
-//        // 如果不带keyDecoder, valueDecoder 则createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>
-//        Map<String, List<KafkaStream<String, String>>> consumerMap = consumer.createMessageStreams(topicCountMap,
-//                keyDecoder, valueDecoder);
-//        KafkaStream<String, String> stream = consumerMap.get(topic).get(0);
-//        ConsumerIterator<String, String> it = stream.iterator();
-//        System.out.println(it.hasNext());
-//        while (it.hasNext()) {
-//            MessageAndMetadata metadata = it.next();
-//            System.out.println("partition = " + metadata.partition() + ",offset = " + metadata.offset() + " ,message = " + metadata.message());
-//        }
-//    }
+    private static void test1(String topic, int numConsumers) {
+        Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
+        topicCountMap.put(topic, numConsumers);
+
+        //因为createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>，如果要解析成String，则需要加上解码器StringDecoder
+        StringDecoder keyDecoder = new StringDecoder(new VerifiableProperties());
+        StringDecoder valueDecoder = new StringDecoder(new VerifiableProperties());
+
+        // 如果不带keyDecoder, valueDecoder 则createMessageStreams()的返回值类型是List<KafkaStream<byte[], byte[]>>
+        Map<String, List<KafkaStream<String, String>>> consumerMap = consumer1.createMessageStreams(topicCountMap,
+                keyDecoder, valueDecoder);
+        List<KafkaStream<String, String>> streams = consumerMap.get(topic);
+        for (KafkaStream<String, String> stream : streams) {
+            ConsumerIterator<String, String> it = stream.iterator();
+            System.out.println(it.hasNext());
+            while (it.hasNext()) {
+                MessageAndMetadata metadata = it.next();
+                System.out.println("partition = " + metadata.partition() + ",offset = " + metadata.offset() + " ,message = " + metadata.message());
+            }
+        }
+    }
 }
 
 

@@ -23,9 +23,9 @@ import java.util.concurrent.TimeUnit;
  * @date 2018/8/29
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class KafkaConsumerDemo1 {
+public class ConsumerHighAPIDemo {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerDemo1.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerHighAPIDemo.class);
     private final ConsumerConnector consumer;
     private static final ConsumerConnector consumer1 = null;
     private final String topic;
@@ -73,7 +73,7 @@ public class KafkaConsumerDemo1 {
         }
     }
 
-    public KafkaConsumerDemo1(String a_zookeeper, String a_groupId, String a_topic) {
+    public ConsumerHighAPIDemo(String a_zookeeper, String a_groupId, String a_topic) {
         consumer = kafka.consumer.Consumer.createJavaConsumerConnector(
                 createConsumerConfig(a_zookeeper, a_groupId));
         this.topic = a_topic;
@@ -119,7 +119,7 @@ public class KafkaConsumerDemo1 {
         String groupId = "test";
         String topic = "test_10_3";
         int threads = 10;
-        KafkaConsumerDemo1 example = new KafkaConsumerDemo1(zooKeeper, groupId, topic);
+        ConsumerHighAPIDemo example = new ConsumerHighAPIDemo(zooKeeper, groupId, topic);
         example.run(threads);
 
         try {

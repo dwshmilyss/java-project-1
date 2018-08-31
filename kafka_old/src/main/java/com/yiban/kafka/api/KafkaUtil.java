@@ -229,10 +229,10 @@ public class KafkaUtil implements Serializable {
     }
 
     public static void main(String[] args) {
-        String brokers = "10.21.3.129:9092";
-        String topicName = "test";
+        String brokers = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
+        String topicName = "test_10_3";
         String partitionId = String.valueOf(0);
-        String clientId = "Client_".concat(topicName).concat("_").concat(partitionId);
+        String clientId = "Client_test_10_3_0";
         try {
 //            System.out.println(KafkaUtil.getInstance().getKafkaOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));
 //            System.out.println(KafkaUtil.getInstance().getKafkaEarlyOffsetByTopicList(brokers, Arrays.asList(new String[]{topicName}), clientId));

@@ -10,6 +10,7 @@ import kafka.utils.VerifiableProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetAddress;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,22 +69,24 @@ public class ConsumerHighAPIDemo {
         //
         int threadNumber = 0;
         for (final KafkaStream stream : streams) {
-            executor.submit(new ConsumerTest(stream, threadNumber));
+            executor.submit(new ConsumerThread(stream, threadNumber));
             threadNumber++;
         }
     }
 
-    public ConsumerHighAPIDemo(String a_zookeeper, String a_groupId, String a_topic) {
+    public ConsumerHighAPIDemo(String a_zookeeper, String a_groupId, String a_clientId, String a_topic) {
         consumer = kafka.consumer.Consumer.createJavaConsumerConnector(
-                createConsumerConfig(a_zookeeper, a_groupId));
+                createConsumerConfig(a_zookeeper, a_groupId,a_clientId));
         this.topic = a_topic;
     }
 
 
-    private static ConsumerConfig createConsumerConfig(String a_zookeeper, String a_groupId) {
+    private static ConsumerConfig createConsumerConfig(String a_zookeeper, String a_groupId , String a_clientId) {
         Properties props = new Properties();
         props.put("zookeeper.connect", a_zookeeper);
         props.put("group.id", a_groupId);
+        // 其实这里不需要hostname 因为默认就是
+        props.put("client.id", a_clientId);
         props.put("zookeeper.session.timeout.ms", "400");
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
@@ -117,9 +120,17 @@ public class ConsumerHighAPIDemo {
 
         String zooKeeper = "10.21.3.74:2181";
         String groupId = "test";
+        InetAddress inetAddress = null;
+        try {
+            inetAddress = java.net.InetAddress.getLocalHost();
+        }catch (java.net.UnknownHostException e){
+            e.printStackTrace();
+        }
+        System.out.println("hostname = " + inetAddress.getHostName());
+        String clientId = inetAddress != null ? inetAddress.getHostName() : "none";
         String topic = "test_10_3";
         int threads = 10;
-        ConsumerHighAPIDemo example = new ConsumerHighAPIDemo(zooKeeper, groupId, topic);
+        ConsumerHighAPIDemo example = new ConsumerHighAPIDemo(zooKeeper, groupId, clientId, topic);
         example.run(threads);
 
         try {
@@ -158,13 +169,13 @@ public class ConsumerHighAPIDemo {
 }
 
 
-class ConsumerTest implements Runnable {
+class ConsumerThread implements Runnable {
     /** Logger */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConsumerThread.class);
     private KafkaStream m_stream;
     private int m_threadNumber;
 
-    public ConsumerTest(KafkaStream a_stream, int a_threadNumber) {
+    public ConsumerThread(KafkaStream a_stream, int a_threadNumber) {
         m_threadNumber = a_threadNumber;
         m_stream = a_stream;
     }

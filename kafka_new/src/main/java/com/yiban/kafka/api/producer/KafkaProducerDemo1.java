@@ -1,8 +1,6 @@
 package com.yiban.kafka.api.producer;
 
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -26,11 +24,14 @@ public class KafkaProducerDemo1 {
     private static KafkaProducer kafkaProducer;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerDemo1.class);
+    public static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
+    public static final String TOPIC = "test_10_3";
+
 
     static {
         Properties props = new Properties();
 //        props.put("bootstrap.servers", "192.168.128.129:9092,192.168.128.129:9093,192.168.128.129:9094");
-        props.put("bootstrap.servers", "10.21.3.129:9092");
+        props.put("bootstrap.servers", BROKERS);
         props.put("acks", "1");
         props.put("retries", 0);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -47,18 +48,17 @@ public class KafkaProducerDemo1 {
 
     public static void main(String[] args) {
         try {
-            String topic = "test4";
             int i = 0;
-            while (true){
+            while (true) {
                 System.out.println("send begin.....");
 
-                ProducerRecord<String, String> record = new ProducerRecord<String, String>(topic, String.valueOf(i),"this is message : " + i);
+                ProducerRecord<String, String> record = new ProducerRecord<String, String>(TOPIC, String.valueOf(i), "this is message : " + i);
                 kafkaProducer.send(record, new Callback() {
                     public void onCompletion(RecordMetadata metadata, Exception e) {
                         System.out.println("callback .....");
                         if (e != null)
                             e.printStackTrace();
-                        System.out.println("message send to partition " + metadata.partition() + ", offset: " + metadata.offset());
+                        System.out.println("topic = " + metadata.topic() + ",partition" + metadata.partition() + ",offset = " + metadata.offset() + ",timestamp = " + metadata.timestamp());
                     }
                 });
 
@@ -67,8 +67,10 @@ public class KafkaProducerDemo1 {
 
                 i++;
                 Thread.sleep(2000);
-            }
 
+                if (i == 100) break;
+
+            }
 
 
         } catch (Exception e) {

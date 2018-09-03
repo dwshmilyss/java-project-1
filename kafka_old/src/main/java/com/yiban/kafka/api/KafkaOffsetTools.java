@@ -37,16 +37,16 @@ public class KafkaOffsetTools {
     }
 
     public static void getOffset() {
-        BlockingChannel channel = new BlockingChannel("10.21.3.129", 9092,
+        BlockingChannel channel = new BlockingChannel("10.21.3.74", 9092,
                 BlockingChannel.UseDefaultBufferSize(),
                 BlockingChannel.UseDefaultBufferSize(),
                 5000 /* read timeout in millis */);
         try {
             channel.connect();
-            final String MY_GROUP = "console-consumer-60920";
-            final String MY_CLIENTID = "demoClientId";
+            final String MY_GROUP = "test";
+            final String MY_CLIENTID = "none";
             int correlationId = 0;
-            final TopicAndPartition testPartition0 = new TopicAndPartition("__consumer_offsets", 28);
+            final TopicAndPartition testPartition0 = new TopicAndPartition("test_10_3", 0);
 //            final TopicAndPartition testPartition1 = new TopicAndPartition("demoTopic", 1);
             channel.send(new ConsumerMetadataRequest(MY_GROUP, ConsumerMetadataRequest.CurrentVersion(), correlationId++, MY_CLIENTID));
             ConsumerMetadataResponse metadataResponse = ConsumerMetadataResponse.readFrom(channel.receive().buffer());

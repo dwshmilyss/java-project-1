@@ -111,4 +111,9 @@ public class Test {
             assertTrue(array[i - 1] < array[i]);
         }
     }
+
+    @org.junit.Test
+    public void test1(){
+        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
+    }
 }

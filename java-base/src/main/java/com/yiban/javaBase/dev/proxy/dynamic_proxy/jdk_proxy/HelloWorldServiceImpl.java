@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.rpc;
+package com.yiban.javaBase.dev.proxy.dynamic_proxy.jdk_proxy;
 
 /**
  * 服务端实现类

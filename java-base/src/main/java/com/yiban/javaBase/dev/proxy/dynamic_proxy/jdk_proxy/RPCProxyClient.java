@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.rpc;
+package com.yiban.javaBase.dev.proxy.dynamic_proxy.jdk_proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;

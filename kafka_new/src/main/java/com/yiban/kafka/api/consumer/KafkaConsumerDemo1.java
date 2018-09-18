@@ -8,10 +8,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * kafka consumer
@@ -154,8 +151,6 @@ public class KafkaConsumerDemo1 {
         TopicPartition test_partition_5 = new TopicPartition(topic, 5);
         TopicPartition test_partition_6 = new TopicPartition(topic, 6);
         TopicPartition test_partition_7 = new TopicPartition(topic, 7);
-        TopicPartition test_partition_8 = new TopicPartition(topic, 8);
-        TopicPartition test_partition_9 = new TopicPartition(topic, 9);
 
         //订阅某个topic 多个topic也可以 (相当于以前的高阶API)
 //        kafkaConsumer.subscribe(Arrays.asList(topic));
@@ -164,57 +159,100 @@ public class KafkaConsumerDemo1 {
         /**
          * 可以指定分区，但是这样kafka就不会负载均衡了
          */
-        kafkaConsumer.assign(Arrays.asList(test_partition_0, test_partition_1, test_partition_2, test_partition_3, test_partition_4, test_partition_5, test_partition_6, test_partition_7, test_partition_8, test_partition_9));
+//        kafkaConsumer.assign(Arrays.asList(test_partition_0, test_partition_1, test_partition_2, test_partition_3, test_partition_4, test_partition_5, test_partition_6, test_partition_7, test_partition_8, test_partition_9));
 
 //        kafkaConsumer.pause(Arrays.asList(partition0));
 
-        //获取当前topic指定partition的offset
+        /**
+         *         获取当前topic指定partition的offset
+         */
+//        System.out.println("topic = " + topic + "，partition = 0 ，offset = " + kafkaConsumer.position(test_partition_0));
+//        System.out.println("topic = " + topic + "，partition = 1 ，offset = " + kafkaConsumer.position(test_partition_1));
+//        System.out.println("topic = " + topic + "，partition = 2 ，offset = " + kafkaConsumer.position(test_partition_2));
+//        System.out.println("topic = " + topic + "，partition = 3 ，offset = " + kafkaConsumer.position(test_partition_3));
+//        System.out.println("topic = " + topic + "，partition = 4 ，offset = " + kafkaConsumer.position(test_partition_4));
+//        System.out.println("topic = " + topic + "，partition = 5 ，offset = " + kafkaConsumer.position(test_partition_5));
+//        System.out.println("topic = " + topic + "，partition = 6 ，offset = " + kafkaConsumer.position(test_partition_6));
+//        System.out.println("topic = " + topic + "，partition = 7 ，offset = " + kafkaConsumer.position(test_partition_7));
+//        System.out.println("topic = " + topic + "，partition = 8 ，offset = " + kafkaConsumer.position(test_partition_8));
+//        System.out.println("topic = " + topic + "，partition = 9 ，offset = " + kafkaConsumer.position(test_partition_9));
 
-        System.out.println("topic = " + topic + "，partition = 0 ，offset = " + kafkaConsumer.position(test_partition_0));
-        System.out.println("topic = " + topic + "，partition = 1 ，offset = " + kafkaConsumer.position(test_partition_1));
-        System.out.println("topic = " + topic + "，partition = 2 ，offset = " + kafkaConsumer.position(test_partition_2));
-        System.out.println("topic = " + topic + "，partition = 3 ，offset = " + kafkaConsumer.position(test_partition_3));
-        System.out.println("topic = " + topic + "，partition = 4 ，offset = " + kafkaConsumer.position(test_partition_4));
-        System.out.println("topic = " + topic + "，partition = 5 ，offset = " + kafkaConsumer.position(test_partition_5));
-        System.out.println("topic = " + topic + "，partition = 6 ，offset = " + kafkaConsumer.position(test_partition_6));
-        System.out.println("topic = " + topic + "，partition = 7 ，offset = " + kafkaConsumer.position(test_partition_7));
-        System.out.println("topic = " + topic + "，partition = 8 ，offset = " + kafkaConsumer.position(test_partition_8));
-        System.out.println("topic = " + topic + "，partition = 9 ，offset = " + kafkaConsumer.position(test_partition_9));
+        /**
+         * 设定一个消费开始时间 2018-09-04 18:40:00
+         */
+        long startTime = Long.valueOf(1536057600*1000l);
+        Map<TopicPartition, Long> startTopicPartitionMap = new HashMap();
+        startTopicPartitionMap.put(test_partition_0, startTime);
+        startTopicPartitionMap.put(test_partition_1, startTime);
+        startTopicPartitionMap.put(test_partition_2, startTime);
+        startTopicPartitionMap.put(test_partition_3, startTime);
+        startTopicPartitionMap.put(test_partition_4, startTime);
+        startTopicPartitionMap.put(test_partition_5, startTime);
+        startTopicPartitionMap.put(test_partition_6, startTime);
 
-//        long time  = 1421849887000l;
-//        Map<TopicPartition, Long> timestampsToSearch = new HashMap();
-//        timestampsToSearch.put(partition0,time);
+        startTopicPartitionMap.put(test_partition_7, startTime);
+        //大于指定time的最早的一条
+        Map<TopicPartition, OffsetAndTimestamp> startOffsetMap = kafkaConsumer.offsetsForTimes(startTopicPartitionMap);
+
+        System.out.println("=======================");
+        print_offset_timestamp_info(startOffsetMap);
+
+        /**
+         * 设定一个消费结束时间 2018-09-05 00:00:00
+         */
+        long endTime = Long.valueOf(1536076800*1000l);
+        Map<TopicPartition, Long> endTopicPartitionMap = new HashMap();
+        endTopicPartitionMap.put(test_partition_0, endTime);
+        endTopicPartitionMap.put(test_partition_1, endTime);
+        endTopicPartitionMap.put(test_partition_2, endTime);
+        endTopicPartitionMap.put(test_partition_3, endTime);
+        endTopicPartitionMap.put(test_partition_4, endTime);
+        endTopicPartitionMap.put(test_partition_5, endTime);
+        endTopicPartitionMap.put(test_partition_6, endTime);
+        endTopicPartitionMap.put(test_partition_7, endTime);
+
+        Map<TopicPartition, OffsetAndTimestamp> endOffsetMap = kafkaConsumer.offsetsForTimes(endTopicPartitionMap);
+        System.out.println("=======================");
+        print_offset_timestamp_info(endOffsetMap);
+
+
+        /**
+         * 获取partition开始的offset
+         */
+        Map<TopicPartition, Long> beginningOffsets = kafkaConsumer.beginningOffsets(startTopicPartitionMap.keySet());
+        System.out.println("=======================");
+        printInfo(beginningOffsets);
+
+
+        /**
+         * 获取partition结束的offset
+         */
+        Map<TopicPartition, Long> endOffsets = kafkaConsumer.endOffsets(startTopicPartitionMap.keySet());
+        System.out.println("=======================");
+        printInfo(endOffsets);
+
+
+        /**
+         * 跳到指定offset位置
+         */
+//        kafkaConsumer.seek(test_partition_0, 0);
+//        kafkaConsumer.seek(test_partition_1, 0);
+//        kafkaConsumer.seek(test_partition_2, 0);
+//        kafkaConsumer.seek(test_partition_3, 0);
+//        kafkaConsumer.seek(test_partition_4, 0);
+//        kafkaConsumer.seek(test_partition_5, 0);
+//        kafkaConsumer.seek(test_partition_6, 0);
+//        kafkaConsumer.seek(test_partition_7, 0);
+//        kafkaConsumer.seek(test_partition_8, 0);
+//        kafkaConsumer.seek(test_partition_9, 0);
 //
-//        //大于指定time的最早的一条
-//        Map<TopicPartition, OffsetAndTimestamp> res = kafkaConsumer.offsetsForTimes(timestampsToSearch);
 //
-//        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry: res.entrySet()
-//             ) {
-//            System.out.println("=======================");
-//            TopicPartition key = entry.getKey();
-//            OffsetAndTimestamp value = entry.getValue();
-//            System.out.println(key.topic()+","+key.partition()+","+value.timestamp()+","+value.offset());
-//        }
-
-        //跳到指定offset位置
-        kafkaConsumer.seek(test_partition_0, 0);
-        kafkaConsumer.seek(test_partition_1, 0);
-        kafkaConsumer.seek(test_partition_2, 0);
-        kafkaConsumer.seek(test_partition_3, 0);
-        kafkaConsumer.seek(test_partition_4, 0);
-        kafkaConsumer.seek(test_partition_5, 0);
-        kafkaConsumer.seek(test_partition_6, 0);
-        kafkaConsumer.seek(test_partition_7, 0);
-        kafkaConsumer.seek(test_partition_8, 0);
-        kafkaConsumer.seek(test_partition_9, 0);
-
-
-        //从指定partition的未提交的offset的开始位置开始消费 等价于auto.offset.reset => "earliest"
-//        kafkaConsumer.seekToBeginning(Arrays.asList(partition0));
-        //跳到指定partition的结束位置 但是不改变kafkaConsumer.position(partition0)，不等价于auto.offset.reset => "latest"
-//        kafkaConsumer.seekToEnd(Arrays.asList(partition0));
-
-
+//        //从指定partition的未提交的offset的开始位置开始消费 等价于auto.offset.reset => "earliest"
+////        kafkaConsumer.seekToBeginning(Arrays.asList(partition0));
+//        //跳到指定partition的结束位置 但是不改变kafkaConsumer.position(partition0)，不等价于auto.offset.reset => "latest"
+////        kafkaConsumer.seekToEnd(Arrays.asList(partition0));
+//
+//
         while (true) {
             ConsumerRecords<String, String> records = kafkaConsumer.poll(100);
             for (ConsumerRecord<String, String> record : records) {
@@ -227,6 +265,26 @@ public class KafkaConsumerDemo1 {
 //            } catch (InterruptedException e) {
 //                e.printStackTrace();
 //            }
+        }
+    }
+
+    private static void print_offset_timestamp_info(Map<TopicPartition, OffsetAndTimestamp> offsetMap) {
+        for (Map.Entry<TopicPartition, OffsetAndTimestamp> entry : offsetMap.entrySet()
+                ) {
+            System.out.println("----------------------------");
+            TopicPartition key = entry.getKey();
+            OffsetAndTimestamp value = entry.getValue();
+            System.out.println("topic = " + key.topic() + ",partition = " + key.partition() + ",timestamp = " + value.timestamp() + ",offset = " + value.offset());
+        }
+    }
+
+    private static void printInfo(Map<TopicPartition, Long> info) {
+        for (Map.Entry<TopicPartition, Long> entry : info.entrySet()
+                ) {
+            System.out.println("-----------------------------");
+            TopicPartition key = entry.getKey();
+            long value = entry.getValue();
+            System.out.println("topic = " + key.topic() + ",partition = " + key.partition() + ",offset = " + value);
         }
     }
 }

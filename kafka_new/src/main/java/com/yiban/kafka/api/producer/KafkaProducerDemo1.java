@@ -66,9 +66,9 @@ public class KafkaProducerDemo1 {
 //                kafkaProducer0820.send(keyedMessage);
 
                 i++;
-                Thread.sleep(2000);
+//                Thread.sleep(1000);
 
-                if (i == 100) break;
+                if (i == 1000000) break;
 
             }
 

@@ -1,5 +1,8 @@
 package com.yiban.javaBase.dev.JVM.gc;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * gc demo
  * ### 二、 默认参数
@@ -14,7 +17,7 @@ public class GCDemo {
     private static final int _1M = 1024 * 1024;
 
     public static void main(String[] args) {
-        test3();
+        test4();
     }
 
     /**
@@ -52,7 +55,7 @@ public class GCDemo {
 
     /**
      * 测试对象在Eden区的分配
-     * VM参数：-vervose:gc -Xms20M -Xmx20M -Xmn10M -XX:PrintGCDetails -XX:SurvivorRatio=8
+     * VM参数：-verbose:gc -Xms20M -Xmx20M -Xmn10M -XX:PrintGCDetails -XX:SurvivorRatio=8
      * Eden:8m 2个survivor为1m
      */
     static void test2() {
@@ -80,4 +83,18 @@ public class GCDemo {
         System.out.println("aa");
         byte[] a1 = new byte[4 * _1M];
     }
+
+    static List list;
+
+    /**
+     * VM参数：-verbose:gc -Xms1024M -Xmx1024M  -XX:SurvivorRatio=4 -XX:+PrintGCDetails
+     */
+    static void test4(){
+        list = new ArrayList<>();
+        for (int i = 1; i <= 900; i++) {
+            list.add(new byte[_1M]);
+        }
+        System.out.println(list.size());
+    }
+
 }

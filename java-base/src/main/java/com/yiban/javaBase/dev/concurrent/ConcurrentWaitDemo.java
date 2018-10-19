@@ -39,10 +39,10 @@ public class ConcurrentWaitDemo {
 
 //        useThreadJoin();
 //        useCountDownLatch(fixedThreadPool);
-//        useSemaphore(fixedThreadPool);
+        useSemaphore(fixedThreadPool);
 //        useCyclicBarrier(fixedThreadPool);
 
-        usePhaser(fixedThreadPool);
+//        usePhaser(fixedThreadPool);
 
 //        ExecutorService executor = Executors.newCachedThreadPool();
 //        CountDownLatch latch = new CountDownLatch(3);
@@ -122,11 +122,11 @@ public class ConcurrentWaitDemo {
     }
 
     /**
-     * 利用 Semaphore 实现主线程等待子线程执行完再运行
+     * 利用 Semaphore 实现主线程等待子线程执行完再运行 感觉这个并不严谨
      * Semaphore
      */
     public static void useSemaphore(ExecutorService cachedThreadPool) {
-        final Semaphore semaphore = new Semaphore(0);
+        final Semaphore semaphore = new Semaphore(0,true);
         final ReentrantLock lock = new ReentrantLock();
         System.out.println("线程" + Thread.currentThread().getName() + "即将发出任务");
         for (int i = 0; i < 3; i++) {
@@ -139,11 +139,12 @@ public class ConcurrentWaitDemo {
         try {
             //等待线程池中的线程执行完毕，因为启动了三个线程，每次调用semaphore.release()都会使acquire(permits)增加1，所以这里的参数为3
             System.out.println(Thread.currentThread().getName() + ",begin semaphore.availablePermits() = " + semaphore.availablePermits());
+            //因为要在主线程中阻塞，所以这里获取资源一定要在主线程中获取
             semaphore.acquire(3);
             System.out.println(Thread.currentThread().getName() + ",end semaphore.availablePermits() = " + semaphore.availablePermits());
             System.out.println("所有任务都已完成");
             System.out.println(Thread.currentThread().getName() + ",n=" + SemaphoreDemo.n);
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         cachedThreadPool.shutdown();
@@ -273,6 +274,9 @@ public class ConcurrentWaitDemo {
             System.out.println("线程 : " + Thread.currentThread().getName() + ",结束运行。。。。" + "，n = " + n.get());
             System.out.println("线程 : " + Thread.currentThread().getName() + ",CountDownLatch计数：" + countDownLatch.getCount());
             this.countDownLatch.countDown();
+            /**
+             * 这里其实还可以继续干其他的事情，当前线程是不阻塞的，阻塞的是调用了await()的线程
+             */
         }
     }
 
@@ -298,13 +302,13 @@ public class ConcurrentWaitDemo {
         @Override
         public void run() {
             try {
+                //这里锁住之后打印结果会更清新(其实这里如果运行的话 完全没必要加锁，只是为了方便看打印结果)
                 lock.lock();
-                //这里锁住之后打印结果会更清新
 //                synchronized (CountDownLatchDemo.class){
                 testMethon(n);
                 semaphore.release();
                 //当前Semaphore的可用资源数，即允许几个线程获取资源
-                System.out.println(Thread.currentThread().getName() + ",left -----------------" + semaphore.availablePermits());
+                System.out.println(Thread.currentThread().getName() + ",left : " + semaphore.availablePermits());
 //                }
                 lock.unlock();
             } catch (Exception e) {

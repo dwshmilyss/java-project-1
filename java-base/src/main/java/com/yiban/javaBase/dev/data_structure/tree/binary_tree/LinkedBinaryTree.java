@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.data_structure.tree;
+package com.yiban.javaBase.dev.data_structure.tree.binary_tree;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

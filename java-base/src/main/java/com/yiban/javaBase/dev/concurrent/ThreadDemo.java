@@ -18,10 +18,11 @@ import java.util.concurrent.TimeUnit;
  */
 public class ThreadDemo {
     public static void main(String[] args) {
-//        System.out.println("name = "+Thread.currentThread().getName());
-//        System.out.println("id = "+Thread.currentThread().getId());
-//        System.out.println("priority = "+Thread.currentThread().getPriority());
-//        System.out.println("state = "+Thread.currentThread().getState());
+        System.out.println("name = "+Thread.currentThread().getName());
+        System.out.println("id = "+Thread.currentThread().getId());
+        System.out.println("priority = "+Thread.currentThread().getPriority());
+        System.out.println("state = "+Thread.currentThread().getState());
+        System.out.println("state = "+Thread.currentThread().getThreadGroup());
 
 //        testThreadInterrupted();
 //        testThreadDeamon();
@@ -30,23 +31,6 @@ public class ThreadDemo {
 
 //        testThreadGroup();
 
-        class TT implements Runnable {
-
-            @Override
-            public void run() {
-                while (true) {
-                    System.out.println("aa");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        TT tt = new TT();
-        tt.run();
-        System.out.println("bbb");
     }
 
     /**
@@ -439,6 +423,44 @@ public class ThreadDemo {
             }
             try {
                 Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * 测试线程的join
+     */
+    static void testJoin(){
+        class TT extends Thread {
+            @Override
+            public void run() {
+                for (int i = 0; i < 100; i++) {
+                    System.out.println("aa");
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        TT tt = new TT();
+        tt.start();
+        /**
+         * 这里如果不加join 那么就是"aa"和"bb"交替输出，如果加了join 就是要等待tt线程执行完再执行main线程
+         * 如果join(1000) 则是在一秒内都是tt线程在执行，1秒后，tt和main交替执行
+         */
+        try {
+            tt.join(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        for (int i = 0; i < 100; i++) {
+            System.out.println("bb");
+            try {
+                Thread.sleep(100);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

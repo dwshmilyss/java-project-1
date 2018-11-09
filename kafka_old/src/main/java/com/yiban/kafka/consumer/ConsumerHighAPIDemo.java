@@ -86,40 +86,22 @@ public class ConsumerHighAPIDemo {
         props.put("zookeeper.connect", a_zookeeper);
         props.put("group.id", a_groupId);
         // 其实这里不需要hostname 因为默认就是
+        System.out.println("a_clientId = " + a_clientId);
         props.put("client.id", a_clientId);
         props.put("zookeeper.session.timeout.ms", "400");
         props.put("zookeeper.sync.time.ms", "200");
         props.put("auto.commit.interval.ms", "1000");
         props.put("auto.commit.enable", "false");
+//        props.put("auto.offset.reset","smallest");
+        props.put("auto.offset.reset","largest");
         return new ConsumerConfig(props);
     }
 
 
     public static void main(String[] args) {
 
-//        Properties props = new Properties();
-//        // zookeeper 配置
-//        props.put("zookeeper.connect", "10.21.3.74:2181");
-//        props.put("group.id","test1");
-//        // zk连接超时
-//        props.put("zookeeper.session.timeout.ms", "4000");
-//        props.put("zookeeper.sync.time.ms", "200");
-//        props.put("auto.offset.reset", "smallest");
-////            props.put("auto.offset.reset", "largest");
-//        props.put("enable.auto.commit", "false");
-////        props.put("auto.commit.interval.ms", "100");
-//        //指定序列化处理类，默认为kafka.serializer.DefaultEncoder,即byte[]
-//        props.put("serializer.class", "kafka.serializer.StringEncoder");
-//        ConsumerConfig config = new ConsumerConfig(props);
-//
-//        consumer = Consumer.createJavaConsumerConnector(config);
-//        System.out.println("KafkaConsumer 0.8.2.0 init completed.....");
-//
-//        test1(TOPIC_NAME,numPartitions);
-
-
-        String zooKeeper = "10.21.3.74:2181";
-        String groupId = "test";
+        String zooKeeper = "10.21.3.75:2181";
+        String groupId = "test1";
         InetAddress inetAddress = null;
         try {
             inetAddress = java.net.InetAddress.getLocalHost();
@@ -128,6 +110,7 @@ public class ConsumerHighAPIDemo {
         }
         System.out.println("hostname = " + inetAddress.getHostName());
         String clientId = inetAddress != null ? inetAddress.getHostName() : "none";
+        System.out.println("clientId = " + clientId);
         String topic = "test_10_3";
         int threads = 10;
         ConsumerHighAPIDemo example = new ConsumerHighAPIDemo(zooKeeper, groupId, clientId, topic);
@@ -138,7 +121,9 @@ public class ConsumerHighAPIDemo {
         } catch (InterruptedException ie) {
 
         }
-        example.shutdown();
+
+        while (true){}
+//        example.shutdown();
     }
 
     /**

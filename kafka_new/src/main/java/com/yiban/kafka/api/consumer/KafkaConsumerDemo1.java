@@ -21,10 +21,8 @@ public class KafkaConsumerDemo1 {
     //0.10.1.0
     private static KafkaConsumer kafkaConsumer;
 
-    //0.8.0
-    private static kafka.javaapi.consumer.ConsumerConnector consumer;
 
-    private static final String GROUP = "MsgConsumer";
+    private static final String GROUP = "test";
     private static final List TOPICS = Arrays.asList("test_10_3");
     public static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
 
@@ -44,13 +42,13 @@ public class KafkaConsumerDemo1 {
     /**
      * 自动提交offset
      */
-    public void autoCommit() {
+    public static void autoCommit() {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//key反序列化方式
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//value反系列化方式
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, true);//自动提交
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKERS);//指定broker地址，来找到group的coordinator
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, this.GROUP);//指定用户组
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP);//指定用户组
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer(properties);
         consumer.subscribe(TOPICS);
@@ -67,13 +65,14 @@ public class KafkaConsumerDemo1 {
     /**
      * 手动提交offset
      */
-    public void manualCommit() {
+    public static void manualCommit() {
         Properties properties = new Properties();
         properties.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//key反序列化方式
         properties.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getCanonicalName());//value反系列化方式
         properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);//手动提交
         properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, BROKERS);//指定broker地址，来找到group的coordinator
-        properties.put(ConsumerConfig.GROUP_ID_CONFIG, this.GROUP);//指定用户组
+//        properties.put("zookeeper.connect","10.21.3.76:2181");
+        properties.put(ConsumerConfig.GROUP_ID_CONFIG, GROUP);//指定用户组
 
         KafkaConsumer<String, String> consumer = new KafkaConsumer(properties);
         consumer.subscribe(TOPICS);//指定topic消费
@@ -107,8 +106,10 @@ public class KafkaConsumerDemo1 {
 
 
     public static void main(String[] args) {
-        String topic = "test_10_3";
-        createConsumer(topic);
+//        String topic = "test_10_3";
+//        createConsumer(topic);
+
+        manualCommit();
     }
 
 

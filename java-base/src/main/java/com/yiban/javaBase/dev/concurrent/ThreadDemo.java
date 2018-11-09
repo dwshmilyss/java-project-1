@@ -4,10 +4,8 @@ import org.springframework.util.StopWatch;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;
-import java.util.ArrayDeque;
-import java.util.Date;
-import java.util.Deque;
-import java.util.concurrent.TimeUnit;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * 线程DEMO
@@ -30,23 +28,77 @@ public class ThreadDemo {
 
 //        testThreadGroup();
 
-        class TT implements Runnable {
+//        class TT implements Runnable {
+//
+//            @Override
+//            public void run() {
+//                while (true) {
+//                    System.out.println("aa");
+//                    try {
+//                        Thread.sleep(1000);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//            }
+//        }
+//        TT tt = new TT();
+//        tt.run();
+//        System.out.println("bbb");
 
-            @Override
-            public void run() {
-                while (true) {
-                    System.out.println("aa");
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
+        ExecutorService threadPool = new ThreadPoolExecutor(5, 5, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(), Executors.defaultThreadFactory(), new ThreadPoolExecutor.DiscardPolicy());
+        final List<Map<String,Integer>> list = new ArrayList<>();
+        List<Map<String, Integer>> list1 = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            Future<Map<String, Integer>> res = threadPool.submit(new Callable<Map<String, Integer>>() {
+                @Override
+                public Map<String, Integer> call() {
+                    System.out.println("子线程开始执行任务");
+                    Test test = new ThreadDemo().new Test(true);
+                    for (int i = 0; i < 10; i++) {
+                        test.map.put(Thread.currentThread().getName()+":"+i, i);
                     }
+                    return test.map;
                 }
+            });
+
+
+//            Future<Map<String, Integer>> res = threadPool.submit(new Runnable() {
+//                @Override
+//                public void run() {
+//                    System.out.println("子线程开始执行任务");
+//                    Test test = new ThreadDemo().new Test(true);
+//                    for (int i = 0; i < 10; i++) {
+//                        test.map.put(Thread.currentThread().getName()+":"+i, i);
+//                    }
+//                    list.add();
+//                }
+//            },list);
+
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            try {
+                System.out.println("主线程在执行任务");
+                System.out.println("子线程执行结果为 = " + res.get().size());
+                list1.add(res.get());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
             }
         }
-        TT tt = new TT();
-        tt.run();
-        System.out.println("bbb");
+
+        //只有全部执行完毕 才可以关闭线程池
+        threadPool.shutdown();
+
+        for (Map<String, Integer> map : list1) {
+            for (String key : map.keySet()) {
+                System.out.println(key + " = " + map.get(key));
+            }
+        }
     }
 
     /**
@@ -441,6 +493,18 @@ public class ThreadDemo {
                 Thread.sleep(10000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
+            }
+        }
+    }
+
+    class Test {
+        private Map<String, Integer> map;
+
+        public Test(boolean flag) {
+            if (flag) {
+                map = new HashMap<>(16);
+            } else {
+                map = new LinkedHashMap<>(16);
             }
         }
     }

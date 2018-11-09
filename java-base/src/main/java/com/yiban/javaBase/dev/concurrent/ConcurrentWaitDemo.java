@@ -3,6 +3,7 @@ package com.yiban.javaBase.dev.concurrent;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -126,7 +127,7 @@ public class ConcurrentWaitDemo {
      * Semaphore
      */
     public static void useSemaphore(ExecutorService cachedThreadPool) {
-        final Semaphore semaphore = new Semaphore(0,true);
+        final Semaphore semaphore = new Semaphore(0, true);
         final ReentrantLock lock = new ReentrantLock();
         System.out.println("线程" + Thread.currentThread().getName() + "即将发出任务");
         for (int i = 0; i < 3; i++) {
@@ -288,6 +289,7 @@ public class ConcurrentWaitDemo {
         public static AtomicInteger n = new AtomicInteger(0);
 
         ReentrantLock lock;
+        SpinLock spinLock;
         Semaphore semaphore;
 
         public SemaphoreDemo(Semaphore semaphore) {
@@ -297,6 +299,7 @@ public class ConcurrentWaitDemo {
         public SemaphoreDemo(Semaphore semaphore, ReentrantLock lock) {
             this.semaphore = semaphore;
             this.lock = lock;
+            spinLock = new SpinLock();
         }
 
         @Override
@@ -386,6 +389,22 @@ public class ConcurrentWaitDemo {
             } finally {
                 phaser.arriveAndDeregister();
             }
+        }
+    }
+
+
+    public static class SpinLock {
+        private AtomicReference<Thread> sign = new AtomicReference<>();
+
+        public void lock() {
+            Thread current = Thread.currentThread();
+            while (!sign.compareAndSet(null, current)) {
+            }
+        }
+
+        public void unlock() {
+            Thread current = Thread.currentThread();
+            sign.compareAndSet(current, null);
         }
     }
 }

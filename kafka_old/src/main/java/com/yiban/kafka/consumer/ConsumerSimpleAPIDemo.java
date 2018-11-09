@@ -34,7 +34,7 @@ public class ConsumerSimpleAPIDemo {
         // 要订阅的topic
         String topic = "test_10_3";
         // 要查找的分区
-        int partition = Integer.parseInt("0");
+        int partition = Integer.parseInt("1");
         // broker节点的ip
         List<String> seeds = new ArrayList<String>();
         seeds.add("10.21.3.74");
@@ -185,12 +185,12 @@ public class ConsumerSimpleAPIDemo {
             System.out.println("Can't find Leader for Topic and Partition. Exiting");
             return;
         }
-
+        System.out.println(metadata.leader().host() + " " + metadata.partitionId());
         String leadBroker = metadata.leader().host();
-        String clientName = "Client_" + a_topic + "_" + a_partition;
+        String clientName = "Client_" + a_topic + "_" + a_partition +"1";
         SimpleConsumer consumer = new SimpleConsumer(leadBroker, a_port, 100000, 64 * 1024, clientName);
         long readOffset = getLastOffset(consumer, a_topic, a_partition, kafka.api.OffsetRequest.EarliestTime(), clientName);
-
+        System.out.println("readOffset = " + readOffset);
         int numErrors = 0;
         while (a_maxReads > 0) {
             if (consumer == null) {
@@ -220,6 +220,8 @@ public class ConsumerSimpleAPIDemo {
             numErrors = 0;
 
             long numRead = 0;
+
+
             for (MessageAndOffset messageAndOffset : fetchResponse.messageSet(a_topic, a_partition)) {
                 long currentOffset = messageAndOffset.offset();
                 if (currentOffset < readOffset) {
@@ -242,6 +244,7 @@ public class ConsumerSimpleAPIDemo {
                 } catch (InterruptedException ie) {
                 }
             }
+            while (true){}
         }
         if (consumer != null) consumer.close();
     }

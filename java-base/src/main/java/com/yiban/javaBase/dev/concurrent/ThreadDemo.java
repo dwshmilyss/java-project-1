@@ -28,24 +28,65 @@ public class ThreadDemo {
 
 //        testThreadGroup();
 
-//        class TT implements Runnable {
-//
-//            @Override
-//            public void run() {
-//                while (true) {
-//                    System.out.println("aa");
+//        testJoin();
+
+
+        TT tt1 = new TT("aa");
+        TT tt2 = new TT("bb");
+        tt1.start();
+        tt2.start();
+    }
+
+
+    static class TT extends Thread {
+        private String str;
+        public TT(String str) {
+            this.str = str;
+        }
+
+        @Override
+        public void run() {
+            for (int i = 0; i < 50; i++) {
+                System.out.println(str);
 //                    try {
-//                        Thread.sleep(1000);
+//                        Thread.sleep(100);
 //                    } catch (InterruptedException e) {
 //                        e.printStackTrace();
 //                    }
-//                }
-//            }
-//        }
-//        TT tt = new TT();
-//        tt.run();
-//        System.out.println("bbb");
+            }
+        }
+    }
 
+
+    public static void testJoin(){
+        class TT extends Thread {
+            private String str;
+            public TT(String str) {
+                this.str = str;
+            }
+
+            @Override
+            public void run() {
+                for (int i = 0; i < 50; i++) {
+                    System.out.println(str);
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+                }
+            }
+        }
+        TT tt1 = new TT("aa");
+        TT tt2 = new TT("bb");
+        tt1.start();
+        tt2.start();
+    }
+
+    /**
+     * 测试接收线程的返回结果
+     */
+    public static void testFuture(){
         ExecutorService threadPool = new ThreadPoolExecutor(5, 5, 60, TimeUnit.SECONDS, new LinkedBlockingDeque<>(), Executors.defaultThreadFactory(), new ThreadPoolExecutor.DiscardPolicy());
         final List<Map<String,Integer>> list = new ArrayList<>();
         List<Map<String, Integer>> list1 = new ArrayList<>();

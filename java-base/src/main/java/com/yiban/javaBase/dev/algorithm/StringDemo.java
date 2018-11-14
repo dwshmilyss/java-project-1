@@ -1,5 +1,8 @@
 package com.yiban.javaBase.dev.algorithm;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 /**
  * 有关字符串的一些算法题
  *
@@ -14,9 +17,11 @@ public class StringDemo {
 
 //        String str1 = new String("123456abcd567");
 //        String str2 = new String("234dddabc45678");
-        String str1 = new String("abcd");
-        String str2 = new String("abcd");
-        getLCString(str1.toCharArray(), str2.toCharArray());
+//        String str1 = new String("abcd");
+//        String str2 = new String("abcd");
+//        getLCString(str1.toCharArray(), str2.toCharArray());
+
+        System.out.println(getFirstCharNotRepeatable("aabbcdcde"));
     }
 
     /**
@@ -157,6 +162,59 @@ public class StringDemo {
                 System.out.println(" ");
             }
         }
+    }
+
+    /**
+     * 获取字符串中第一个没有重复的字符
+     * 利用嵌套循环比较实现
+     */
+    public static Character getFirstCharNotRepeatable(String string) {
+        if (string == null) {
+            return null;
+        }
+        boolean repeated = false;
+        for (int i = 0; i < string.length(); i++) {
+            repeated = false;
+            for (int j = 0; j < string.length(); j++) {
+                if (i != j && string.charAt(i) == string.charAt(j)) {
+                    repeated = true;
+                    break;
+                }
+            }
+            if (!repeated) {
+                return string.charAt(i);
+            }
+        }
+
+        return null;
+    }
+
+
+    /**
+     * 获取字符串中第一个没有重复的字符
+     * ""
+     */
+    public static Character getFirstCharNotRepeatableByMap(String string) {
+        if (string == null) {
+            return null;
+        }
+        Map<Character, Integer> map = new LinkedHashMap<>();
+        for (char c :
+                string.toCharArray()) {
+            if (!map.containsKey(c)) {
+                map.put(c, 1);
+            } else {
+                map.put(c, map.get(c) + 1);
+            }
+        }
+
+        for (Map.Entry<Character, Integer> en :
+                map.entrySet()) {
+            if (en.getValue() == 1) {
+                return en.getKey();
+            }
+        }
+        return null;
     }
 }
 

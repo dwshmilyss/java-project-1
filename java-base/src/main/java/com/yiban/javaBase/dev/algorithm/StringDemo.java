@@ -11,6 +11,9 @@ import java.util.Map;
  * @website http://blog.csdn.net/dwshmilyss
  */
 public class StringDemo {
+
+    public static String res = "";
+
     public static void main(String[] args) {
         //求最长公共子串
 //        System.out.println(getLongestCommonString("abdefgdefga", "abedefgdefaa"));
@@ -20,8 +23,19 @@ public class StringDemo {
         String str2 = "ABCBDAB";
         int result = getLongestCommonSequenceLengthByDP(str1, str2);
         System.out.println(result);
-        String LCS = "";
-        System.out.println(getLongestCommonSequence(str1, str2, LCS));
+//        String LCS = "";
+//        System.out.println(getLongestCommonSequence(str1, str2, LCS));
+
+
+        System.out.println("脚本之家测试结果：");
+        String[] x = {" ", "A", "B", "C", "B", "D", "A", "B"};
+        String[] y = {" ", "B", "D", "C", "A", "B", "A"};
+        int[][] b = LCSLength(x, y);
+        System.out.println("X和y的最长公共子序列是：");
+        LCS(b, x, x.length - 1, y.length - 1);
+        System.out.println();
+        System.out.println(res);
+
 
         /**
          * 求最多公共子串的算法
@@ -105,84 +119,52 @@ public class StringDemo {
 
     /**
      * 求两个字符串的最长公共子序列
-     *
-     * @param str1
-     * @param str2
+     * @param x
+     * @param y
      * @return
      */
-    private static String getLongestCommonSequence(String str1, String str2, String LCS) {
-        if (str1 == null || str2 == null || "".equals(str1) || "".equals(str2)) {
-            return "";
+    public static int[][] LCSLength(String[] x, String[] y) {
+        int m = x.length;
+        int n = y.length;
+        int[][] b = new int[x.length][y.length];
+        int[][] c = new int[x.length][y.length];
+        for (int i = 1; i < m; i++) {
+            c[i][0] = 0;
         }
-        int len1 = str1.length();
-        int len2 = str2.length();
-        if (len1 < len2) {
-            for (int i = 0; i <= str1.length(); i++) {
-                for (int j = 0; j <= str2.length(); j++) {
-                    if (str1.charAt(i) == str2.charAt(j)) {
-                        LCS += str1.charAt(i);
-                        if (str1.length() == 1 || str2.length() == 1){
-                            return LCS;
-                        }
-                        getLongestCommonSequence(str1.substring(i + 1), str2.substring(j + 1), LCS);
-                    }
-                }
-            }
-        } else if (len1 == len2){
-            int a = 0, b = 0;
-            int c = 0, d = 0;
-            int e = 0, f = 0;
-            flag1:
-            for (int i = 0; i <= len1; i++) {
-                for (int j = 0; j <= len2; j++) {
-                    a++;
-                    if (str1.charAt(i) == str2.charAt(j)) {
-                        c = i;
-                        d = j;
-                        break flag1;
-                    }
-                }
-            }
-            flag2:
-            for (int i = 0; i <= len1; i++) {
-                for (int j = 0; j <= len2; j++) {
-                    b++;
-                    if (str2.charAt(i) == str1.charAt(j)) {
-                        e = i;
-                        f = j;
-                        break flag2;
-                    }
-                }
-            }
-            if (a < b) {
-                LCS += str1.charAt(c);
-                if (str1.length() == 1 || str2.length() == 1){
-                    return LCS;
-                }
-                getLongestCommonSequence(str1.substring(c + 1), str2.substring(d + 1), LCS);
-            }else{
-                LCS += str2.charAt(e);
-                if (str1.length() == 1 || str2.length() == 1){
-                    return LCS;
-                }
-                getLongestCommonSequence(str1.substring(f + 1), str2.substring(e + 1), LCS);
-            }
-        }else {
-            for (int i = 0; i <= str2.length(); i++) {
-                for (int j = 0; j <= str1.length(); j++) {
-                    if (str2.charAt(i) == str1.charAt(j)) {
-                        LCS += str2.charAt(i);
-                        if (str1.length() == 1 || str2.length() == 1){
-                            return LCS;
-                        }
-                        getLongestCommonSequence(str2.substring(i + 1), str1.substring(j + 1), LCS);
-                    }
+        for (int i = 1; i < n; i++) {
+            c[0][i] = 0;
+        }
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                if (x[i] == y[j]) {
+                    c[i][j] = c[i - 1][j - 1] + 1;
+                    b[i][j] = 1;
+                } else if (c[i - 1][j] >= c[i][j - 1]) {
+                    c[i][j] = c[i - 1][j];
+                    b[i][j] = 2;
+                } else {
+                    c[i][j] = c[i][j - 1];
+                    b[i][j] = 3;
                 }
             }
         }
-
-        return LCS;
+        return b;
     }
+
+    public static void LCS(int[][] b, String[] x, int i, int j) {
+        if (i == 0 || j == 0) return;
+        if (b[i][j] == 1) {
+            LCS(b, x, i - 1, j - 1);
+            System.out.print(x[i] + " ");
+            res = res.concat(x[i]);
+        } else if (b[i][j] == 2) {
+            LCS(b, x, i - 1, j);
+        } else LCS(b, x, i, j - 1);
+    }
+
+
+
+
 
     /**
      * 求最多公共子串 (动态规划)

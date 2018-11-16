@@ -1,5 +1,8 @@
 package com.yiban.javaBase.dev.data_structure.tree.binary_tree;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 /**
  * Created by Administrator on 2018/10/13 0013.
  */
@@ -166,7 +169,7 @@ public class BinaryTree<E extends Comparable> {
 
     /**
      * 中序遍历（先左子树，然后根节点，最后右子树）
-     *
+     * 只有这种遍历是按顺序输出的
      */
 
     public void middleOrder(Node current){
@@ -177,7 +180,10 @@ public class BinaryTree<E extends Comparable> {
         }
     }
 
-    //前序遍历
+    /**
+     * 前序遍历 先访问根节点 然后中序遍历左子树 最后中序遍历右子树
+     */
+
     public void preOrder(Node current){
         if(current != null){
             System.out.print(current.data+" ");
@@ -215,6 +221,48 @@ public class BinaryTree<E extends Comparable> {
         return minNode;
     }
 
+    /**
+     * 二叉树的逆转(递归实现)
+     * @param root
+     */
+    public Node invertNode(Node root){
+        if (root == null){
+            return root;
+        }
+        Node temp = root.leftChild;
+        root.leftChild = invertNode(root.rightChild);
+        root.rightChild = invertNode(temp);
+        return root;
+    }
+
+    /**
+     * 二叉树逆转 借助队列实现
+     * @param root
+     * @return
+     */
+    public Node invertNode1(Node root){
+        if (root == null) return null;
+        Queue<Node> queue = new LinkedList<>();
+        queue.add(root);
+        while (!queue.isEmpty()){
+            //加入到队列中
+            Node current = queue.poll();
+            //下面三行代码就是交换左右子节点
+            Node temp = current.leftChild;
+            current.leftChild = current.rightChild;
+            current.rightChild = temp;
+            //把左子节点加入到队列中 继续循环 直到左子树为空
+            if (current.leftChild != null){
+                queue.add(current.leftChild);
+            }
+            //把右子节点加入到队列中 继续循环 直到右子树为空
+            if (current.rightChild != null){
+                queue.add(current.rightChild);
+            }
+        }
+        return root;
+    }
+
     public static void main(String[] args) {
         BinaryTree<Integer> binaryTree = new BinaryTree<>();
         int[] datas =  {5,3,1,2,6,4,7};
@@ -223,11 +271,17 @@ public class BinaryTree<E extends Comparable> {
         }
 
         binaryTree.middleOrder(binaryTree.root);
-        System.out.println("================");
+        System.out.println("\n ================");
         binaryTree.preOrder(binaryTree.root);
-        System.out.println("================");
+        System.out.println("\n ================");
         binaryTree.afterOrder(binaryTree.root);
-
+        System.out.println("\n ================");
 //        binaryTree.delete(3);
+        binaryTree.invertNode(binaryTree.root);
+        binaryTree.middleOrder(binaryTree.root);
+        System.out.println("\n ================");
+        binaryTree.invertNode1(binaryTree.root);
+        binaryTree.middleOrder(binaryTree.root);
+        System.out.println("\n ================");
     }
 }

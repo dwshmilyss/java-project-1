@@ -3,6 +3,7 @@ package com.yiban.javaBase.dev.collections.queue;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 /**
@@ -18,6 +19,23 @@ public class ConcurrentLinkedQueueDemo {
         concurrentLinkedQueue.offer("a");
         concurrentLinkedQueue.offer("b");
         concurrentLinkedQueue.offer("c");
+
+        for (Iterator<String> iterator = concurrentLinkedQueue.iterator();iterator.hasNext();){
+            String item = iterator.next();
+            System.out.println(item);
+        }
+
+
+        System.out.println(concurrentLinkedQueue.remove());
+        System.out.println(concurrentLinkedQueue.remove());
+        System.out.println(concurrentLinkedQueue.remove());
+        //只有三个元素 第四次调用remove就会抛异常
+//        System.out.println(concurrentLinkedQueue.remove());
+        //但是调用poll只是返回Null 不会抛出异常
+        System.out.println(concurrentLinkedQueue.poll());
+
+
+
 //        Node node = new Node();
 //        System.out.println(node.next);
 //        /**

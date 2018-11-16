@@ -16,15 +16,13 @@ public class StringDemo {
 
     public static void main(String[] args) {
         //求最长公共子串
-//        System.out.println(getLongestCommonString("abdefgdefga", "abedefgdefaa"));
+        System.out.println(getLongestCommonString("ABCDEFG", "BABCD"));
 
         //求最长公共子序列
         String str1 = "BDCABA";
         String str2 = "ABCBDAB";
         int result = getLongestCommonSequenceLengthByDP(str1, str2);
         System.out.println(result);
-//        String LCS = "";
-//        System.out.println(getLongestCommonSequence(str1, str2, LCS));
 
 
         System.out.println("脚本之家测试结果：");
@@ -57,9 +55,8 @@ public class StringDemo {
      * 例如： abdefgdefga 会被 abedefgdefaa
      * 最大公共子串是：defgdef
      * 最大公共子序列是：abdefgdefa
-     * 思路：
+     * 思路：穷举法
      * 选取待比较的2个字符串中长度短的那个，然后从整个字符串开始(依次截掉最后一个字符)，在长的那个字符串中查找比较。
-     *
      * @param str1
      * @param str2
      * @return
@@ -91,21 +88,27 @@ public class StringDemo {
     /**
      * 求两个字符串的最长公共子序列的长度（动态规划算法）
      *
-     * @param str1
-     * @param str2
+     * @param str1 注意传入的字符串前面要加个空格，因为算法中所有的循环都是从下标1开始的
+     * @param str2 注意传入的字符串前面要加个空格，因为算法中所有的循环都是从下标1开始的
      * @return
      */
     private static int getLongestCommonSequenceLengthByDP(String str1, String str2) {
-        int[][] c = new int[str1.length() + 1][str2.length() + 1];
-        for (int row = 0; row <= str1.length(); row++) {
+        int x = str1.length();
+        int y = str2.length();
+        int[][] c = new int[x][y];
+        for (int row = 1; row < x; row++) {
             c[row][0] = 0;
         }
-        for (int column = 0; column <= str2.length(); column++) {
+        for (int column = 1; column < y; column++) {
             c[0][column] = 0;
         }
-        for (int i = 1; i <= str1.length(); i++) {
-            for (int j = 1; j <= str2.length(); j++) {
-                if (str1.charAt(i - 1) == str2.charAt(j - 1)) {
+        for (int i = 1; i < x; i++) {
+            for (int j = 1; j < y; j++) {
+                /**
+                 * 为什么是这样的三个判断 这里面是有这样的公式的 因为是动态规划算法 会拆分成若干个子任务
+                 * 所以会出现类似 ： i-1  j-1 这样的运算（因为i-1是i的子任务）
+                 */
+                if (str1.charAt(i) == str2.charAt(j)) {
                     c[i][j] = c[i - 1][j - 1] + 1;
                 } else if (c[i][j - 1] > c[i - 1][j]) {
                     c[i][j] = c[i][j - 1];
@@ -114,7 +117,7 @@ public class StringDemo {
                 }
             }
         }
-        return c[str1.length()][str2.length()];
+        return c[x-1][y-1];
     }
 
     /**

@@ -164,12 +164,16 @@ public class BinaryTree<E extends Comparable> {
         return successor;
     }
 
-    //中序遍历
-    public void infixOrder(Node current){
+    /**
+     * 中序遍历（先左子树，然后根节点，最后右子树）
+     *
+     */
+
+    public void middleOrder(Node current){
         if(current != null){
-            infixOrder(current.leftChild);
+            middleOrder(current.leftChild);
             System.out.print(current.data+" ");
-            infixOrder(current.rightChild);
+            middleOrder(current.rightChild);
         }
     }
 
@@ -177,16 +181,16 @@ public class BinaryTree<E extends Comparable> {
     public void preOrder(Node current){
         if(current != null){
             System.out.print(current.data+" ");
-            infixOrder(current.leftChild);
-            infixOrder(current.rightChild);
+            middleOrder(current.leftChild);
+            middleOrder(current.rightChild);
         }
     }
 
     //后序遍历
-    public void postOrder(Node current){
+    public void afterOrder(Node current){
         if(current != null){
-            infixOrder(current.leftChild);
-            infixOrder(current.rightChild);
+            middleOrder(current.leftChild);
+            middleOrder(current.rightChild);
             System.out.print(current.data+" ");
         }
     }
@@ -213,11 +217,17 @@ public class BinaryTree<E extends Comparable> {
 
     public static void main(String[] args) {
         BinaryTree<Integer> binaryTree = new BinaryTree<>();
-        int[] datas =  {5,3,1};
+        int[] datas =  {5,3,1,2,6,4,7};
         for (int i = 0; i < datas.length; i++) {
             binaryTree.insert(datas[i]);
         }
 
-        binaryTree.delete(3);
+        binaryTree.middleOrder(binaryTree.root);
+        System.out.println("================");
+        binaryTree.preOrder(binaryTree.root);
+        System.out.println("================");
+        binaryTree.afterOrder(binaryTree.root);
+
+//        binaryTree.delete(3);
     }
 }

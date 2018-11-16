@@ -27,29 +27,35 @@ public class Demo1 {
 //            System.out.println(field.getName());
 //        }
 
-        getFields(new Test());
+
+        getFields(new Test(),false);
+        System.out.println("==============================");
+        getMethods(new Test(),false);
+        System.out.println("==============================");
+        System.out.println(getStaticFields("str2"));
+        System.out.println("==============================");
 
         PrivateClass2 p = new PrivateClass2();
         Class<?> classType = p.getClass();
-//
-//        Field field = classType.getDeclaredField("name");
-//
-//        field.setAccessible(true); // 抑制Java对修饰符的检查
-////        field.set(p, "lisi");
-//
-//        System.out.println(field.getName() +" " +field.get(p));
 
+        Field field = classType.getDeclaredField("name");
+        field.setAccessible(true); // 抑制Java对修饰符的检查
+        field.set(p, "lisi");
+        System.out.println(field.getName() + " " + field.get(p));
+        System.out.println("==============================");
 
-        // 获取Method对象
+        /**
+         * getDeclaredMethod 表示获取私有方法 不加Declared表示获取public
+         */
         Method method = classType.getDeclaredMethod("sayHello",
                 new Class[]{String.class, Integer.class});
-
         method.setAccessible(true); // 抑制Java的访问控制检查
-        // 如果不加上上面这句，将会Error: TestPrivate can not access a member of class PrivateClass with modifiers "private"
+        //调用对象的私有方法 要加上上面这句话
         String str = (String) method.invoke(p, new Object[]{"zhangsan", 18});
-
         System.out.println(str);
     }
+
+
 
     /**
      * java8 可以获取参数的名称
@@ -75,9 +81,19 @@ public class Demo1 {
         return paramterList;
     }
 
-    public static void getFields(Object object) {
-//        Field fields[] = object.getClass().getDeclaredFields();
-        Field fields[] = object.getClass().getFields();
+    /**
+     * 获取对象的属性
+     * @param object
+     * @param isPublic
+     */
+    public static void getFields(Object object, boolean isPublic) {
+        Field fields[];
+        if (isPublic) {   //只能获取public字段
+            fields = object.getClass().getFields();
+        } else {
+            //获取public和private字段
+            fields = object.getClass().getDeclaredFields();
+        }
         String[] name = new String[fields.length];
         Object[] value = new Object[fields.length];
 
@@ -92,6 +108,47 @@ public class Demo1 {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 获取对象的方法
+     * @param object
+     * @param isPublic
+     */
+    private static void getMethods(Object object, boolean isPublic) {
+        Method[] methods;
+        if (isPublic){
+            methods = object.getClass().getMethods();
+        }else {
+            methods = object.getClass().getDeclaredMethods();
+        }
+        String[] name = new String[methods.length];
+
+        try {
+            Field.setAccessible(methods, true);
+            for (int i = 0; i < name.length; i++) {
+                name[i] = methods[i].getName();
+                System.out.println("name ->" + name[i]);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * 获取静态字段 其实完全没必要 因为使用对象也可以获取静态字段
+     * @param field
+     * @return
+     */
+    private static Object getStaticFields(String field){
+        try {
+            Field f = Test.class.getDeclaredField(field);
+            f.setAccessible(true);
+            return f.get(null);
+        } catch (Exception e) {}
+        return null;
+    }
+
 
     public String test(String param1, String param2) {
         String s = param1 + ":" + param2;
@@ -116,6 +173,9 @@ class Test {
     public String gender = "male";
     private String name = "aa";
     private int age = 18;
+
+    private static String str1;
+    private static String str2  = "";
 
     public String getName() {
         return name;

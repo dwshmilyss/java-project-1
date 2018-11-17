@@ -43,6 +43,6 @@ public class HashUtils {
         byte[] bytes = md5.digest();
         //每个字节 & 0xFF再移位
         long result = ((long) (bytes[3] & 0xFF) << 24) | ((long) (bytes[2] & 0xFF) << 16) | ((long) (bytes[1] & 0xFF) << 8) | ((long) (bytes[0] & 0xFF));
-        return result & 0xffffffffl;
+        return result & 0xffffffffL;
     }
 }

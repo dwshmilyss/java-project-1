@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
  */
 public class StringDemo implements Serializable {
 
-    public static final long serialVersionUID = 1l;
+    public static final long serialVersionUID = 1L;
     /**
      * slf4j logger
      */

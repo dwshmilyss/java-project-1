@@ -270,8 +270,9 @@ public class StringDemo {
         for (j = 0; j < maxLen; j++) {
             if (max[j] > 0) {
                 System.out.println("第" + (j + 1) + "个公共子串:");
-                for (i = maxIndex[j] - max[j] + 1; i <= maxIndex[j]; i++)
+                for (i = maxIndex[j] - max[j] + 1; i <= maxIndex[j]; i++){
                     System.out.print(str1[i]);
+                }
                 System.out.println(" ");
             }
         }

@@ -181,7 +181,7 @@ public class KafkaConsumerDemo1 {
         /**
          * 设定一个消费开始时间 2018-09-04 18:40:00
          */
-        long startTime = Long.valueOf(1536057600*1000l);
+        long startTime = Long.valueOf(1536057600*1000L);
         Map<TopicPartition, Long> startTopicPartitionMap = new HashMap();
         startTopicPartitionMap.put(test_partition_0, startTime);
         startTopicPartitionMap.put(test_partition_1, startTime);
@@ -201,7 +201,7 @@ public class KafkaConsumerDemo1 {
         /**
          * 设定一个消费结束时间 2018-09-05 00:00:00
          */
-        long endTime = Long.valueOf(1536076800*1000l);
+        long endTime = Long.valueOf(1536076800*1000L);
         Map<TopicPartition, Long> endTopicPartitionMap = new HashMap();
         endTopicPartitionMap.put(test_partition_0, endTime);
         endTopicPartitionMap.put(test_partition_1, endTime);

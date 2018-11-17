@@ -155,14 +155,18 @@ public class StringDemo {
     }
 
     public static void LCS(int[][] b, String[] x, int i, int j) {
-        if (i == 0 || j == 0) return;
+        if (i == 0 || j == 0) {
+            return;
+        }
         if (b[i][j] == 1) {
             LCS(b, x, i - 1, j - 1);
             System.out.print(x[i] + " ");
             res = res.concat(x[i]);
         } else if (b[i][j] == 2) {
             LCS(b, x, i - 1, j);
-        } else LCS(b, x, i, j - 1);
+        } else {
+            LCS(b, x, i, j - 1);
+        }
     }
 
 
@@ -232,11 +236,13 @@ public class StringDemo {
         int maxLen = len1 > len2 ? len1 : len2;
         int[] max = new int[maxLen];
         int[] maxIndex = new int[maxLen];
-        int[] c = new int[maxLen]; // 记录对角线上的相等值的个数
+        // 记录对角线上的相等值的个数
+        int[] c = new int[maxLen];
 
         for (i = 0; i < len2; i++) {
             for (j = len1 - 1; j >= 0; j--) {
-                if (str2[i] == str1[j]) {//如果str2的第一个字符 == str1的最后一个字符
+                //如果str2的第一个字符 == str1的最后一个字符
+                if (str2[i] == str1[j]) {
                     if ((i == 0) || (j == 0)) {
                         c[j] = 1;
                     } else {
@@ -245,16 +251,19 @@ public class StringDemo {
                 } else {
                     c[j] = 0;
                 }
-
-                if (c[j] > max[0]) { // 如果是大于那暂时只有一个是最长的,而且要把后面的清0;
-                    max[0] = c[j]; // 记录对角线元素的最大值，之后在遍历时用作提取子串的长度
-                    maxIndex[0] = j; // 记录对角线元素最大值的位置
+                // 如果是大于那暂时只有一个是最长的,而且要把后面的清0;
+                if (c[j] > max[0]) {
+                    // 记录对角线元素的最大值，之后在遍历时用作提取子串的长度
+                    max[0] = c[j];
+                    // 记录对角线元素最大值的位置
+                    maxIndex[0] = j;
 
                     for (int k = 1; k < maxLen; k++) {
                         max[k] = 0;
                         maxIndex[k] = 0;
                     }
-                } else if (c[j] == max[0]) { // 有多个是相同长度的子串
+                    // 有多个是相同长度的子串
+                } else if (c[j] == max[0]) {
                     for (int k = 1; k < maxLen; k++) {
                         if (max[k] == 0) {
                             max[k] = c[j];

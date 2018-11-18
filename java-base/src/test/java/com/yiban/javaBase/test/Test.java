@@ -116,4 +116,9 @@ public class Test {
     public void test1(){
         System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
     }
+
+    @org.junit.Test
+    public void test2(){
+
+    }
 }

@@ -9,23 +9,33 @@ import java.util.Random;
  */
 public class Demo1 {
     public static void main(String[] args) throws Exception {
-        //CaseObject object = new CaseObject();
         while (true) {
             Random random = new Random();
-            execute(random.nextInt(4000));
-
-            //object.execute(random.nextInt(4000));
+//            execute(random.nextInt(4000));
+            Demo1 demo1 = new Demo1();
+            demo1.sayHello("123456", 123, random.nextInt(4000));
         }
 
 
-
     }
+
+
     public static Integer execute(int sleepTime) {
         try {
             Thread.sleep(sleepTime);
         } catch (Exception e) {
         }
-        System.out.println("sleep time is=>"+sleepTime);
+        System.out.println("sleep time is=>" + sleepTime);
         return 0;
     }
+
+    public String sayHello(String name, int age, long sleepTime) {
+        try {
+            Thread.sleep(sleepTime);
+        } catch (Exception e) {
+        }
+        System.out.println("name = " + name + ",age = " + age + ",sleepTime = " + sleepTime);
+        return name + " : " + age;
+    }
+
 }

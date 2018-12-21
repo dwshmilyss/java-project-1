@@ -1,5 +1,6 @@
 package com.yiban.javaBase.dev.JVM.gc;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +18,7 @@ public class GCDemo {
     private static final int _1M = 1024 * 1024;
 
     public static void main(String[] args) {
-        test4();
+        test5();
     }
 
     /**
@@ -97,4 +98,14 @@ public class GCDemo {
         System.out.println(list.size());
     }
 
+    /**
+     * -verbose:gc -XX:MaxDirectMemorySize=10m -XX:+PrintGC -XX:+PrintGCDetails -XX:+DisableExplicitGC
+      */
+    static void test5(){
+        for (int i = 0; i < 100000; i++) {
+            ByteBuffer.allocateDirect(128);
+        }
+        System.out.println("done");
+    }
 }
+

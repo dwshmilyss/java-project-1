@@ -9,16 +9,37 @@ import java.util.Random;
  */
 public class Demo1 {
     public static void main(String[] args) throws Exception {
-        while (true) {
-            Random random = new Random();
-//            execute(random.nextInt(4000));
-            Demo1 demo1 = new Demo1();
-            demo1.sayHello("123456", 123, random.nextInt(4000));
-        }
+//        while (true) {
+//            Random random = new Random();
+////            execute(random.nextInt(4000));
+//            Demo1 demo1 = new Demo1();
+//            demo1.sayHello("123456", 123, random.nextInt(4000));
+//        }
 
+        Thread.sleep(60000);
+
+        new Demo1().new A().start();
+
+        Thread.sleep(60000);
+        new Demo1().new B().run();
 
     }
 
+
+    class A extends Thread{
+        @Override
+        public void run(){
+            System.out.println("thread run .... ");
+        }
+    }
+
+    class B implements Runnable{
+
+        @Override
+        public void run() {
+            System.out.println("runnable run .... ");
+        }
+    }
 
     public static Integer execute(int sleepTime) {
         try {

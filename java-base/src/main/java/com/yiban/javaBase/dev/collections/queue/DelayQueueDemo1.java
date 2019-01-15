@@ -65,8 +65,8 @@ public class DelayQueueDemo1 {
 
         @Override
         public int compareTo(Delayed o) {
-            if (o == null || !(o instanceof Student)) return 1;
-            if (o == this) return 0;
+            if (o == null || !(o instanceof Student)) {return 1;}
+            if (o == this) {return 0;}
             Student s = (Student) o;
             if (this.workTime > s.workTime) {
                 return 1;

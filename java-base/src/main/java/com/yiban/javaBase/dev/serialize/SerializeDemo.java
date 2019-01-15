@@ -62,12 +62,13 @@ class Student extends Person{
 
     private String grade;
     public String clazz;
+    public int age;
     private static int gender = 1;
     public transient String birth;
     private transient int haha;
 
 
-    public Student(String grade, String clazz,String birth,int haha) {
+    public Student(String grade, String clazz, String birth, int haha) {
         super("dw",19);
         this.grade = grade;
         this.clazz = clazz;

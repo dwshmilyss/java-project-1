@@ -21,6 +21,7 @@ public class PriorityQueueDemo {
 
     public static void main(String args[]) {
         Comparator<PriorityQueueDemo> OrderIsdn = new Comparator<PriorityQueueDemo>() {
+            @Override
             public int compare(PriorityQueueDemo o1, PriorityQueueDemo o2) {
                 // TODO Auto-generated method stub
                 int numbera = o1.getPopulation();
@@ -58,6 +59,7 @@ public class PriorityQueueDemo {
         return this.population;
     }
 
+    @Override
     public String toString() {
         return getName() + " - " + getPopulation();
     }

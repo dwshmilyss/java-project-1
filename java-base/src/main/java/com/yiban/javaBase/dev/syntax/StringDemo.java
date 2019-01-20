@@ -42,7 +42,9 @@ public class StringDemo implements Serializable {
         String s3 = "abc";
         CharSequence cs = s3.subSequence(1,2);
         System.out.println(cs.getClass());
+        if (s1 != null) {
 
+        }
     }
 
     /**

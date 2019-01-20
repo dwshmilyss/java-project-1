@@ -2,6 +2,7 @@ package com.yiban.javaBase.test;
 
 
 import com.yiban.javaBase.dev.concurrent.fork_join.SortTask;
+import org.intellij.lang.annotations.Language;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -23,7 +24,7 @@ public class Test {
 
     private static Unsafe theUnsafe;
     private static sun.misc.Unsafe UNSAFE;
-    private int a;
+    private static int a;
     private int b;
 
     //使用方法
@@ -33,6 +34,7 @@ public class Test {
         Field theUnsafeInstance = Unsafe.class.getDeclaredField("theUnsafe");
         theUnsafeInstance.setAccessible(true);
         return (Unsafe) theUnsafeInstance.get(Unsafe.class);
+
     }
 
     //    static
@@ -46,7 +48,10 @@ public class Test {
 //    }
     public static void main(String[] args) throws Exception {
         System.out.println(5 & 3);
-
+        a = 1;
+        a = 2;
+        a = 3;
+        a = 4;
         //for循环还可以这样写，b不用定义类型，应该是推断出来的
 //        for (int a = 1,b = a;;){
 //            System.out.println(b);
@@ -119,6 +124,18 @@ public class Test {
 
     @org.junit.Test
     public void test2(){
+        String str = "{\"aa\":\"bb\",\"cc\": \"dd\"}";
+        String str1 = "select * from aa where id = 1 and uname = \"bbb\"";
+        //language=HTML
+        String str2 = "<html>\n" +
+                " <a href=\"aaa\" content=\"bbb\"></a>\n" +
+                "</html>";
+        @Language("MySQL") String sql = "select * from  aaa";
+        @Language("JSON") String json = "{\"name\": \"dw\",\"age\": 18}";
+        if (true) {
 
+        }
+        System.out.println("aaa");
     }
+
 }

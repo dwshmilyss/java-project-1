@@ -1,5 +1,6 @@
 package com.yiban.javaBase.dev.syntax;
 
+import org.intellij.lang.annotations.Language;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,11 +22,12 @@ import java.nio.charset.Charset;
  */
 public class StringDemo implements Serializable {
 
-    public static final long serialVersionUID = 1L;
+
     /**
      * slf4j logger
      */
     private static final Logger LOGGER = LoggerFactory.getLogger(StringDemo.class);
+    private static final long serialVersionUID = -3537307121344283322L;
 
     public StringDemo() {
     }
@@ -42,9 +44,15 @@ public class StringDemo implements Serializable {
         String s3 = "abc";
         CharSequence cs = s3.subSequence(1,2);
         System.out.println(cs.getClass());
+        if (s1 == null) {
+
+        }
         if (s1 != null) {
 
         }
+
+        @Language("JSON") String s4 = "{\"NAME\": \"DW\"}";
+        @Language("JSON") String s5 = "";
     }
 
     /**

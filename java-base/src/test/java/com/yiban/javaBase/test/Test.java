@@ -1,15 +1,13 @@
 package com.yiban.javaBase.test;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.yiban.javaBase.dev.concurrent.fork_join.SortTask;
 import org.intellij.lang.annotations.Language;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Random;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
@@ -138,4 +136,9 @@ public class Test {
         System.out.println("aaa");
     }
 
+    @org.junit.Test
+    private void test3(){
+        JSONArray arr = new JSONArray();
+        arr.add("ss");
+    }
 }

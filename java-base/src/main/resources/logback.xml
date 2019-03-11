@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
+
+    <property name="LOG_HOME" value="D:/logs" />
+
     <!-- 控制台输出 -->
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
@@ -24,6 +27,7 @@
                 %msg%n
             </pattern>
         </encoder>
+        <!-- 如果当天的日志达到该阀值，则数据不会再写入到日志文件中，所以定义该参数需格外注意 -->
         <triggeringPolicy
                 class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <MaxFileSize>10MB</MaxFileSize>
@@ -41,11 +45,22 @@
         <appender-ref ref ="FILE"/>
     </appender>
 
+    <!-- 这里的name代表包路径，包路径越少越是父级。<logger>中没有配置level，即继承父级的level，<logger>的父级为<root>。 没有配置additivity，那么additivity=true，表示此<logger>的打印信息向父级<root>传递 -->
+    <!--<logger name="com.yiban" level="debug" additivity="true">-->
+        <!--<appender-ref ref="FILE"/>-->
+    <!--</logger>-->
+
+
     <logger name="com.yiban" level="debug" additivity="true">
-        <appender-ref ref="FILE"/>
+        <appender-ref ref="ASYNC"/>
     </logger>
 
-    <root level="INFO">
+    <!--<logger name="com" additivity="true"></logger>-->
+    <!--<logger name="com.yiban" level="warn" additivity="true">-->
+        <!--<appender-ref ref="STDOUT"/>-->
+    <!--</logger>-->
+
+    <root level="debug">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

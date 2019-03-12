@@ -18,7 +18,7 @@ import java.util.List;
  * @date 2017/5/26
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class Demo1 {
+public class HbaseOldAPI {
     public static Configuration configuration = null;
     public static Admin admin = null;
     public static Connection connection = null;

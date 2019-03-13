@@ -14,7 +14,6 @@ public class RedisTest {
     @Test
     public void test(){
         Jedis jedis = RedisPool.getJedis();
-        String value = jedis.get("foo");
-        System.out.println("value = " + value);
+        System.out.println("value = " + jedis.ttl("bb"));
     }
 }

@@ -5,6 +5,7 @@ import redis.clients.jedis.Jedis;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -17,6 +18,7 @@ import java.util.concurrent.locks.ReentrantLock;
 public class CacheDemo {
     //互斥锁
     static ReentrantLock lock = new ReentrantLock();
+    static Jedis jedis = RedisPool.getJedis();
 
     /**
      * 避免缓存击穿的解决方案
@@ -87,7 +89,7 @@ public class CacheDemo {
      * 这个方法的实现和上面使用java的ReentrantLock一模一样
      */
     public static String getKeyByRedis(String key) throws InterruptedException {
-        Jedis jedis = RedisPool.getJedis();
+
         //首先从缓存中获取
         String value = "";
         value = jedis.get(key);
@@ -108,6 +110,37 @@ public class CacheDemo {
                 //然后重试
                 return getKeyByRedis(key);
             }
+        }
+        return value;
+    }
+
+    /**
+     * 还有一种方法就是缓存永不“过期”（其实就是手动检查缓存是否失效 如果失效 立即从DB中检索并更新缓存）
+     * @param key
+     * @return
+     */
+    public static String getKeyByNoExpire(final String key) {
+        String value = "";
+        value = jedis.get(key);
+        ThreadPoolExecutor threadPool = new ThreadPoolExecutor(0,Integer.MAX_VALUE,60L, TimeUnit.SECONDS, new SynchronousQueue<Runnable>(), new ThreadPoolExecutor.DiscardOldestPolicy());
+        //获取key的剩余时间（秒）
+        long timeout = jedis.ttl(key);
+        if (timeout <= 0){
+            // 异步更新后台异常执行
+            threadPool.execute(new Runnable() {
+                public void run() {
+                    String keyMutex = "mutex:" + key;
+                    if (jedis.setnx(keyMutex, "1") == 1) {
+                        // 3 min timeout to avoid mutex holder crash
+                        jedis.expire(keyMutex, 3 * 60);
+                        //TODO 获取DB中的数据
+                        String dbValue = "";
+//                        dbValue = db.get(key);
+                        jedis.set(key, dbValue);
+                        jedis.del(keyMutex);
+                    }
+                }
+            });
         }
         return value;
     }

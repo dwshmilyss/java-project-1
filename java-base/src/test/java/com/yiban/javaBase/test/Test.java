@@ -4,6 +4,7 @@ package com.yiban.javaBase.test;
 import com.alibaba.fastjson.JSONArray;
 import com.yiban.javaBase.dev.concurrent.fork_join.SortTask;
 import org.intellij.lang.annotations.Language;
+import org.junit.Assert;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -137,8 +138,22 @@ public class Test {
     }
 
     @org.junit.Test
-    private void test3(){
+    public void test3(){
         JSONArray arr = new JSONArray();
         arr.add("ss");
+    }
+
+    @org.junit.Test
+    public void test4(){
+        Assert.assertEquals(1,1);
+        System.out.println("haha");
+    }
+
+    @org.junit.Test
+    public void test5(){
+        int a = 1;
+        Integer b = new Integer(1);
+        (a+"").getBytes();
+        String.valueOf(a).getBytes();
     }
 }

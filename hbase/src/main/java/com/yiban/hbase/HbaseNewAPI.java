@@ -29,7 +29,7 @@ public class HbaseNewAPI {
 
 
 //            List<User> list = new ArrayList<>(101);
-//            for (int i = 201; i <= 300; i++) {
+//            for (int i = 1; i <= 100; i++) {
 //                User user = new User(i + "", "dw:" + i, "123", "unknown", "30", "1311234"+i, "4064865@163.com");
 //                list.add(user);
 //            }
@@ -49,32 +49,34 @@ public class HbaseNewAPI {
             RegexStringComparator regexStringComparator = new RegexStringComparator("^(.*)@163.com"); // 支持正则表达式的值比较 (以 you 开头的字符串)
             SubstringComparator substringComparator = new SubstringComparator("@163.com"); // 查找包含 dwshmilyss 的字符串
             BinaryPrefixComparator binaryPrefixComparator = new BinaryPrefixComparator(Bytes.toBytes("@163.com")); //
-//            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
-//            getDataBySingleColumnValueFilter(connection, tableName, "info", "email", null,binaryPrefixComparator);
+////            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
+////            getDataBySingleColumnValueFilter(connection, tableName, "info", "email", null,binaryPrefixComparator);
+//
+//
+//            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
+//            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
+//            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
+//            singleColumnValueFilter1.setFilterIfMissing(true);
+//            singleColumnValueFilter1.setLatestVersionOnly(true);
+//            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
+//            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
+//            List<Filter> filters1 = new ArrayList<>();
+//            List<Filter> filters2 = new ArrayList<>();
+//            filters1.add(singleColumnValueFilter1);
+//            filters1.add(singleColumnValueFilter2);
+//            filters1.add(singleColumnValueFilter3);
+//            filters2.add(singleColumnValueFilter4);
+//            filters2.add(singleColumnValueFilter5);
+//            /**
+//             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
+//             */
+//            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters2);
+//            filters1.add(filterList);
+//            getDataByMultiFilter(connection,tableName,filters1);
 
-
-            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
-            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
-            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
-            singleColumnValueFilter1.setFilterIfMissing(true);
-            singleColumnValueFilter1.setLatestVersionOnly(true);
-            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
-            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
-            List<Filter> filters1 = new ArrayList<>();
-            List<Filter> filters2 = new ArrayList<>();
-            filters1.add(singleColumnValueFilter1);
-            filters1.add(singleColumnValueFilter2);
-            filters1.add(singleColumnValueFilter3);
-            filters2.add(singleColumnValueFilter4);
-            filters2.add(singleColumnValueFilter5);
-            /**
-             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
-             */
-            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters2);
-            filters1.add(filterList);
-            getDataByMultiFilter(connection,tableName,filters1);
-
-//              getDataByRowFilter(connection,tableName,"user-5");
+            RegexStringComparator regexStringComparator1 = new RegexStringComparator("^(.*)-99");
+            SubstringComparator substringComparator1 = new SubstringComparator("admin");
+              getDataByRowFilter(connection,tableName,regexStringComparator1);
 //            deleteByRowKey(connection,tableName,"user-50");
 
         } catch (IOException e) {
@@ -132,7 +134,7 @@ public class HbaseNewAPI {
      * @throws IOException
      */
     public static void insertData(Connection connection, TableName tableName, User user) throws IOException {
-        Put put = new Put(("user-" + user.getId()).getBytes());
+        Put put = new Put(("admin-" + user.getId()).getBytes());
         //参数：1.列族  2.列名  3.值
         put.addColumn("info".getBytes(), "username".getBytes(), user.getUsername().getBytes());
         put.addColumn("info".getBytes(), "age".getBytes(), user.getAge().getBytes());
@@ -417,22 +419,27 @@ public class HbaseNewAPI {
      *
      * @param connection
      * @param tableName
-     * @param rowKey
+     * @param byteArrayComparable
      */
-    public static void getDataByRowFilter(Connection connection, TableName tableName, String rowKey) {
+    public static void getDataByRowFilter(Connection connection, TableName tableName, ByteArrayComparable byteArrayComparable) {
         try {
             Table table = connection.getTable(tableName);
             Scan scan = new Scan();
-            RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, new RegexStringComparator(rowKey));
+            /**
+             * 这里的第二个参数可以使用多种Comparator
+             */
+            RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, byteArrayComparable);
             scan.setFilter(filter);
             ResultScanner scanner = table.getScanner(scan);
-
+            int cn = 0;
             for (Result result : scanner) {
+                ++cn;
                 for (KeyValue keyValue : result.raw()) {
                     System.out.println("第 " + new String(keyValue.getRow()) + " 行 ," + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
                 }
                 System.out.println();
             }
+            System.out.println("cn = " + cn);
         } catch (IOException e) {
             e.printStackTrace();
         }

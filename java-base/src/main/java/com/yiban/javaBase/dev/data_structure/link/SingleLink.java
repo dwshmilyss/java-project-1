@@ -128,11 +128,14 @@ public class SingleLink<E extends Comparable> {
         if (head == null || head.next == null) {
             return;
         }
+        //声明两个指针  分别指向第一个和第二个节点
         Node p = head.next;
         Node q = head.next.next;
         //将第一个结点的next置为空，否则会出现一个环
         Node temp = null;
+        //循环结束后 q==null 那么p就指向原链表的最后一个节点
         while (q != null) {
+            //第二个指针往后移
             temp = q.next;
             q.next = p;
             p = q;
@@ -140,6 +143,7 @@ public class SingleLink<E extends Comparable> {
         }
         //循环结束后 这里要把原链表的第一个节点到第二个节点的指针打断，不然在第一个节点和第二个节点之间会形成一个循环引用 即 1->2,2->1
         head.next.next = null;
+        //更改头结点
         head.next = p;
     }
 
@@ -203,13 +207,13 @@ public class SingleLink<E extends Comparable> {
         System.out.println(singleLink.insertByIndex(5, 2));
         System.out.println("len is = " + singleLink.getLength());
         singleLink.iterator();
-        System.out.println("\n =============== ");
+        System.out.println("\n reverseSingleLink =============== ");
         singleLink.reverseSingleLink();
         singleLink.iteratorByRecursion(singleLink.head);
 //        singleLink.iterator();
-        System.out.println("\n =============== ");
+        System.out.println("\n reverseByStack =============== ");
         singleLink.reverseByStack();
-        System.out.println("\n =============== ");
+        System.out.println("\n reverseByRecurtion =============== ");
         singleLink.reverseByRecurtion(singleLink.head);
         singleLink.iterator();
     }

@@ -76,7 +76,7 @@ public class HbaseNewAPI {
 
             RegexStringComparator regexStringComparator1 = new RegexStringComparator("^(.*)-99");
             SubstringComparator substringComparator1 = new SubstringComparator("admin");
-              getDataByRowFilter(connection,tableName,regexStringComparator1);
+              getDataByRowFilter(connection,tableName,substringComparator1);
 //            deleteByRowKey(connection,tableName,"user-50");
 
         } catch (IOException e) {
@@ -428,8 +428,14 @@ public class HbaseNewAPI {
             /**
              * 这里的第二个参数可以使用多种Comparator
              */
-            RowFilter filter = new RowFilter(CompareFilter.CompareOp.EQUAL, byteArrayComparable);
-            scan.setFilter(filter);
+            RowFilter rowFilter = new RowFilter(CompareFilter.CompareOp.EQUAL, byteArrayComparable);
+            RowFilter lastRowFilter = new RowFilter(CompareFilter.CompareOp.GREATER, new BinaryComparator(Bytes.toBytes("admin-17")));
+            PageFilter pageFilter = new PageFilter(10);
+            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL);
+            filterList.addFilter(rowFilter);
+            filterList.addFilter(lastRowFilter);
+            filterList.addFilter(pageFilter);
+            scan.setFilter(filterList);
             ResultScanner scanner = table.getScanner(scan);
             int cn = 0;
             for (Result result : scanner) {
@@ -437,7 +443,6 @@ public class HbaseNewAPI {
                 for (KeyValue keyValue : result.raw()) {
                     System.out.println("第 " + new String(keyValue.getRow()) + " 行 ," + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
                 }
-                System.out.println();
             }
             System.out.println("cn = " + cn);
         } catch (IOException e) {

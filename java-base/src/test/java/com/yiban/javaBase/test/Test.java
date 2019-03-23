@@ -11,6 +11,8 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static junit.framework.TestCase.assertTrue;
 
@@ -151,9 +153,10 @@ public class Test {
 
     @org.junit.Test
     public void test5(){
-        int a = 1;
-        Integer b = new Integer(1);
-        (a+"").getBytes();
-        String.valueOf(a).getBytes();
+//        for (Map.Entry entry : System.getenv().entrySet()) {
+//            System.out.println("entry = " + entry);
+//        }
+        String regex = "[0-9]{4}";
+        System.out.println(Pattern.matches(regex, "1122"));
     }
 }

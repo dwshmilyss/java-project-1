@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 为这个mapper指定一个唯一的namespace，namespace的值习惯上设置成包名+sql映射文件名，这样就能够保证namespace的值是唯一的
+例如namespace="com.yiban.mybatis.dev.mapper.StudentMapper"就是com.yiban.mybatis.dev.mapper(包名)+StudentMapper(StudentMapper.xml文件去除后缀)
+ -->
+<mapper namespace="com.yiban.mybatis.dev.mapper.StudentMapper">
+    <insert id="insertList">
+        insert into student(name, phone, email, sex, locked)
+        values
+        <foreach collection="list" item="student" separator=",">
+            (
+            #{student.name}, #{student.phone},#{student.email},
+            #{student.sex},#{student.locked}
+            )
+        </foreach>
+    </insert>
+</mapper>

@@ -11,6 +11,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -158,5 +159,31 @@ public class Test {
 //        }
         String regex = "[0-9]{4}";
         System.out.println(Pattern.matches(regex, "1122"));
+    }
+
+    @org.junit.Test
+    public void test6(){
+        AtomicInteger atomicInteger = new AtomicInteger(1);
+        int flag = 100;
+        for (int i = 0; i < 10; i++) {
+            Runnable runnable = new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName());
+//                    for (int j = 0; j < 20; j++) {
+//                        int uid = atomicInteger.incrementAndGet();
+//                        System.out.println(Thread.currentThread().getName() + " = " + uid);
+//                        if (uid < flag) {
+//                        }else {
+////                            synchronized (Test.class){
+////
+////                            }
+//                        }
+//                    }
+                }
+            };
+            Thread thread = new Thread(runnable);
+            thread.start();
+        }
     }
 }

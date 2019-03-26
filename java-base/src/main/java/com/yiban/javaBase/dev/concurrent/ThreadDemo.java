@@ -31,10 +31,20 @@ public class ThreadDemo {
 //        testJoin();
 
 
-        TT tt1 = new TT("aa");
-        TT tt2 = new TT("bb");
-        tt1.start();
-        tt2.start();
+//        TT tt1 = new TT("aa");
+//        TT tt2 = new TT("bb");
+//        tt1.start();
+//        tt2.start();
+
+
+        for (int i = 0; i < 10; i++) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    System.out.println(Thread.currentThread().getName());
+                }
+            }).start();
+        }
     }
 
 

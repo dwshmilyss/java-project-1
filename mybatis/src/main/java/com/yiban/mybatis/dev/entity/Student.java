@@ -13,8 +13,8 @@ public class Student {
     private String name;
     private String phone;
     private String email;
-    private byte sex;
-    private byte locked;
+    private Byte sex;
+    private Byte locked;
     private Date gmtCreated;
     private Date gmtModified;
     private int delete;
@@ -51,19 +51,19 @@ public class Student {
         return email;
     }
 
-    public void setSex(byte sex) {
+    public void setSex(Byte sex) {
         this.sex = sex;
     }
 
-    public byte getSex() {
+    public Byte getSex() {
         return sex;
     }
 
-    public void setLocked(byte locked) {
+    public void setLocked(Byte locked) {
         this.locked = locked;
     }
 
-    public byte getLocked() {
+    public Byte getLocked() {
         return locked;
     }
 

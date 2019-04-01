@@ -78,7 +78,7 @@ public class KafkaConsumerDemo1 {
         consumer.subscribe(TOPICS);//指定topic消费
 
         long i = 0;
-        while (true) {
+//        while (true) {
             //每100条提交一次
             ConsumerRecords<String, String> records = consumer.poll(100);//100ms 拉取一次数据
             for (ConsumerRecord<String, String> record : records) {
@@ -101,7 +101,7 @@ public class KafkaConsumerDemo1 {
                 System.out.println("now commit the partition[ " + partition.partition() + "] offset");
                 consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
             }
-        }
+//        }
     }
 
 

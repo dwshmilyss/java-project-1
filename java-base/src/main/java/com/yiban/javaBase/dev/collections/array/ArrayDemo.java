@@ -2,6 +2,8 @@ package com.yiban.javaBase.dev.collections.array;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -55,6 +57,11 @@ public class ArrayDemo {
 
         System.out.println("Capital of Japan is " + countryCapitals.get("Japan"));
         System.out.println("Capital of France is " + countryCapitals.get("France"));
+
+        ArrayList list = new ArrayList();
+        list.get(0);
+        LinkedList linkedList = new LinkedList();
+        linkedList.get(10);
     }
 }
 

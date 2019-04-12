@@ -19,7 +19,7 @@ public class ConsistentHashingWithoutVirtualNode {
     static {
         for (int i = 0; i < servers.length; i++) {
             //对每个服务器进行hash，获取hash值
-            int hash = HashUtils.getHash(servers[i]);
+            int hash = HashUtils.hash_FNV1_32(servers[i]);
             System.out.println("服务器:" + servers[i] + "的hash值为:" + hash);
             sortedMap.put(hash, servers[i]);
         }
@@ -28,7 +28,7 @@ public class ConsistentHashingWithoutVirtualNode {
     //给定一个Key，计算应当路由到的服务器结点，因为按顺时针获取，所以应该获取到的服务器节点的hash值都要比该key的hash值大
     private static String getServer(String key) {
         //得到该key的hash值
-        int hash = HashUtils.getHash(key);
+        int hash = HashUtils.hash_FNV1_32(key);
         //得到大于该Hash值的所有Map
         SortedMap<Integer, String> subMap = sortedMap.tailMap(hash);
         if (subMap.isEmpty()) {
@@ -59,7 +59,7 @@ public class ConsistentHashingWithoutVirtualNode {
     public static void main(String[] args) {
         String[] keys = {"太阳", "月亮", "星星"};
         for (int i = 0; i < keys.length; i++)
-            System.out.println("[" + keys[i] + "]的hash值为" + HashUtils.getHash(keys[i])
+            System.out.println("[" + keys[i] + "]的hash值为" + HashUtils.hash_FNV1_32(keys[i])
                     + ", 被路由到结点[" + getServer(keys[i]) + "]");
     }
 }

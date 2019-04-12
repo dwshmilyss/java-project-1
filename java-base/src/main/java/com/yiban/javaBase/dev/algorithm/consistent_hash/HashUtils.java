@@ -12,8 +12,10 @@ public class HashUtils {
      */
     private static MessageDigest md5 = null;
 
-    //使用FNV1_32_HASH算法计算服务器的Hash值,这里不使用重写hashCode的方法，最终效果没区别
-    public static int getHash(String str) {
+    /**
+     * 使用FNV1_32_HASH算法计算服务器的Hash值,这里不使用重写hashCode的方法，最终效果没区别
+     */
+    public static int hash_FNV1_32(String str) {
         final int p = 16777619;
         int hash = (int) 2166136261L;
         for (int i = 0; i < str.length(); i++)
@@ -30,7 +32,12 @@ public class HashUtils {
         return hash;
     }
 
-    public static long hash(String key) {
+    /**
+     * 使用MD5进行hash运算
+     * @param key
+     * @return
+     */
+    public static long hash_MD5(String key) {
         if (md5 == null) {
             try {
                 md5 = MessageDigest.getInstance("MD5");

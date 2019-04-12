@@ -33,7 +33,7 @@ public class ConsistentHashingWithVirtualNode {
         for (String str : realNodes) {
             for (int i = 0; i < VIRTUAL_NODES; i++) {
                 String virtualNodeName = str + "&&VN" + String.valueOf(i);
-                int hash = HashUtils.getHash(virtualNodeName);
+                int hash = HashUtils.hash_FNV1_32(virtualNodeName);
                 System.out.println("虚拟节点[" + virtualNodeName + "]被添加, hash值为" + hash);
                 virtualNodes.put(hash, virtualNodeName);
             }
@@ -45,7 +45,7 @@ public class ConsistentHashingWithVirtualNode {
     //得到应当路由到的结点
     private static String getServer(String key) {
         //得到该key的hash值
-        int hash = HashUtils.getHash(key);
+        int hash = HashUtils.hash_FNV1_32(key);
         // 得到大于该Hash值的所有Map
         SortedMap<Integer, String> subMap = virtualNodes.tailMap(hash);
         String virtualNode;
@@ -71,6 +71,6 @@ public class ConsistentHashingWithVirtualNode {
         String[] keys = {"太阳", "月亮", "星星"};
         for (int i = 0; i < keys.length; i++)
             System.out.println("[" + keys[i] + "]的hash值为" +
-                    HashUtils.getHash(keys[i]) + ", 被路由到结点[" + getServer(keys[i]) + "]");
+                    HashUtils.hash_FNV1_32(keys[i]) + ", 被路由到结点[" + getServer(keys[i]) + "]");
     }
 }

@@ -29,7 +29,7 @@ public class ConsistentHashingWithoutVirtualNode {
     private static String getServer(String key) {
         //得到该key的hash值
         int hash = HashUtils.hash_FNV1_32(key);
-        //得到大于该Hash值的所有Map
+        //得到大于该Hash值的所有server
         SortedMap<Integer, String> subMap = sortedMap.tailMap(hash);
         if (subMap.isEmpty()) {
             //如果没有比该key的hash值大的，则从第一个node开始。这样可以虚拟成一个圆圈。

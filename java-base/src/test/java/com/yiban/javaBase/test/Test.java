@@ -124,7 +124,9 @@ public class Test {
 
     @org.junit.Test
     public void test1(){
-        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
+
+//        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
+        System.out.println("abc".charAt(0) + 1);
     }
 
     @org.junit.Test

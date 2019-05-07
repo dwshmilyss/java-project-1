@@ -76,9 +76,10 @@ public class NIOClient extends Thread {
                     String message = new String(data, "UTF-8");
                     System.out.println("recevie message from server:, size:" + buffer.position() + " msg: " + message);
                     //写消息到服务端(另外还有一种方法可以写数据)
-//                    ByteBuffer outbuffer = ByteBuffer.wrap(("client.".concat(msg)).getBytes());
-//                    channel.write(outbuffer);
+                    ByteBuffer outbuffer = ByteBuffer.wrap(("client.".concat(message)).getBytes());
+                    channel.write(outbuffer);
                     //
+                    doWrite(channel,message);
                 }
             }
         }

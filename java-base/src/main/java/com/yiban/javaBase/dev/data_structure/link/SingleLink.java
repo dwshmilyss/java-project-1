@@ -197,25 +197,25 @@ public class SingleLink<E extends Comparable> {
         }
         singleLink.iterator();
 
-        System.out.println("\n =============== ");
-        System.out.println("len is = " + singleLink.getLength());
-        System.out.println("=============== ");
-        System.out.println(singleLink.removeByIndex(5));
-        System.out.println("len is = " + singleLink.getLength());
-        singleLink.iterator();
-        System.out.println("\n =============== ");
-        System.out.println(singleLink.insertByIndex(5, 2));
-        System.out.println("len is = " + singleLink.getLength());
-        singleLink.iterator();
+//        System.out.println("\n =============== ");
+//        System.out.println("len is = " + singleLink.getLength());
+//        System.out.println("=============== ");
+//        System.out.println(singleLink.removeByIndex(5));
+//        System.out.println("len is = " + singleLink.getLength());
+//        singleLink.iterator();
+//        System.out.println("\n =============== ");
+//        System.out.println(singleLink.insertByIndex(5, 2));
+//        System.out.println("len is = " + singleLink.getLength());
+//        singleLink.iterator();
         System.out.println("\n reverseSingleLink =============== ");
         singleLink.reverseSingleLink();
-        singleLink.iteratorByRecursion(singleLink.head);
-//        singleLink.iterator();
-        System.out.println("\n reverseByStack =============== ");
-        singleLink.reverseByStack();
-        System.out.println("\n reverseByRecurtion =============== ");
-        singleLink.reverseByRecurtion(singleLink.head);
+//        singleLink.iteratorByRecursion(singleLink.head);
         singleLink.iterator();
+//        System.out.println("\n reverseByStack =============== ");
+//        singleLink.reverseByStack();
+//        System.out.println("\n reverseByRecurtion =============== ");
+//        singleLink.reverseByRecurtion(singleLink.head);
+//        singleLink.iterator();
     }
 
 }

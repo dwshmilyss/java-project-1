@@ -1,7 +1,6 @@
 package com.yiban.javaBase.dev.collections.map;
 
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * 红黑树:
@@ -23,13 +22,52 @@ public class TreeMapTest {
         treeMap.put("d", "d1");
         treeMap.put("c", "c1");
 
-        for (String key :
-                treeMap.keySet()) {
-            System.out.println(treeMap.get(key));
+        for (String key : treeMap.keySet()) {
+            System.out.println(key + " = " + treeMap.get(key));
         }
 
-//        Map<String,String> sortedMap = new SortedMap<String, String>() {
-//        }
 
+        System.out.println("================= ");
+        //这里如果要比较key 传入自定义的比较器即可
+        //如果比较string 这里是多此一举  因为string本身就实现了Comparable
+        Map<String, String> map = new TreeMap<String, String>(new Comparator<String>() {
+            @Override
+            public int compare(String o1, String o2) {
+                return o1.compareToIgnoreCase(o2);
+            }
+        });
+
+        map.put("KFC", "kfc");
+        map.put("WNBA", "wnba");
+        map.put("NBA", "nba");
+        map.put("CBA", "cba");
+        for (String key : map.keySet()) {
+            System.out.println(key + " = " + map.get(key));
+        }
+
+        //按value排序
+        Map<String,Integer> map1 = new HashMap<>();
+        map1.put("b",2);
+        map1.put("a",1);
+        map1.put("d",4);
+        map1.put("e",4);
+        map1.put("c",3);
+
+        List<Map.Entry<String,Integer>> entryList = new ArrayList<>(map1.entrySet());
+        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o1.getValue() - o2.getValue();
+            }
+        });
+        Map<String,Integer> tempMap = new HashMap<>();
+        for (Iterator<Map.Entry<String, Integer>> iter = entryList.iterator();iter.hasNext();){
+            Map.Entry<String, Integer> entry = iter.next();
+            tempMap.put(entry.getKey(), entry.getValue());
+        }
+        System.out.println("================ ");
+        for (String key : tempMap.keySet()) {
+            System.out.println(key + " = " + tempMap.get(key));
+        }
     }
 }

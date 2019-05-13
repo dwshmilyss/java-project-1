@@ -12,6 +12,10 @@
     <dubbo:protocol name="dubbo" port="20880"/>
     <!-- service implementation, as same as regular local bean -->
     <bean id="demoService" class="com.yiban.dubbo.demo.provider.DemoServiceImpl"/>
+    <bean id="demoService1" class="com.yiban.dubbo.demo.provider.DemoService1Impl"/>
+    <bean id="demoService2" class="com.yiban.dubbo.demo.provider.DemoService2Impl"/>
     <!-- declare the service interface to be exported -->
     <dubbo:service interface="com.yiban.dubbo.demo.api.DemoService" ref="demoService"/>
+    <dubbo:service interface="com.yiban.dubbo.demo.api.DemoService1" ref="demoService1"/>
+    <dubbo:service interface="com.yiban.dubbo.demo.api.DemoService2" ref="demoService2"/>
 </beans>

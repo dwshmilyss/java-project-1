@@ -8,8 +8,13 @@ import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
 import sun.misc.Unsafe;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.math.BigDecimal;
+import java.net.URI;
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
@@ -195,6 +200,24 @@ public class Test {
     public void test7() {
         //这里的16进制代表的是ASCII码
         System.out.println(new String(new byte[]{0x61,0x62}));
+
+        URI uri = URI.create("http://www.baidu.com");
+        URLConnection urlConnection = null;
+        try {
+            urlConnection = uri.toURL().openConnection();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            InputStream inputStream =urlConnection.getInputStream() ;
+            InputStreamReader isr = new InputStreamReader(inputStream) ;
+            char[] c = new char[1024] ;
+            while (isr.read(c)!=-1){
+                System.out.print(c) ;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @org.junit.Test
@@ -212,6 +235,7 @@ public class Test {
 
         assert StringUtils.isEmpty("");
     }
+
 
 
     public static String addZeroForNum(String str, int strLength) {

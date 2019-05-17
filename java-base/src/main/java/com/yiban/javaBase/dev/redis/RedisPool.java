@@ -1,6 +1,7 @@
 package com.yiban.javaBase.dev.redis;
 
 import java.util.List;
+import java.util.UUID;
 
 import com.yiban.javaBase.dev.tools.MyTools;
 import org.slf4j.Logger;
@@ -83,14 +84,11 @@ public class RedisPool {
     }
 
     public static void main(String[] args) {
-        Jedis jedis = RedisPool.getJedis();
-        List<String> lists = jedis.lrange("tasklist", 0, 0);
-        System.out.println(lists.get(0));
-//        JSONObject jsonObject = JSONObject.parseObject(str);
-//        System.out.println(jsonObject.get("userId")+" "+jsonObject.get("word"));
-        RedisPool.close(jedis);
-        
-//        String str = "{\"userId\":1,\"word\":\"哈哈,呵呵,嘿嘿\",\"time_start\":1,\"time_end\":2}";
+        Jedis jedis = getJedis();
+        for (int i = 1; i <= 10; i++) {
+            jedis.set("key" + i, UUID.randomUUID().toString());
+        }
+        close(jedis);
 
     }
 }

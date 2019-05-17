@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 
 /**
@@ -31,9 +32,13 @@ public class FileCopyDemo {
         try {
             fis = new FileInputStream(src);
             fos = new FileOutputStream(dest);
+
             inChannel = fis.getChannel();//得到对应的文件通道
             outChannel = fos.getChannel();//得到对应的文件通道
-            inChannel.transferTo(0, inChannel.size(), outChannel);//连接两个通道，并且从in通道读取，然后写入out通道
+
+//            inChannel.transferTo(0, inChannel.size(), outChannel);//连接两个通道，并且从in通道读取，然后写入out通道
+
+            inChannel.transferTo(0, inChannel.size(), Channels.newChannel(fos));//连接两个通道，并且从in通道读取，然后写入out通道
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

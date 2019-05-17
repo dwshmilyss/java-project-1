@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.rpc;
+package com.yiban.javaBase.dev.rpc.serialize;
 
 import java.io.Serializable;
 

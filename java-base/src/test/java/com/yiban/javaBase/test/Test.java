@@ -3,11 +3,14 @@ package com.yiban.javaBase.test;
 
 import com.alibaba.fastjson.JSONArray;
 import com.yiban.javaBase.dev.concurrent.fork_join.SortTask;
+import org.apache.commons.lang.StringUtils;
 import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
 import java.util.*;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
@@ -121,7 +124,9 @@ public class Test {
 
     @org.junit.Test
     public void test1(){
-        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
+
+//        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
+        System.out.println("abc".charAt(0) + 1);
     }
 
     @org.junit.Test
@@ -142,8 +147,7 @@ public class Test {
 
     @org.junit.Test
     public void test3(){
-        JSONArray arr = new JSONArray();
-        arr.add("ss");
+        System.out.println(UUID.randomUUID().toString().replace("-","").length());
     }
 
     @org.junit.Test
@@ -185,5 +189,43 @@ public class Test {
             Thread thread = new Thread(runnable);
             thread.start();
         }
+    }
+
+    @org.junit.Test
+    public void test7() {
+        //这里的16进制代表的是ASCII码
+        System.out.println(new String(new byte[]{0x61,0x62}));
+    }
+
+    @org.junit.Test
+    public void test8() {
+        long time = 1554780426;
+        String temp = "1011100101011000001000100001010";
+        String res = addZeroForNum(temp, 36);
+        System.out.println("res = " + res + ",len = " + res.length());
+        System.out.println(1554780426);
+        System.out.println(Long.parseLong(temp,2));
+        System.out.println(Long.parseLong(res,2));
+        System.out.println(temp.length());
+
+
+
+        assert StringUtils.isEmpty("");
+    }
+
+
+    public static String addZeroForNum(String str, int strLength) {
+        int strLen = str.length();
+        if (strLen < strLength) {
+            while (strLen < strLength) {
+                StringBuffer sb = new StringBuffer();
+                sb.append("0").append(str);// 左补0
+                // sb.append(str).append("0");//右补0
+                str = sb.toString();
+                strLen = str.length();
+            }
+        }
+
+        return str;
     }
 }

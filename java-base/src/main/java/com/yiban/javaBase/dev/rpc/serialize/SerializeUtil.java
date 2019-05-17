@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.rpc;
+package com.yiban.javaBase.dev.rpc.serialize;
 
 import com.alibaba.com.caucho.hessian.io.HessianInput;
 import com.alibaba.com.caucho.hessian.io.HessianOutput;
@@ -12,7 +12,7 @@ import java.io.*;
  * @date 2018/9/18
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class RPCTheory {
+public class SerializeUtil {
 
     /**
      * 在网络上传输的数据，无论何种类型，最终都需要转化为二进制流。在面向对象的程序设计中，客户端将对象转化为二进制流发送给服务端，服务端接收数据后将二进制流转化为对象

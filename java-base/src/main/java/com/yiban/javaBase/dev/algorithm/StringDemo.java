@@ -48,6 +48,9 @@ public class StringDemo {
 //        getLCString(str1.toCharArray(), str2.toCharArray());
 
 //        System.out.println(getFirstCharNotRepeatable("aabbcdcde"));
+
+
+        findSubString("abcdefghi", "bca");
     }
 
     /**
@@ -339,6 +342,38 @@ public class StringDemo {
             }
         }
         return null;
+    }
+
+    /**
+     * 查找子串第一次出现的位置
+     * @param str1
+     * @param str2
+     * @return
+     */
+    public static int findSubString(String str1,String str2) {
+        str1 = str1.toLowerCase();
+        str2 = str2.toLowerCase();
+        int len1 = str1.length();
+        int len2 = str2.length();
+        int i = 0, j = 0;
+        String min,max;
+        max = len1 < len2 ? str2 : str1;
+        min = len1 < len2 ? str1 : str2;
+        while (i < max.length() && j < min.length()) {
+            if (max.charAt(i) == min.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                i = i - j + 1;
+                j = 0;
+            }
+        }
+        if (j >= min.length()) { //子串遍历完成则返回匹配成功时 i 的起始位置。
+            return i - j;
+        } else {   // 没找到
+            return -1;
+        }
+
     }
 }
 

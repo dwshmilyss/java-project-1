@@ -236,7 +236,27 @@ public class Test {
         assert StringUtils.isEmpty("");
     }
 
+    @org.junit.Test
+    public void test9() {
+        SortedMap<Integer, String> sortedMap = new TreeMap<Integer, String>();
+        sortedMap.put(1, "a");
+        sortedMap.put(2, "b");
+        sortedMap.put(3, "c");
+        sortedMap.put(4, "d");
+        sortedMap.put(5, "e");
 
+        SortedMap<Integer,String> subMap = sortedMap.tailMap(2);
+        for (Map.Entry<Integer,String> entry : subMap.entrySet()) {
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+
+        System.out.println("-------------------------");
+
+        for (Iterator<Map.Entry<Integer,String>> iterator = subMap.entrySet().iterator(); iterator.hasNext(); ) {
+            Map.Entry<Integer, String> entry = iterator.next();
+            System.out.println(entry.getKey() + " " + entry.getValue());
+        }
+    }
 
     public static String addZeroForNum(String str, int strLength) {
         int strLen = str.length();

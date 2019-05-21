@@ -36,30 +36,30 @@ public class TopNHeap<T extends Comparable<? super T>> {
             System.out.print("  ");
         }
 
-        System.out.println("  ");
-        heap.initHeap(data);
-        for (int i = 0; i < 10; i++) {
-            heap.addToHeap(i);
-        }
-        while (heap.hasNext()) {
-            System.out.print(heap.removeTop());
-            System.out.print("  ");
-        }
-
-        System.out.println("  ");
-        heap = new TopNHeap<Integer>(10);
-        Random rd = new Random();
-        for (int i = 0; i < 20; i++) {
-            int value = rd.nextInt(100);
-//          System.out.print(value);
-//          System.out.print("  ");
-            heap.addToHeap(value);
-        }
-        System.out.println("  ");
-        while (heap.hasNext()) {
-            System.out.print(heap.removeTop());
-            System.out.print("  ");
-        }
+//        System.out.println("  ");
+//        heap.initHeap(data);
+//        for (int i = 0; i < 10; i++) {
+//            heap.addToHeap(i);
+//        }
+//        while (heap.hasNext()) {
+//            System.out.print(heap.removeTop());
+//            System.out.print("  ");
+//        }
+//
+//        System.out.println("  ");
+//        heap = new TopNHeap<Integer>(10);
+//        Random rd = new Random();
+//        for (int i = 0; i < 20; i++) {
+//            int value = rd.nextInt(100);
+////          System.out.print(value);
+////          System.out.print("  ");
+//            heap.addToHeap(value);
+//        }
+//        System.out.println("  ");
+//        while (heap.hasNext()) {
+//            System.out.print(heap.removeTop());
+//            System.out.print("  ");
+//        }
 
     }
 

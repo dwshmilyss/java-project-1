@@ -258,13 +258,6 @@ public class Test {
         }
     }
 
-    @org.junit.Test
-    public void test10() {
-        System.out.println(Integer.MAX_VALUE);
-        System.out.println(Integer.MIN_VALUE);
-        System.out.println(1L << 6);
-        System.out.println(63 >> 6);
-    }
 
     public static String addZeroForNum(String str, int strLength) {
         int strLen = str.length();

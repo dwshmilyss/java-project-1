@@ -128,7 +128,8 @@ public class KafkaConsumerDemo1 {
         //是否自动提交已拉取消息的offset。提交offset即视为该消息已经成功被消费，该组下的Consumer无法再拉取到该消息（除非手动修改offset）。默认为true
         //和commit=false 配合使用并没有丢失消息
         /**
-         * 当无法获取当前offset的时候该怎么处理，这个配置项的默认值是“latest”，而当我们新建一个group对主题订阅的时候，第一次应该是符合这个要求的（无法知道当前的offset值），这个时候就触发了“latest”这个配置值对应的操作，也就是说把当前topic里面最新的偏移作为offset，那显然，该消费者是读不到主题中的历史信息的，于是把配置的值改为“earliest”，发现正常了，
+         * 当无法获取当前offset的时候该怎么处理，这个配置项的默认值是“latest”，而当我们新建一个group对主题订阅的时候，第一次应该是符合这个要求的（无法知道当前的offset值），
+         * 这个时候就触发了“latest”这个配置值对应的操作，也就是说把当前topic里面最新的偏移作为offset，那显然，该消费者是读不到主题中的历史信息的，于是把配置的值改为“earliest”，发现正常了，
          需要注意的是，这个配置只在group第一次订阅主题的时候触发，一旦这个offset值被确定下来了，你再把这个配置改成“earliest”就没效果了，因为他已经不符合这个条件了（这个group在这个主题下已经能拿到offset值了）
          */
         properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
@@ -251,7 +252,7 @@ public class KafkaConsumerDemo1 {
 //        //从指定partition的未提交的offset的开始位置开始消费 等价于auto.offset.reset => "earliest"
 ////        kafkaConsumer.seekToBeginning(Arrays.asList(partition0));
 //        //跳到指定partition的结束位置 但是不改变kafkaConsumer.position(partition0)，不等价于auto.offset.reset => "latest"
-////        kafkaConsumer.seekToEnd(Arrays.asList(partition0));
+        kafkaConsumer.seekToEnd(Arrays.asList(test_partition_0));
 //
 //
         while (true) {

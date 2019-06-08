@@ -101,9 +101,24 @@ public class KafkaConsumerThreadDemo {
          */
         public void autoCommit(boolean isClosed) {
             while (isClosed) {
+                /**
+                 *
+                 */
                 ConsumerRecords<String, String> records = kafkaConsumer.poll(100);//100ms 拉取一次数据
                 for (ConsumerRecord<String, String> record : records) {
                     System.out.println(Thread.currentThread().getName() + " : topic = " + record.topic() + " partition = " + record.partition() + " offset = " + record.offset() + " key = " + record.key() + " value = " + record.value());
+                }
+
+                /**
+                 * 遍历所有分区 这里得遍历所有分区，否则还是只消费了一个区：(待验证)
+                 */
+                for (TopicPartition topicPartition : records.partitions()) {
+                    List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
+                    for (ConsumerRecord<String,String> record : partitionRecords) {
+                        System.out.println(
+                                "message==>key:" + record.key() + " value:" + record.value() + " offset:" + record.offset()
+                                        + " 分区:" + record.partition());
+                    }
                 }
             }
         }

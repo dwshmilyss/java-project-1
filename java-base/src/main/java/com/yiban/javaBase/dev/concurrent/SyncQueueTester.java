@@ -29,6 +29,7 @@ public class SyncQueueTester {
         executor.
                 submit(
                         new Callable<Void>() {
+                            @Override
                             public Void call() throws InterruptedException {
                                 System.out.println("start " + index);
                                 Thread.sleep(2000); // pretend to do work

@@ -60,10 +60,12 @@ public class KafkaProducerDemo1 {
 
                 ProducerRecord<String, String> record = new ProducerRecord<String, String>(TOPIC, String.valueOf(i), "this is message : " + i);
                 kafkaProducer.send(record, new Callback() {
+                    @Override
                     public void onCompletion(RecordMetadata metadata, Exception e) {
                         System.out.println("callback .....");
-                        if (e != null)
+                        if (e != null) {
                             e.printStackTrace();
+                        }
                         System.out.println("topic = " + metadata.topic() + ",partition" + metadata.partition() + ",offset = " + metadata.offset() + ",timestamp = " + metadata.timestamp());
                     }
                 });

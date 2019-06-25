@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.FutureTask;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.locks.ReentrantLock;
@@ -23,12 +24,12 @@ import java.util.concurrent.locks.ReentrantLock;
  */
 public class KafkaConsumerThreadDemo {
 
-    private static final int NUMPARTITIONS = 9;
-    private static final String GROUPNAME = "g3";
-    private static final String TOPICNAME = "test1";
-    private static final String BROKERS = "10.21.3.129:9092";
-    private static final boolean ISAUTOCOMMIT = true;
-    private static final boolean ISHIGH = false;
+    private static final int NUMPARTITIONS = 8;
+    private static final String GROUPNAME = "test_8_3_g2";
+    private static final String TOPICNAME = "test_8_3";
+    private static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
+    private static final boolean ISAUTOCOMMIT = false;
+    private static final boolean ISHIGH = true;
 
     public static void main(String[] args) {
         // 修改kafka日志输出级别(只针对当前的console)
@@ -68,6 +69,7 @@ public class KafkaConsumerThreadDemo {
                 this.partitionId = partitionId;
                 this.brokers = brokers;
                 this.isHigh = isHigh;
+                createConsumer(groupName, topicName, partitionId, brokers, isHigh);
             } finally {
                 lock.unlock();
             }
@@ -90,6 +92,17 @@ public class KafkaConsumerThreadDemo {
             properties.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommit);//自动提交
             properties.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, brokers);//指定broker地址，来找到group的coordinator
             properties.put(ConsumerConfig.GROUP_ID_CONFIG, groupName);//指定用户组
+            //从最早开始消费
+            properties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+            //broker检测consumer是否超时 如果在这段时间内consumer没有发送心跳给broker，则认为consumer已经离线，会触发rebalance
+            properties.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 30000);
+            // 心跳间隔设置 通常要小于session.timeout.ms 但也不能高于session.timeout.ms的1/3
+            properties.put(ConsumerConfig.HEARTBEAT_INTERVAL_MS_CONFIG, 10000);
+            //
+            properties.put(ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, 31000);
+
+            properties.put(ConsumerConfig.MAX_PARTITION_FETCH_BYTES_CONFIG, 1000);
+
 
             kafkaConsumer = new KafkaConsumer(properties);
             return kafkaConsumer;
@@ -112,14 +125,14 @@ public class KafkaConsumerThreadDemo {
                 /**
                  * 遍历所有分区 这里得遍历所有分区，否则还是只消费了一个区：(待验证)
                  */
-                for (TopicPartition topicPartition : records.partitions()) {
-                    List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
-                    for (ConsumerRecord<String,String> record : partitionRecords) {
-                        System.out.println(
-                                "message==>key:" + record.key() + " value:" + record.value() + " offset:" + record.offset()
-                                        + " 分区:" + record.partition());
-                    }
-                }
+//                for (TopicPartition topicPartition : records.partitions()) {
+//                    List<ConsumerRecord<String, String>> partitionRecords = records.records(topicPartition);
+//                    for (ConsumerRecord<String,String> record : partitionRecords) {
+//                        System.out.println(
+//                                "message==>key:" + record.key() + " value:" + record.value() + " offset:" + record.offset()
+//                                        + " 分区:" + record.partition());
+//                    }
+//                }
             }
         }
 

@@ -74,7 +74,7 @@ public class FileCopyDemo {
             while (inChannel.read(buffer) != -1) {
                 //切换模式（由读模式切换为写模式）
                 /**
-                 * Buffer有两种模式，写模式和读模式。在写模式下调用flip()之后，Buffer从写模式变成读模式。
+                 * Buffer有两种模式，写模式和读模式。在读模式下调用flip()之后，Buffer从读模式变成写模式。
                  *
                  */
                 buffer.flip();

@@ -7,7 +7,6 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.clients.producer.RecordMetadata;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
@@ -21,7 +20,7 @@ import java.util.concurrent.Executors;
  * @blog http://blog.csdn.net/dwshmilyss
  */
 public class KafkaProducerThreadDemo {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerThreadDemo.class);
+    private static final Logger logger = Logger.getLogger(KafkaProducerThreadDemo.class);
 
     private static final String BOOTSTRAP = "10.21.3.129:9092";
     private static final String TOPICNAME = "test1";

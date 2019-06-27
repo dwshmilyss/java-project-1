@@ -6,7 +6,7 @@ import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.spi.LoggerFactory;
 
 import java.util.*;
 
@@ -36,7 +36,7 @@ public class KafkaConsumerDemo1 {
     /**
      * Logger
      */
-    private static final org.slf4j.Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerDemo1.class);
+    private static final Logger LOGGER = Logger.getLogger(KafkaConsumerDemo1.class);
 
 
     /**
@@ -78,7 +78,7 @@ public class KafkaConsumerDemo1 {
         consumer.subscribe(TOPICS);//指定topic消费
 
         long i = 0;
-//        while (true) {
+        while (true) {
             //每100条提交一次
             ConsumerRecords<String, String> records = consumer.poll(100);//100ms 拉取一次数据
             for (ConsumerRecord<String, String> record : records) {
@@ -101,7 +101,7 @@ public class KafkaConsumerDemo1 {
                 System.out.println("now commit the partition[ " + partition.partition() + "] offset");
                 consumer.commitSync(Collections.singletonMap(partition, new OffsetAndMetadata(lastOffset + 1)));
             }
-//        }
+        }
     }
 
 

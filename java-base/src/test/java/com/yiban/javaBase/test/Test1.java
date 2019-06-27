@@ -13,15 +13,16 @@ import java.util.List;
 public class Test1 {
     @Test
     public void test() {
-        System.out.println(Integer.MAX_VALUE);
-        System.out.println(1l << 31);
-        System.out.println("--------------");
-        System.out.println(1 << 30);
-        System.out.println("--------------");
-        System.out.println(Integer.MIN_VALUE);
-        System.out.println(1L << 6);
-        System.out.println(63 >> 6);
-        System.out.println(1 | 1 << 1);
+//        System.out.println(Integer.MAX_VALUE);
+//        System.out.println(1l << 31);
+//        System.out.println("--------------");
+//        System.out.println(1 << 30);
+//        System.out.println("--------------");
+//        System.out.println(Integer.MIN_VALUE);
+//        System.out.println(1L << 6);
+//        System.out.println(63 >> 6);
+//        System.out.println(1 | 1 << 1);
+        System.out.println(Math.abs("test_8_3_g2".hashCode()) % 8);
     }
 
     @Test

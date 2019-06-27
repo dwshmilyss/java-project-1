@@ -6,8 +6,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.log4j.Level;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.log4j.Logger;
 
 import java.util.Arrays;
 import java.util.List;
@@ -25,7 +24,7 @@ public class KafkaConsumerFutureTask {
     /**
      * Logger
      **/
-    private static final Logger LOGGER = LoggerFactory.getLogger(KafkaConsumerFutureTask.class);
+    private static final Logger LOGGER = Logger.getLogger(KafkaConsumerFutureTask.class);
     private static final int NUMPARTITIONS = 8;
     private static final String GROUPNAME = "test_8_3_g2";
     private static final String TOPICNAME = "test_8_3";

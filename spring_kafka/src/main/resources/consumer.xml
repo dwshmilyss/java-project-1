@@ -31,7 +31,7 @@
     </bean>
 
     <!-- 3.定义消费实现类 -->
-    <bean id="kafkaConsumerService" class="com.yiban.kafka.spring.KafkaConsumerSerivceImpl" />
+    <bean id="kafkaMessageListener" class="com.yiban.spring_kafka.dev.KafkaMessageListener" />
 
     <!-- 4.消费者容器配置信息 -->
     <bean id="containerProperties" class="org.springframework.kafka.listener.config.ContainerProperties">
@@ -47,7 +47,7 @@
                  <value>${templar.aggrement.agreementRepayRemind.topic}</value>-->
             </list>
         </constructor-arg>
-        <property name="messageListener" ref="kafkaConsumerService" />
+        <property name="messageListener" ref="kafkaMessageListener" />
     </bean>
     <!-- 5.消费者并发消息监听容器，执行doStart()方法 -->
     <bean id="messageListenerContainer" class="org.springframework.kafka.listener.ConcurrentMessageListenerContainer" init-method="doStart" >

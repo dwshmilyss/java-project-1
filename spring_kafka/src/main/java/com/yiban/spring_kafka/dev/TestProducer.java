@@ -1,4 +1,4 @@
-package com.yiban.kafka.spring;
+package com.yiban.spring_kafka.dev;
 
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -28,7 +28,7 @@ public class TestProducer {
             @Override
             public void onSuccess(SendResult<K, T> ktSendResult) {
                 //成功业务逻辑
-                System.out.println("发送成功");
+                System.out.println("发送成功 : " + ktSendResult.toString());
 
             }
         };

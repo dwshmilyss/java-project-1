@@ -1,7 +1,9 @@
-package com.yiban.kafka.spring;
+package com.yiban.spring_kafka.dev.boot;
 
+import org.apache.log4j.Logger;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+
 
 /**
  * @auther WEI.DUAN
@@ -9,8 +11,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @website http://blog.csdn.net/dwshmilyss
  */
 @SpringBootApplication
-public class TestConsumer {
+public class TestConsumerSpring {
+    public static final Logger LOGGER = Logger.getLogger(TestConsumerSpring.class);
+
     public static void main(String[] args) {
-        SpringApplication.run(TestConsumer.class, args);
+        SpringApplication.run(TestConsumerSpring.class, args);
     }
 }

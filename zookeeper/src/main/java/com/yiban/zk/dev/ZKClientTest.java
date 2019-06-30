@@ -17,13 +17,16 @@ public class ZKClientTest {
         String child1Path = rootPath + "/hello1";
         String child2Path = rootPath + "/word1";
 
-        //ZKOperate操作API
-        ZKOperate zkWatchAPI = new ZKOperate();
+        //ZKOperate操作API 封装了zk的一些基本操作
+        ZKOperate zkOperate = new ZKOperate();
 
         // 连接zk服务器
         MyZooKeeper zooKeeper = new MyZooKeeper();
         zooKeeper.connect("10.21.3.77:2181",30000);
         try {
+
+            zkOperate.createZNode("/bb", "test for data");
+            //
             MyZooKeeper.zooKeeper.create("/aa", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
             MyZooKeeper.zooKeeper.create("/aa/loc1", String.valueOf(10).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
             MyZooKeeper.zooKeeper.create("/aa/loc2", String.valueOf(11).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);

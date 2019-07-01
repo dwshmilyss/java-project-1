@@ -17,7 +17,10 @@ public class MyZooKeeper implements Watcher{
     protected CountDownLatch countDownLatch = new CountDownLatch(1);
     //缓存时间
     private static final int SESSION_TIME = 2000;
+
     public static ZooKeeper zooKeeper = null;
+
+    @Override
     public void process(WatchedEvent watchedEvent) {
         logger.info("收到事件通知：" + watchedEvent.getState() );
         if(watchedEvent.getState()== Event.KeeperState.SyncConnected){
@@ -30,8 +33,7 @@ public class MyZooKeeper implements Watcher{
      * <pre>
      *     [关于connectString服务器地址配置]
      *     格式: 192.168.1.1:2181,192.168.1.2:2181,192.168.1.3:2181
-     *     这个地址配置有多个ip:port之间逗号分隔,底层操作
-     *     ConnectStringParser connectStringParser =  new ConnectStringParser(“192.168.1.1:2181,192.168.1.2:2181,192.168.1.3:2181”);
+     *     这个地址配置有多个ip:port之间逗号分隔,底层操作 : ConnectStringParser connectStringParser =  new ConnectStringParser(“192.168.1.1:2181,192.168.1.2:2181,192.168.1.3:2181”);
      *     这个类主要就是解析传入地址列表字符串，将其它保存在一个ArrayList中
      *     ArrayList<InetSocketAddress> serverAddresses = new ArrayList<InetSocketAddress>();
      *     接下去，这个地址列表会被进一步封装成StaticHostProvider对象，并且在运行过程中，一直是这个对象来维护整个地址列表。

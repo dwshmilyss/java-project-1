@@ -1,4 +1,4 @@
-package com.yiban.spring_kafka.dev;
+package com.yiban.spring_kafka.dev.boot.partitioner;
 
 import org.apache.kafka.clients.producer.Partitioner;
 import org.apache.kafka.common.Cluster;

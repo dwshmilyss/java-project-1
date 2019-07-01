@@ -21,7 +21,7 @@
                 <entry key="value.serializer"
                        value="org.apache.kafka.common.serialization.StringSerializer" />
                 <entry key="partitioner.class"
-                       value="${partitioner.class}"/>
+                       value="${partitioner.class}"/><!-- 用自己定义的partitioner分区 -->
             </map>
         </constructor-arg>
     </bean>

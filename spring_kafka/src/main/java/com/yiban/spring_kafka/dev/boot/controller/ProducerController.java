@@ -28,8 +28,8 @@ public class ProducerController {
 
     @ApiOperation(value = "send")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "topic",value = "test_8_3",defaultValue = "test_8_3",required = true,dataType = "string",paramType = "query"),
-            @ApiImplicitParam(name = "content", value = "content", required = true, dataType = "string", paramType = "query")
+            @ApiImplicitParam(name = "topic",value = "the topic for producer",defaultValue = "test_8_3",required = true,dataType = "string",paramType = "query"),
+            @ApiImplicitParam(name = "content", value = "value of data", required = true, dataType = "string", paramType = "query")
     })
     @PostMapping(value = "/send", produces = "application/json;charset=UTF-8")
     public String sendMsg(@RequestParam String topic, @RequestParam String content) {

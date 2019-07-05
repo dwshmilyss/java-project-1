@@ -136,7 +136,7 @@ public class MyListener {
     }
 
     @KafkaListener(id = "id7", topicPartitions = { @TopicPartition(topic = TPOIC, partitions = { "7" }) })
-    public void listenPartition7(List<ConsumerRecord<?, ?>> records) {
+    public void listenPartition7(List<ConsumerRecord<?, ?>> records,Acknowledgment acknowledgment) {
         log.info("Id7 Listener, Thread ID: " + Thread.currentThread().getId());
         log.info("Id7 records size " + records.size());
 
@@ -148,6 +148,38 @@ public class MyListener {
                 String topic = record.topic();
                 log.info("p7 Received message={}", message);
             }
+        }
+        acknowledgment.acknowledge();
+    }
+
+
+    /**
+     * 这个方法只是测试手动提交offset
+     * @param records
+     * @param acknowledgment
+     */
+    @KafkaListener(id = "id8", topicPartitions = { @TopicPartition(topic = TPOIC, partitions = { "8" }) })
+    public void listenPartition8(List<ConsumerRecord<?, ?>> records,Acknowledgment acknowledgment) {
+        log.info("Id8 Listener, Thread ID: " + Thread.currentThread().getId());
+        log.info("Id8 records size " + records.size());
+
+        for (ConsumerRecord<?, ?> record : records) {
+            Optional<?> kafkaMessage = Optional.ofNullable(record.value());
+            log.info("Received: " + record);
+            if (kafkaMessage.isPresent()) {
+                Object message = record.value();
+                String topic = record.topic();
+                log.info("p8 Received message={}", message);
+            }
+        }
+        try {
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }finally {
+            log.info("start commit offset");
+            acknowledgment.acknowledge();//手动提交偏移量
+            log.info("stop commit offset");
         }
     }
 }

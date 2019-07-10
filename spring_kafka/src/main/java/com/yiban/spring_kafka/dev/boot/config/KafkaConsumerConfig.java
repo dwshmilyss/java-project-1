@@ -12,6 +12,7 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.KafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.AbstractMessageListenerContainer;
 import org.springframework.kafka.listener.ConcurrentMessageListenerContainer;
 
 import java.util.HashMap;
@@ -36,6 +37,10 @@ public class KafkaConsumerConfig {
         //设置为批量消费，每个批次数量在Kafka配置参数中设置ConsumerConfig.MAX_POLL_RECORDS_CONFIG
         factory.setBatchListener(true);
         factory.getContainerProperties().setPollTimeout(3000);
+        //配置手动提交 这个要配合MyListener中的Acknowledgment 一起使用
+        factory.getContainerProperties().setAckMode(AbstractMessageListenerContainer.AckMode.MANUAL_IMMEDIATE);
+        //异常的话直接从onMessage里抛出去，这时候spring-kafka会看你的ackOnError设置的值，是true的话会提交，false的话不提交
+        factory.getContainerProperties().setAckOnError(true);
         return factory;
     }
 

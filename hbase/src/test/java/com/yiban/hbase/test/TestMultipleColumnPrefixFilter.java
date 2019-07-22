@@ -23,10 +23,12 @@ import static org.junit.Assert.assertEquals;
  */
 public class TestMultipleColumnPrefixFilter {
     private static final TableName TABLENAME = TableName.valueOf("test1");
+    private static final TableName TABLENAME1 = TableName.valueOf("test2");
     private static final String ROOTDIR = "hdfs://gagcluster/hbase";
 
     @Test
     public void testMultipleColumnPrefixFilter() throws IOException {
+        //创建表
         Configuration configuration = getConfiguration();
 //        System.out.println("configuration = " + configuration.get("hbase.column.max.version"));
         Connection connection = ConnectionFactory.createConnection(configuration);
@@ -34,30 +36,33 @@ public class TestMultipleColumnPrefixFilter {
         String family = "Family";
         HTableDescriptor hTableDescriptor = new HTableDescriptor(TABLENAME);
         HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(family);
+        //因为下面插入数据的时候会有两个版本号，所以这里要设置最大版本号
         hColumnDescriptor.setMaxVersions(2);
         hTableDescriptor.addFamily(hColumnDescriptor);
         if (!admin.tableExists(TABLENAME)) {
             admin.createTable(hTableDescriptor);
         }
-
         Table table = connection.getTable(TABLENAME);
 
         List<String> rows = generateRandomWords(100, "row");
         List<String> columns = generateRandomWords(10000, "column");
+        //这个变量相当于版本号
         long maxTimestamp = 2;
 
+        //用于存储三个前缀各有多少条数据
         Map<String, List<KeyValue>> prefixMap = new HashMap<String,
                 List<KeyValue>>();
-
         prefixMap.put("p", new ArrayList<KeyValue>());
         prefixMap.put("q", new ArrayList<KeyValue>());
         prefixMap.put("s", new ArrayList<KeyValue>());
 
         String valueString = "ValueString";
         System.out.println("rows size = " + rows.size());
+        //开始插入数据
         for (String row : rows) {
             Put put = new Put(Bytes.toBytes(row));
             for (String column : columns) {
+                //每条数据两个版本
                 for (long timestamp = 1; timestamp <= maxTimestamp; timestamp++) {
                     KeyValue kv = KeyValueTestUtil.create(row, family, column, timestamp,
                             valueString);
@@ -74,6 +79,7 @@ public class TestMultipleColumnPrefixFilter {
 
         System.out.println(prefixMap.get("p").size() + " " + prefixMap.get("q").size());
 
+        //定义检索条件 这里按照列名的前缀进行查找
         MultipleColumnPrefixFilter filter;
         Scan scan = new Scan();
         scan.setMaxVersions();
@@ -106,13 +112,23 @@ public class TestMultipleColumnPrefixFilter {
 
     @Test
     public void testMultipleColumnPrefixFilterWithManyFamilies() throws IOException {
+        Configuration configuration = getConfiguration();
+        Connection connection = ConnectionFactory.createConnection(configuration);
+        Admin admin = connection.getAdmin();
+
         String family1 = "Family1";
         String family2 = "Family2";
-        HTableDescriptor htd = new HTableDescriptor(TABLENAME);
-        htd.addFamily(new HColumnDescriptor(family1));
-        htd.addFamily(new HColumnDescriptor(family2));
-        HRegionInfo info = new HRegionInfo(htd.getTableName(), null, null, false);
-        HRegion region = HRegion.createHRegion(info, new Path(ROOTDIR), getConfiguration(), htd);
+        HTableDescriptor hTableDescriptor = new HTableDescriptor(TABLENAME1);
+        HColumnDescriptor hColumnDescriptor1 = new HColumnDescriptor(family1);
+        HColumnDescriptor hColumnDescriptor2 = new HColumnDescriptor(family2);
+        hColumnDescriptor1.setMaxVersions(3);
+        hColumnDescriptor2.setMaxVersions(3);
+        hTableDescriptor.addFamily(hColumnDescriptor1);
+        hTableDescriptor.addFamily(hColumnDescriptor2);
+        if (!admin.tableExists(TABLENAME1)) {
+            admin.createTable(hTableDescriptor);
+        }
+        Table table = connection.getTable(TABLENAME1);
 
         List<String> rows = generateRandomWords(100, "row");
         List<String> columns = generateRandomWords(10000, "column");
@@ -150,7 +166,7 @@ public class TestMultipleColumnPrefixFilter {
                     }
                 }
             }
-            region.put(p);
+            table.put(p);
         }
 
         MultipleColumnPrefixFilter filter;
@@ -162,37 +178,28 @@ public class TestMultipleColumnPrefixFilter {
 
         filter = new MultipleColumnPrefixFilter(filter_prefix);
         scan.setFilter(filter);
-        List<Cell> results = new ArrayList<Cell>();
-        InternalScanner scanner = region.getScanner(scan);
-        while (scanner.next(results)) ;
+        List<KeyValue> results = new ArrayList<KeyValue>();
+        ResultScanner scanner = table.getScanner(scan);
+        for (Result result : scanner) {
+            for (KeyValue keyValue : result.raw()) {
+                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()) + "version = " + keyValue.getTimestamp());
+                results.add(keyValue);
+            }
+        }
+        System.out.println("results size = " + results.size());
         assertEquals(prefixMap.get("p").size() + prefixMap.get("q").size(), results.size());
     }
 
+
+    /**
+     * 对比 MultipleColumnPrefixFilter vs ColumnPrefixFilter
+     * @throws IOException
+     */
     @Test
     public void testMultipleColumnPrefixFilterWithColumnPrefixFilter() throws IOException {
-        String family = "Family";
-        HTableDescriptor htd = new HTableDescriptor(TABLENAME);
-        htd.addFamily(new HColumnDescriptor(family));
-        HRegionInfo info = new HRegionInfo(htd.getTableName(), null, null, false);
-        HRegion region = HRegion.createHRegion(info, new Path(ROOTDIR), getConfiguration(), htd);
-
-        List<String> rows = generateRandomWords(100, "row");
-        List<String> columns = generateRandomWords(10000, "column");
-        long maxTimestamp = 2;
-
-        String valueString = "ValueString";
-
-        for (String row : rows) {
-            Put p = new Put(Bytes.toBytes(row));
-            for (String column : columns) {
-                for (long timestamp = 1; timestamp <= maxTimestamp; timestamp++) {
-                    KeyValue kv = KeyValueTestUtil.create(row, family, column, timestamp,
-                            valueString);
-                    p.add(kv);
-                }
-            }
-            region.put(p);
-        }
+        Configuration configuration = getConfiguration();
+        Connection connection = ConnectionFactory.createConnection(configuration);
+        Table table = connection.getTable(TABLENAME);
 
         MultipleColumnPrefixFilter multiplePrefixFilter;
         Scan scan1 = new Scan();
@@ -202,9 +209,14 @@ public class TestMultipleColumnPrefixFilter {
 
         multiplePrefixFilter = new MultipleColumnPrefixFilter(filter_prefix);
         scan1.setFilter(multiplePrefixFilter);
-        List<Cell> results1 = new ArrayList<Cell>();
-        InternalScanner scanner1 = region.getScanner(scan1);
-        while (scanner1.next(results1)) ;
+        List<KeyValue> results1 = new ArrayList<KeyValue>();
+        ResultScanner scanner1 = table.getScanner(scan1);
+        for (Result result : scanner1) {
+            for (KeyValue keyValue : result.raw()) {
+                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()) + "version = " + keyValue.getTimestamp());
+                results1.add(keyValue);
+            }
+        }
 
         ColumnPrefixFilter singlePrefixFilter;
         Scan scan2 = new Scan();
@@ -212,9 +224,14 @@ public class TestMultipleColumnPrefixFilter {
         singlePrefixFilter = new ColumnPrefixFilter(Bytes.toBytes("p"));
 
         scan2.setFilter(singlePrefixFilter);
-        List<Cell> results2 = new ArrayList<Cell>();
-        InternalScanner scanner2 = region.getScanner(scan1);
-        while (scanner2.next(results2)) ;
+        List<KeyValue> results2 = new ArrayList<KeyValue>();
+        ResultScanner scanner2 = table.getScanner(scan2);
+        for (Result result : scanner2) {
+            for (KeyValue keyValue : result.raw()) {
+                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()) + "version = " + keyValue.getTimestamp());
+                results2.add(keyValue);
+            }
+        }
 
         assertEquals(results1.size(), results2.size());
     }

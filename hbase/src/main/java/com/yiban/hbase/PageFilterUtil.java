@@ -30,34 +30,18 @@ public class PageFilterUtil {
     /** Logger **/
     private static final Logger LOGGER = LoggerFactory.getLogger(PageFilter.class);
 
-    /**
-     * 创建连接（连接zk和hbase）
-     *
-     * @return
-     * @throws IOException
-     */
-    public static Connection getConnection() throws IOException {
-        Configuration configuration = HBaseConfiguration.create();
-        configuration.set("hbase.zookeeper.property.clientPort", "2181");
-        configuration.set("hbase.zookeeper.quorum", "10.21.3.73");
-        //集群配置↓
-        //configuration.set("hbase.zookeeper.quorum", "101.236.39.141,101.236.46.114,101.236.46.113");
-        configuration.set("hbase.master", "10.21.3.73:60000");
-        Connection connection = ConnectionFactory.createConnection(configuration);
-        return connection;
-    }
 
     /**
-     * 获取指定Rowkey正则的资讯列表（分页）
+     * 获取指定Rowkey正则的数据列表（分页）
      *
      * @param pageSize   页大小
      * @param lastRowKey 上一页最后的rowkey
      * @param rowkeyReg  Rowkey正则
-     * @return 资讯列表
+     * @return 数据列表
      */
     public List<Object> getData(int pageSize, String lastRowKey, String rowkeyReg) throws IOException {
         List<Object> dataList = new ArrayList<>();
-        Connection conn = getConnection();
+        Connection conn = HbaseNewAPI.getConnection();
         try {
             // 二级索引表查询索引数据
             Table table = conn.getTable(TableName.valueOf(""));
@@ -99,43 +83,16 @@ public class PageFilterUtil {
     }
 
 
-    /**
-     *  根据rowkey获取hbase元数据
-     *  @param tableName 表名
-     *  @param get HbaseGet
-     */
-    public User getDataByRowKey(String tableName, Get get) {
-        User user = new User();
-        try {
-            Connection conn = getConnection();
-            Table table = conn.getTable(TableName.valueOf(tableName));
-            Result result = table.get(get);
-            Cell[] cells = result.rawCells();
-            String rowkey = "";
-            if (cells.length >= 1) {
-                for (Cell cell : cells) {
-                    rowkey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
-                    String column = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
-                    String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-                    //TODO 填充user对象
-                }
-            }
-            user.setId(rowkey);
-            table.close();
-        } catch (Exception e) {
-            LOGGER.error("####获取hbase数据出错:" + e);
-        }
-        return user;
-    }
+
 
 
     /**
      * 获取Hbase 查询Reg
-     *
+     * 根据 开始日期+结束日期+查询关键字 组合成正则字符串
      * @param timeStart 开始时间 格式只能是yyyyMMdd
      * @param timeEnd   结束时间 格式只能是yyyyMMdd
      * @param titleStr  标题关键词
-     * @return 正则
+     * @return 正则表达式
      */
     private static String getTitleRegex(String timeStart, String timeEnd, String titleStr) {
         titleStr = titleStr.replace("*", "\\*").replace("(", "\\(").replace(")", "\\)")
@@ -171,10 +128,8 @@ public class PageFilterUtil {
     }
 
     public static void main(String[] args) {
-        getTitleRegex("20181010", "20181111", "aa");
-
+        System.out.println(getTitleRegex("20181010", "20181111", "aa"));
         String regex = "(20181010|20181011|20181012|20181013|20181014|20181015|20181016|20181017|20181018|20181019|20181020|20181021|20181022|20181023|20181024|20181025|20181026|20181027|20181028|20181029|20181030|20181031|20181101|20181102|20181103|20181104|20181105|20181106|20181107|20181108|20181109|20181110|20181111).*aa.*";
-
         System.out.println(Pattern.matches(regex,"20181032ccaaacc"));
     }
 

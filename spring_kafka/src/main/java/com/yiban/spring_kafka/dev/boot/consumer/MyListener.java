@@ -23,7 +23,7 @@ import java.util.concurrent.CountDownLatch;
 public class MyListener {
     private static final String TPOIC = "test_1_1";
 
-    @KafkaListener(id = "id0",groupId = "test_g2_1",topics = {"test"} )
+    @KafkaListener(id = "id0",groupId = "test_8_3_g1",topics = {"test_8_3"} )
     public void listenPartition0(List<ConsumerRecord<?, ?>> records) {
         log.info("Id0 Listener, Thread ID: " + Thread.currentThread().getId());
         log.info("Id0 records size " +  records.size());
@@ -41,7 +41,7 @@ public class MyListener {
 
 //    @KafkaListener(id = "id0", topicPartitions = { @TopicPartition(topic = TPOIC, partitions = { "0" }) })
 //    public void listenPartition0(List<ConsumerRecord<?, ?>> records) {
-//        log.info("Id0 Listener, Thread ID: " + Thread.currentThread().getId());
+//        log.i nfo("Id0 Listener, Thread ID: " + Thread.currentThread().getId());
 //        log.info("Id0 records size " +  records.size());
 //
 //        for (ConsumerRecord<?, ?> record : records) {

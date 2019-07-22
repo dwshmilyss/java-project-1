@@ -47,4 +47,13 @@ public class Test1 {
         x = x ^ y;
         System.out.println("x = " + x + ",y=" + y);
     }
+
+    @Test
+    public void test3() {
+        List<String> list = null;
+        String[] list1 = {};
+        for (String string : list1) {
+            System.out.println(string);
+        }
+    }
 }

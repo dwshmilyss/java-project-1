@@ -1,10 +1,13 @@
 package com.yiban.hbase;
 
+import com.yiban.hbase.entity.User;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.*;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,16 +21,19 @@ import java.util.List;
  */
 public class HbaseNewAPI {
     private static Admin admin;
-
+    /**
+     * Logger
+     **/
+    private static final Logger LOGGER = LoggerFactory.getLogger(HbaseNewAPI.class);
 
     public static void main(String[] args) {
         try {
-            Connection connection = initHbase();
+            Connection connection = getConnection();
             //创建表
-//            TableName tableName = createTable(connection, "user", new String[]{"info", "contact"});
+//            TableName tableName = createTable(connection, "user1", new String[]{"info", "contact"});
             TableName tableName = TableName.valueOf("user");
 
-
+//            //插入数据 begin
 //            List<User> list = new ArrayList<>(101);
 //            for (int i = 1; i <= 100; i++) {
 //                User user = new User(i + "", "dw:" + i, "123", "unknown", "30", "1311234"+i, "4064865@163.com");
@@ -37,47 +43,79 @@ public class HbaseNewAPI {
 //            for (User user : list) {
 //                insertData(connection,tableName,user);
 //            }
+//                //插入数据 end
 
-//            getNoDealData(connection,tableName);
+//            getNoDealData(connection,tableName);//按照hbase的格式输出显示所有数据
 
-//            getAllData(connection, tableName);
+            //查询所有数据并填充User对象
+//            List<User> list = getAllData(connection, tableName);
+//            if (list != null) {
+//                for (User user : list) {
+//                    System.out.println(user);
+//                }
+//            }
 
+//            //获取某个cell的值
 //            System.out.println("res = " + getCellData(connection, tableName, "user-50", "info", "age"));
 
+//          //根据startRowkey 和 stopRowKey查找数据
 //            getDataByStartAndEnd(connection, tableName, "user-51", "user-55");
 
             RegexStringComparator regexStringComparator = new RegexStringComparator("^(.*)@163.com"); // 支持正则表达式的值比较 (以 you 开头的字符串)
-            SubstringComparator substringComparator = new SubstringComparator("@163.com"); // 查找包含 dwshmilyss 的字符串
-            BinaryPrefixComparator binaryPrefixComparator = new BinaryPrefixComparator(Bytes.toBytes("@163.com")); //
-////            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
-////            getDataBySingleColumnValueFilter(connection, tableName, "info", "email", null,binaryPrefixComparator);
-//
-//
-//            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
-//            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
-//            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
-//            singleColumnValueFilter1.setFilterIfMissing(true);
-//            singleColumnValueFilter1.setLatestVersionOnly(true);
-//            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
-//            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
-//            List<Filter> filters1 = new ArrayList<>();
-//            List<Filter> filters2 = new ArrayList<>();
-//            filters1.add(singleColumnValueFilter1);
-//            filters1.add(singleColumnValueFilter2);
-//            filters1.add(singleColumnValueFilter3);
-//            filters2.add(singleColumnValueFilter4);
-//            filters2.add(singleColumnValueFilter5);
-//            /**
-//             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
-//             */
-//            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters2);
-//            filters1.add(filterList);
-//            getDataByMultiFilter(connection,tableName,filters1);
+            SubstringComparator substringComparator = new SubstringComparator("dwshmilyss"); // 查找包含 dwshmilyss 的字符串
+            BinaryPrefixComparator binaryPrefixComparator = new BinaryPrefixComparator(Bytes.toBytes("dwshmilyss")); //
+            //TODO 值比较的话用这两种比较器没有效果 还是老老实实指定列值吧
+            BinaryComparator binaryComparator = new BinaryComparator(Bytes.toBytes(18));
+            LongComparator longComparator = new LongComparator(18);
+
+            //指定列值作为过滤条件
+//            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
+            //指定过滤器作为过滤条件
+//            getDataBySingleColumnValueFilter(connection, tableName, "contact", "email", null, regexStringComparator);
+
+
+            /**
+             * 组合实现复杂查询
+             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
+             * MUST_PASS_ONE => OR
+             * MUST_PASS_ALL => AND
+             */
+            System.out.println("========  muliti filter start ==============");
+            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
+            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
+            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
+            singleColumnValueFilter1.setFilterIfMissing(true);
+            singleColumnValueFilter1.setLatestVersionOnly(true);
+            List<Filter> filters1 = new ArrayList<>();
+            filters1.add(singleColumnValueFilter1);
+            filters1.add(singleColumnValueFilter2);
+            filters1.add(singleColumnValueFilter3);
+
+            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
+            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
+            List<Filter> filters2 = new ArrayList<>();
+            filters2.add(singleColumnValueFilter4);
+            filters2.add(singleColumnValueFilter5);
+            //TODO OR
+            FilterList filterList1 = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters1);
+            //TODO AND
+            FilterList filterList2 = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters2);
+
+            List<Filter> filters = new ArrayList<>();
+            filters.add(filterList1);
+            filters.add(filterList2);
+            //TODO 最后再AND
+            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+            getDataByMultiFilter(connection,tableName,filterList);
+            System.out.println("========  muliti filter end ==============");
 
             RegexStringComparator regexStringComparator1 = new RegexStringComparator("^(.*)-99");
             SubstringComparator substringComparator1 = new SubstringComparator("admin");
-              getDataByRowFilter(connection,tableName,substringComparator1);
+            getDataByRowFilter(connection, tableName, substringComparator1);
+
 //            deleteByRowKey(connection,tableName,"user-50");
+
+//            System.out.println(getDataByRowKey(getConnection(), tableName, "user-99"));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,17 +123,15 @@ public class HbaseNewAPI {
     }
 
     /**
-     * 创建连接（连接zk和hbase）
+     * 创建连接（连接zk和hbase master）
      *
      * @return
      * @throws IOException
      */
-    public static Connection initHbase() throws IOException {
+    public static Connection getConnection() throws IOException {
         Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
-        configuration.set("hbase.zookeeper.quorum", "10.21.3.73");
-        //集群配置↓
-        //configuration.set("hbase.zookeeper.quorum", "101.236.39.141,101.236.46.114,101.236.46.113");
+        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
         configuration.set("hbase.master", "10.21.3.73:60000");
         Connection connection = ConnectionFactory.createConnection(configuration);
         return connection;
@@ -146,7 +182,7 @@ public class HbaseNewAPI {
     }
 
     /**
-     * 扫描表 获取原始数据
+     * 扫描表 直接输出（按照hbase的格式输出）
      *
      * @param connection
      * @param tableName
@@ -227,50 +263,59 @@ public class HbaseNewAPI {
      */
     public static List<User> getAllData(Connection connection, TableName tableName) {
         Table table = null;
-        List<User> list = new ArrayList<User>();
+        List<User> userList = null;
         try {
             table = connection.getTable(tableName);
             ResultScanner results = table.getScanner(new Scan());
-            User user = null;
-            for (Result result : results) {
-                String id = new String(result.getRow());
-                System.out.println("用户名:" + new String(result.getRow()));
-                user = new User();
-                for (Cell cell : result.rawCells()) {
-                    //获取rowkey columnfamily 列名 值
-                    String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
-                    String family = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
-                    String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
-                    String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-                    System.out.println("rowKey = " + rowKey + ",family = " + family + ",colName = " + colName + ",value = " + value);
-                    user.setId(rowKey);
-                    switch (colName) {
-                        case "username":
-                            user.setUsername(value);
-                            break;
-                        case "age":
-                            user.setAge(value);
-                            break;
-                        case "gender":
-                            user.setGender(value);
-                            break;
-                        case "phone":
-                            user.setPhone(value);
-                            break;
-                        case "email":
-                            user.setEmail(value);
-                            break;
-                        default:
-                            break;
-                    }
+            System.out.println(results.next());
+            if (results.next() != null) {
+                //有数据才初始化list
+                userList = new ArrayList<User>();
+                User user = null;
+                for (Result result : results) {
+                    //获取rowKey
+                    String id = new String(result.getRow());
+                    System.out.println("用户名:" + id);
+                    user = new User();
+                    Cell[] cells = result.rawCells();
+                    if (cells != null) {
+                        for (Cell cell : result.rawCells()) {
+                            //获取rowkey columnfamily 列名 值
+                            String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+                            String family = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+                            String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+                            String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+                            System.out.println("rowKey = " + rowKey + ",family = " + family + ",colName = " + colName + ",value = " + value);
+                            user.setId(rowKey);
+                            switch (colName) {
+                                case "username":
+                                    user.setUsername(value);
+                                    break;
+                                case "age":
+                                    user.setAge(value);
+                                    break;
+                                case "gender":
+                                    user.setGender(value);
+                                    break;
+                                case "phone":
+                                    user.setPhone(value);
+                                    break;
+                                case "email":
+                                    user.setEmail(value);
+                                    break;
+                                default:
+                                    break;
+                            }
 
+                        }
+                        userList.add(user);
+                    }
                 }
-                list.add(user);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return list;
+        return userList;
     }
 
     /**
@@ -295,8 +340,8 @@ public class HbaseNewAPI {
      * 批量查询
      *
      * @param tableName
-     * @param >=        startRow
-     * @param <         stopRow
+     * @param >=startRow
+     * @param <          stopRow 注意这里不包含stopRow
      * @throws Exception
      */
     public static void getDataByStartAndEnd(Connection connection, TableName tableName, String startRow, String stopRow) {
@@ -305,17 +350,18 @@ public class HbaseNewAPI {
             table = connection.getTable(tableName);
             Scan scan = new Scan();
 
-            //这里可以只获取某个列族
-            //这里可以只获取某个列
+            //这里可以只获取某个列族的某个列
             scan.addColumn("info".getBytes(), "username".getBytes());
 
             //rowkey>=a && rowkey<b
             scan.setStartRow(startRow.getBytes());
             scan.setStopRow(stopRow.getBytes());
             ResultScanner scanner = table.getScanner(scan);
+            System.out.println(scanner.next());
 
             for (Result result : scanner) {
-
+                //三种输出方式都可以
+                //rawCells 返回Cell[]
                 for (Cell cell : result.rawCells()) {
                     String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
                     String family = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
@@ -324,22 +370,18 @@ public class HbaseNewAPI {
                     System.out.println("rowKey = " + rowKey + ",family = " + family + ",colName = " + colName + ",value = " + value);
                 }
 
-                System.out.println("----------------------------");
-                for (Cell cell : result.listCells()) {
-                    String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
-                    String family = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
-                    String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
-                    String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-                    System.out.println("rowKey = " + rowKey + ",family = " + family + ",colName = " + colName + ",value = " + value);
-                }
-                System.out.println("----------------------------");
+                //listCells返回List
+//                for (Cell cell : result.listCells()) {
+//                    String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+//                    String family = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+//                    String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+//                    String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+//                    System.out.println("rowKey = " + rowKey + ",family = " + family + ",colName = " + colName + ",value = " + value);
+//                }
 
-                for (KeyValue keyValue : result.raw()) {
-                    System.out.println("rowkey = " + new String(keyValue.getRow()) + ",family = " + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
-                }
-
-
-                System.out.println(" ======================= ");
+//                for (KeyValue keyValue : result.raw()) {
+//                    System.out.println("rowkey = " + new String(keyValue.getRow()) + ",family = " + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
+//                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -348,7 +390,7 @@ public class HbaseNewAPI {
     }
 
     /**
-     * 过滤器查询：SingleColumnValueFilter过滤器
+     * 过滤器查询：SingleColumnValueFilter 过滤器
      *
      * @param connection
      * @param tableName
@@ -367,38 +409,40 @@ public class HbaseNewAPI {
         try {
             Table table = connection.getTable(tableName);
             Scan scan = new Scan();
-            Filter filter = null;
+            scan.addColumn("info".getBytes(), "age".getBytes());
+            scan.addColumn("contact".getBytes(), "email".getBytes());
+            scan.setMaxResultSize(10);
+            scan.setCaching(10);
+            PageFilter pageFilter = new PageFilter(10);
+            Filter singleColumnValueFilter = null;
+            FilterList filterList = new FilterList();
+            //如果列的值没传，那么用比较器
             if (columnValue == null) {
-                filter = new SingleColumnValueFilter(family.getBytes(), column.getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL, byteArrayComparable);
+                singleColumnValueFilter = new SingleColumnValueFilter(family.getBytes(), column.getBytes(), CompareFilter.CompareOp.EQUAL, byteArrayComparable);
             }
+            //如果比较器没传，那么用列值
             if (byteArrayComparable == null) {
-                filter = new SingleColumnValueFilter(family.getBytes(), column.getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL, columnValue.getBytes());
+                singleColumnValueFilter = new SingleColumnValueFilter(family.getBytes(), column.getBytes(), CompareFilter.CompareOp.EQUAL, columnValue.getBytes());
             }
-            scan.setFilter(filter);
+            filterList.addFilter(singleColumnValueFilter);
+            filterList.addFilter(pageFilter);
+            scan.setFilter(filterList);
             ResultScanner scanner = table.getScanner(scan);
-
             for (Result result : scanner) {
                 for (KeyValue keyValue : result.raw()) {
-                    System.out.println("第 " + new String(keyValue.getRow()) + " 行 ," + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
+                    System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
                 }
-                System.out.println();
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public static void getDataByMultiFilter(Connection connection, TableName tableName, List<Filter> filters) {
+    public static void getDataByMultiFilter(Connection connection, TableName tableName, FilterList filterList) {
         try {
             Table table = connection.getTable(tableName);
             Scan scan = new Scan();
-            /**
-             * MUST_PASS_ONE => or
-             * MUST_PASS_ALL => and
-             */
-            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
             scan.setFilter(filterList);
-
             ResultScanner scanner = table.getScanner(scan);
 
             for (Result result : scanner) {
@@ -411,7 +455,6 @@ public class HbaseNewAPI {
             e.printStackTrace();
         }
     }
-
 
 
     /**
@@ -451,109 +494,17 @@ public class HbaseNewAPI {
     }
 
 
-    //删除表
+    /**
+     * 删除表
+     */
     public static void deleteTable(String tableName) {
         try {
             TableName tablename = TableName.valueOf(tableName);
-            admin = initHbase().getAdmin();
+            admin = getConnection().getAdmin();
             admin.disableTable(tablename);
             admin.deleteTable(tablename);
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-}
-
-
-class User {
-    private String id;
-    private String username;
-    private String password;
-    private String gender;
-    private String age;
-    private String phone;
-    private String email;
-
-    public User(String id, String username, String password, String gender, String age, String phone, String email) {
-        this.id = id;
-        this.username = username;
-        this.password = password;
-        this.gender = gender;
-        this.age = age;
-        this.phone = phone;
-        this.email = email;
-    }
-
-    public User() {
-
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public String getAge() {
-        return age;
-    }
-
-    public void setAge(String age) {
-        this.age = age;
-    }
-
-    public String getPhone() {
-        return phone;
-    }
-
-    public void setPhone(String phone) {
-        this.phone = phone;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id='" + id + '\'' +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                ", gender='" + gender + '\'' +
-                ", age='" + age + '\'' +
-                ", phone='" + phone + '\'' +
-                ", email='" + email + '\'' +
-                '}';
     }
 }

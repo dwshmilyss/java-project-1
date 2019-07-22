@@ -26,9 +26,10 @@ import java.util.concurrent.locks.ReentrantLock;
 public class KafkaConsumerThreadDemo {
 
     private static final int NUMPARTITIONS = 8;
-    private static final String GROUPNAME = "test_8_3_g2";
-    private static final String TOPICNAME = "test_8_3";
-    private static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
+    private static final String GROUPNAME = "test_1_1_g2";
+    private static final String TOPICNAME = "test_1_1";
+//    private static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
+    private static final String BROKERS = "192.168.200.128:9092";
     private static final boolean ISAUTOCOMMIT = false;
     private static final boolean ISHIGH = true;
 

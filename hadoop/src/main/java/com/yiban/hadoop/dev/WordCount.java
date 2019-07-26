@@ -51,14 +51,33 @@ public class WordCount {
     }
 
     public static void main(String[] args) throws Exception {
+        System.setProperty("hadoop.home.dir", "G:\\soft\\hadoop-2.8.2\\hadoop-2.8.2");
+        System.setProperty("HADOOP_USER_NAME", "root");
         Configuration conf = new Configuration();
+        conf.addResource("core-site.xml");
+        conf.addResource("yarn-site.xml");
+        conf.addResource("hdfs-site.xml");
+        conf.addResource("mapred-site.xml");
+        conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
+        conf.set("fs.defaultFS","hdfs://master01:9000");
+        conf.set("mapreduce.framework.name","yarn");
+        conf.set("mapreduce.job.queuename","rt1");
+
+        conf.set("mapreduce.app-submission.cross-platform","true");
+        //这里要指定绝对路径
+        //如果这里指定了jar 那么下面的setJarByClass就可以省略
+        conf.set("mapreduce.job.jar","D:\\source_code\\java-project-1\\out\\artifacts\\hadoop_jar\\hadoop.jar");
+
+
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length < 2) {
             System.err.println("Usage: wordcount <in> [<in>...] <out>");
             System.exit(2);
         }
         Job job = Job.getInstance(conf, "word count");
-        job.setJarByClass(WordCount.class);
+        //这里的setJarByClass会有问题，会找不到Mapper类
+        //所以最好还是用上面指定mapreduce.job.jar的方式
+//        job.setJarByClass(WordCount.class);
         job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(IntSumReducer.class);
         job.setReducerClass(IntSumReducer.class);

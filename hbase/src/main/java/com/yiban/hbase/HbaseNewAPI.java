@@ -30,8 +30,8 @@ public class HbaseNewAPI {
         try {
             Connection connection = getConnection();
             //创建表
-//            TableName tableName = createTable(connection, "user1", new String[]{"info", "contact"});
-            TableName tableName = TableName.valueOf("user");
+            TableName tableName = createTable(connection, "test_1_copy", new String[]{"family", "column"});
+//            TableName tableName = TableName.valueOf("user");
 
 //            //插入数据 begin
 //            List<User> list = new ArrayList<>(101);
@@ -61,57 +61,57 @@ public class HbaseNewAPI {
 //          //根据startRowkey 和 stopRowKey查找数据
 //            getDataByStartAndEnd(connection, tableName, "user-51", "user-55");
 
-            RegexStringComparator regexStringComparator = new RegexStringComparator("^(.*)@163.com"); // 支持正则表达式的值比较 (以 you 开头的字符串)
-            SubstringComparator substringComparator = new SubstringComparator("dwshmilyss"); // 查找包含 dwshmilyss 的字符串
-            BinaryPrefixComparator binaryPrefixComparator = new BinaryPrefixComparator(Bytes.toBytes("dwshmilyss")); //
-            //TODO 值比较的话用这两种比较器没有效果 还是老老实实指定列值吧
-            BinaryComparator binaryComparator = new BinaryComparator(Bytes.toBytes(18));
-            LongComparator longComparator = new LongComparator(18);
-
-            //指定列值作为过滤条件
-//            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
-            //指定过滤器作为过滤条件
-//            getDataBySingleColumnValueFilter(connection, tableName, "contact", "email", null, regexStringComparator);
-
-
-            /**
-             * 组合实现复杂查询
-             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
-             * MUST_PASS_ONE => OR
-             * MUST_PASS_ALL => AND
-             */
-            System.out.println("========  muliti filter start ==============");
-            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
-            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
-            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
-            singleColumnValueFilter1.setFilterIfMissing(true);
-            singleColumnValueFilter1.setLatestVersionOnly(true);
-            List<Filter> filters1 = new ArrayList<>();
-            filters1.add(singleColumnValueFilter1);
-            filters1.add(singleColumnValueFilter2);
-            filters1.add(singleColumnValueFilter3);
-
-            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
-            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
-            List<Filter> filters2 = new ArrayList<>();
-            filters2.add(singleColumnValueFilter4);
-            filters2.add(singleColumnValueFilter5);
-            //TODO OR
-            FilterList filterList1 = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters1);
-            //TODO AND
-            FilterList filterList2 = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters2);
-
-            List<Filter> filters = new ArrayList<>();
-            filters.add(filterList1);
-            filters.add(filterList2);
-            //TODO 最后再AND
-            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
-            getDataByMultiFilter(connection,tableName,filterList);
-            System.out.println("========  muliti filter end ==============");
-
-            RegexStringComparator regexStringComparator1 = new RegexStringComparator("^(.*)-99");
-            SubstringComparator substringComparator1 = new SubstringComparator("admin");
-            getDataByRowFilter(connection, tableName, substringComparator1);
+//            RegexStringComparator regexStringComparator = new RegexStringComparator("^(.*)@163.com"); // 支持正则表达式的值比较 (以 you 开头的字符串)
+//            SubstringComparator substringComparator = new SubstringComparator("dwshmilyss"); // 查找包含 dwshmilyss 的字符串
+//            BinaryPrefixComparator binaryPrefixComparator = new BinaryPrefixComparator(Bytes.toBytes("dwshmilyss")); //
+//            //TODO 值比较的话用这两种比较器没有效果 还是老老实实指定列值吧
+//            BinaryComparator binaryComparator = new BinaryComparator(Bytes.toBytes(18));
+//            LongComparator longComparator = new LongComparator(18);
+//
+//            //指定列值作为过滤条件
+////            getDataBySingleColumnValueFilter(connection, tableName, "info", "age", "18",null);
+//            //指定过滤器作为过滤条件
+////            getDataBySingleColumnValueFilter(connection, tableName, "contact", "email", null, regexStringComparator);
+//
+//
+//            /**
+//             * 组合实现复杂查询
+//             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
+//             * MUST_PASS_ONE => OR
+//             * MUST_PASS_ALL => AND
+//             */
+//            System.out.println("========  muliti filter start ==============");
+//            SingleColumnValueFilter singleColumnValueFilter1 = new SingleColumnValueFilter("contact".getBytes(),"email".getBytes(), CompareFilter.CompareOp.EQUAL,substringComparator);
+//            SingleColumnValueFilter singleColumnValueFilter2 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.LESS_OR_EQUAL,"1311234657".getBytes());
+//            SingleColumnValueFilter singleColumnValueFilter3 = new SingleColumnValueFilter("contact".getBytes(),"phone".getBytes(), CompareFilter.CompareOp.GREATER_OR_EQUAL,"1311234001".getBytes());
+//            singleColumnValueFilter1.setFilterIfMissing(true);
+//            singleColumnValueFilter1.setLatestVersionOnly(true);
+//            List<Filter> filters1 = new ArrayList<>();
+//            filters1.add(singleColumnValueFilter1);
+//            filters1.add(singleColumnValueFilter2);
+//            filters1.add(singleColumnValueFilter3);
+//
+//            SingleColumnValueFilter singleColumnValueFilter4 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"female".getBytes());
+//            SingleColumnValueFilter singleColumnValueFilter5 = new SingleColumnValueFilter("info".getBytes(),"gender".getBytes(), CompareFilter.CompareOp.EQUAL,"male".getBytes());
+//            List<Filter> filters2 = new ArrayList<>();
+//            filters2.add(singleColumnValueFilter4);
+//            filters2.add(singleColumnValueFilter5);
+//            //TODO OR
+//            FilterList filterList1 = new FilterList(FilterList.Operator.MUST_PASS_ONE, filters1);
+//            //TODO AND
+//            FilterList filterList2 = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters2);
+//
+//            List<Filter> filters = new ArrayList<>();
+//            filters.add(filterList1);
+//            filters.add(filterList2);
+//            //TODO 最后再AND
+//            FilterList filterList = new FilterList(FilterList.Operator.MUST_PASS_ALL, filters);
+//            getDataByMultiFilter(connection,tableName,filterList);
+//            System.out.println("========  muliti filter end ==============");
+//
+//            RegexStringComparator regexStringComparator1 = new RegexStringComparator("^(.*)-99");
+//            SubstringComparator substringComparator1 = new SubstringComparator("admin");
+//            getDataByRowFilter(connection, tableName, substringComparator1);
 
 //            deleteByRowKey(connection,tableName,"user-50");
 
@@ -142,7 +142,7 @@ public class HbaseNewAPI {
      *
      * @param connection    连接zk
      * @param tableName     表名
-     * @param columnFamilys 列族
+     * @param columnFamilys 列族 列族最好不要超过3个 因为列族多了容易引发IO瓶颈
      * @throws IOException
      */
     public static TableName createTable(Connection connection, String tableName, String[] columnFamilys) throws IOException {

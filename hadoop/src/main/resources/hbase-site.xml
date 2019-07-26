@@ -1,0 +1,95 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/xsl" href="configuration.xsl"?>
+<!--
+/**
+ *
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+-->
+<configuration>
+  <property>
+    <name>hbase.rootdir</name>
+    <value>hdfs://gagcluster/hbase</value>
+    <!--<value>hdfs://yiban.isilon:8020/hbase</value>-->
+  </property>
+  <property>
+    <name>hbase.cluster.distributed</name>
+    <value>true</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.clientPort</name>
+    <value>2181</value>
+  </property>
+  <property>
+    <name>hbase.tmp.dir</name>
+    <value>/usr/local/data/hbase-tmp</value>
+  </property>
+  <property>
+  <name>hbase.zookeeper.quorum</name>
+    <value>master01,master02,slave01,slave02,slave03</value>
+  </property>
+  <property>
+    <name>hbase.zookeeper.property.dataDir</name>
+    <value>/usr/local/zookeeper-3.4.6/data</value>
+  </property>
+  <property>
+    <name>hbase.master.info.port</name>
+    <value>60010</value>
+  </property>
+  <property>
+    <name>hbase.master.port</name>
+    <value>60000</value>
+  </property>
+  <property>
+    <name>hbase.client.write.buffer</name>
+    <value>20971520</value>
+  </property>
+  <property>
+    <name>zookeeper.session.timeout</name>
+    <value>120000</value>
+    <description>ZooKeeper session timeout in milliseconds. It is used in two different ways.
+      First, this value is used in the ZK client that HBase uses to connect to the ensemble.
+      It is also used by HBase when it starts a ZK server and it is passed as the 'maxSessionTimeout'. See
+      http://hadoop.apache.org/zookeeper/docs/current/zookeeperProgrammers.html#ch_zkSessions.
+      For example, if a HBase region server connects to a ZK ensemble that's also managed by HBase, then the
+      session timeout will be the one specified by this configuration. But, a region server that connects
+      to an ensemble managed with a different configuration will be subjected that ensemble's maxSessionTimeout. So,
+      even though HBase might propose using 90 seconds, the ensemble can have a max timeout lower than this and
+      it will take precedence. The current default that ZK ships with is 40 seconds, which is lower than HBase's.
+    </description>
+  </property>
+  <property>
+    <name>hbase.regionserver.handler.count</name>
+    <value>50</value>
+    <description>Count of RPC Listener instances spun up on RegionServers.
+    Same property is used by the Master for count of master handlers.</description>
+  </property>
+  <property>
+    <name>hbase.regionserver.restart.on.zk.expire</name>
+    <value>true</value>
+  </property>
+<!--
+ <property>
+     <name>hbase.regionserver.codecs</name>
+     <value>lzo</value>
+ </property>
+ <property>
+   <name>hbase.coprocessor.region.classes</name>
+   <value>org.apache.hadoop.hbase.coprocessor.AggregateImplementation</value>
+ </property>
+-->
+</configuration>

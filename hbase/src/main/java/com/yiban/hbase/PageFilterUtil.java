@@ -101,12 +101,13 @@ public class PageFilterUtil {
             return null;
         }
         String regex = "";
+        //按照开始日期和结束日期拼接正则字符串，拼接后类似这样(20181010|20181011|20181012|20181013|20181014|20181015)
         if (!StringUtils.isEmpty(timeStart) && !StringUtils.isEmpty(timeEnd)) {
             regex += "(";
-            LocalDate ss = LocalDate.parse(timeStart, DateTimeFormatter.ofPattern("yyyyMMdd"));
-            LocalDate ee = LocalDate.parse(timeEnd, DateTimeFormatter.ofPattern("yyyyMMdd"));
-            LocalDateTime startTime = LocalDateTime.of(ss.getYear(), ss.getMonth(), ss.getDayOfMonth(), 0, 0, 0);
-            LocalDateTime endTime = LocalDateTime.of(ee.getYear(), ee.getMonth(), ee.getDayOfMonth(), 0, 0, 0);
+            LocalDate start = LocalDate.parse(timeStart, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            LocalDate end = LocalDate.parse(timeEnd, DateTimeFormatter.ofPattern("yyyyMMdd"));
+            LocalDateTime startTime = LocalDateTime.of(start.getYear(), start.getMonth(), start.getDayOfMonth(), 0, 0, 0);
+            LocalDateTime endTime = LocalDateTime.of(end.getYear(), end.getMonth(), end.getDayOfMonth(), 0, 0, 0);
             while (startTime.isBefore(endTime) || startTime.isEqual(endTime)) {
                 String ymd = startTime.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
                 regex += ymd + "|";

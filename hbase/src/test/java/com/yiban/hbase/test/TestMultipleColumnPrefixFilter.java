@@ -6,7 +6,9 @@ import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
 import org.apache.hadoop.hbase.filter.MultipleColumnPrefixFilter;
+import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.regionserver.HRegion;
+import org.apache.hadoop.hbase.regionserver.IncreasingToUpperBoundRegionSplitPolicy;
 import org.apache.hadoop.hbase.regionserver.InternalScanner;
 import org.apache.hadoop.hbase.util.Bytes;
 import org.junit.Test;
@@ -28,6 +30,7 @@ public class TestMultipleColumnPrefixFilter {
 
     @Test
     public void testMultipleColumnPrefixFilter() throws IOException {
+        long start = System.currentTimeMillis();
         //创建表
         Configuration configuration = getConfiguration();
 //        System.out.println("configuration = " + configuration.get("hbase.column.max.version"));
@@ -55,7 +58,7 @@ public class TestMultipleColumnPrefixFilter {
         prefixMap.put("p", new ArrayList<KeyValue>());
         prefixMap.put("q", new ArrayList<KeyValue>());
         prefixMap.put("s", new ArrayList<KeyValue>());
-
+        List<Put> putList = new ArrayList<>(500);
         String valueString = "ValueString";
         System.out.println("rows size = " + rows.size());
         //开始插入数据
@@ -74,11 +77,13 @@ public class TestMultipleColumnPrefixFilter {
                     }
                 }
             }
-            table.put(put);
+            putList.add(put);
         }
+        table.put(putList);
 
         System.out.println(prefixMap.get("p").size() + " " + prefixMap.get("q").size());
-
+        //8251
+        System.out.println(System.currentTimeMillis() - start);
         //定义检索条件 这里按照列名的前缀进行查找
         MultipleColumnPrefixFilter filter;
         Scan scan = new Scan();
@@ -125,6 +130,8 @@ public class TestMultipleColumnPrefixFilter {
         hColumnDescriptor2.setMaxVersions(3);
         hTableDescriptor.addFamily(hColumnDescriptor1);
         hTableDescriptor.addFamily(hColumnDescriptor2);
+        //设置表的region的拆分策略
+//        hTableDescriptor.setRegionSplitPolicyClassName("IncreasingToUpperBoundRegionSplitPolicy");
         if (!admin.tableExists(TABLENAME1)) {
             admin.createTable(hTableDescriptor);
         }

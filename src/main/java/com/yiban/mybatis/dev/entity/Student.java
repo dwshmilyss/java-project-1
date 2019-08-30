@@ -8,7 +8,7 @@ import java.util.Date;
  */ 
 public class Student{
 
-	private null studentId;
+	private int studentId;
 	private String name;
 	private String phone;
 	private String email;
@@ -18,10 +18,10 @@ public class Student{
 	private Date gmtModified;
 	private int delete;
 
-	public void setStudentId(null studentId){
+	public void setStudentId(int studentId){
 		this.studentId=studentId;
 	}
-	public null getStudentId(){
+	public int getStudentId(){
 		return studentId;
 	}
 	public void setName(String name){

@@ -1,5 +1,6 @@
 package com.yiban.hive.dev;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.sql.*;
 import java.util.Properties;
@@ -8,13 +9,8 @@ import java.util.Properties;
  * Created by duanwei on 2017/3/23.
  */
 public class JDBCToHiveUtils {
-    private static final String jdbcDriver = "org.apache.hive.jdbc.HiveDriver";
-    private static final String jdbcUrl = "jdbc:hive2://10.21.3.77:10000/db_hive_test";
-    private static final String userName = "root";
-    private static final String password = "root";
 
-
-    public static Connection getHiveConnection() throws Exception {
+    public static Connection getHiveConnection() throws IOException, ClassNotFoundException, SQLException {
         Properties properties = new Properties();
         InputStream inStream = JDBCToHiveUtils.class.getClassLoader()
                 .getResourceAsStream("jdbc.properties");
@@ -27,7 +23,9 @@ public class JDBCToHiveUtils {
         String jdbcDriver = properties.getProperty("jdbcDriver");
 
         // 2. 加载驱动: Class.forName(driverClass)
-        Class.forName(jdbcDriver);
+        System.out.println("jdbcDriver = " + jdbcDriver);
+//        Class.forName(jdbcDriver);
+        Class.forName("org.apache.hive.jdbc.HiveDriver");
 
         // 3.获取数据库连接
         Connection connection = DriverManager.getConnection(url, user,
@@ -36,7 +34,7 @@ public class JDBCToHiveUtils {
         return connection;
     }
 
-    public void releaseConn(ResultSet resultSet, Statement statement, Connection connection) {
+    public static void releaseConn(ResultSet resultSet, Statement statement, Connection connection) {
         if (resultSet != null) {
             try {
                 resultSet.close();

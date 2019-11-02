@@ -21,8 +21,8 @@ public class KafkaConsumerDemo1 {
     private static KafkaConsumer kafkaConsumer;
 
 
-    private static final String GROUP = "test";
-    private static final List TOPICS = Arrays.asList("test_10_3");
+    private static final String GROUP = "test_1_1";
+    private static final List TOPICS = Arrays.asList("test_1_1");
     public static final String BROKERS = "10.21.3.74:9092,10.21.3.75:9092,10.21.3.76:9092,10.21.3.77:9092";
 
     static {

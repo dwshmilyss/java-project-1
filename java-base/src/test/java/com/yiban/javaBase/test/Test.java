@@ -128,14 +128,14 @@ public class Test {
     }
 
     @org.junit.Test
-    public void test1(){
+    public void test1() {
 
 //        System.out.println(Math.abs("console-consumer-90932".hashCode()) % 50);
         System.out.println("abc".charAt(0) + 1);
     }
 
     @org.junit.Test
-    public void test2(){
+    public void test2() {
         String str = "{\"aa\":\"bb\",\"cc\": \"dd\"}";
         String str1 = "select * from aa where id = 1 and uname = \"bbb\"";
         //language=HTML
@@ -151,18 +151,18 @@ public class Test {
     }
 
     @org.junit.Test
-    public void test3(){
-        System.out.println(UUID.randomUUID().toString().replace("-","").length());
+    public void test3() {
+        System.out.println(UUID.randomUUID().toString().replace("-", "").length());
     }
 
     @org.junit.Test
-    public void test4(){
-        Assert.assertEquals(1,1);
+    public void test4() {
+        Assert.assertEquals(1, 1);
         System.out.println("haha");
     }
 
     @org.junit.Test
-    public void test5(){
+    public void test5() {
 //        for (Map.Entry entry : System.getenv().entrySet()) {
 //            System.out.println("entry = " + entry);
 //        }
@@ -171,7 +171,7 @@ public class Test {
     }
 
     @org.junit.Test
-    public void test6(){
+    public void test6() {
         AtomicInteger atomicInteger = new AtomicInteger(1);
         int flag = 100;
         for (int i = 0; i < 10; i++) {
@@ -199,7 +199,7 @@ public class Test {
     @org.junit.Test
     public void test7() {
         //这里的16进制代表的是ASCII码
-        System.out.println(new String(new byte[]{0x61,0x62}));
+        System.out.println(new String(new byte[]{0x61, 0x62}));
 
         URI uri = URI.create("http://www.baidu.com");
         URLConnection urlConnection = null;
@@ -209,11 +209,11 @@ public class Test {
             e.printStackTrace();
         }
         try {
-            InputStream inputStream =urlConnection.getInputStream() ;
-            InputStreamReader isr = new InputStreamReader(inputStream) ;
-            char[] c = new char[1024] ;
-            while (isr.read(c)!=-1){
-                System.out.print(c) ;
+            InputStream inputStream = urlConnection.getInputStream();
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            char[] c = new char[1024];
+            while (isr.read(c) != -1) {
+                System.out.print(c);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -227,10 +227,9 @@ public class Test {
         String res = addZeroForNum(temp, 36);
         System.out.println("res = " + res + ",len = " + res.length());
         System.out.println(1554780426);
-        System.out.println(Long.parseLong(temp,2));
-        System.out.println(Long.parseLong(res,2));
+        System.out.println(Long.parseLong(temp, 2));
+        System.out.println(Long.parseLong(res, 2));
         System.out.println(temp.length());
-
 
 
         assert StringUtils.isEmpty("");
@@ -245,17 +244,30 @@ public class Test {
         sortedMap.put(4, "d");
         sortedMap.put(5, "e");
 
-        SortedMap<Integer,String> subMap = sortedMap.tailMap(2);
-        for (Map.Entry<Integer,String> entry : subMap.entrySet()) {
+        SortedMap<Integer, String> subMap = sortedMap.tailMap(2);
+        for (Map.Entry<Integer, String> entry : subMap.entrySet()) {
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
 
         System.out.println("-------------------------");
 
-        for (Iterator<Map.Entry<Integer,String>> iterator = subMap.entrySet().iterator(); iterator.hasNext(); ) {
+        for (Iterator<Map.Entry<Integer, String>> iterator = subMap.entrySet().iterator(); iterator.hasNext(); ) {
             Map.Entry<Integer, String> entry = iterator.next();
             System.out.println(entry.getKey() + " " + entry.getValue());
         }
+    }
+
+    @org.junit.Test
+    public void test10() {
+        int i = -1, j = -2;
+        j = i++;
+        System.out.println("j = " + j + ",i = " + i);
+//        for (; ; ) {
+//            if (++i == 2) {
+//                break;
+//            }
+//            System.out.println(i);
+//        }
     }
 
 

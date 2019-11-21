@@ -9,6 +9,41 @@ import java.util.concurrent.CountDownLatch;
  */
 public class CountDownLatchDemo {
     public static void main(String[] args) {
+        test();
+    }
+
+    //模拟并发压测的时候可以用这种模式
+    public static void test() {
+        final CountDownLatch countDownLatch = new CountDownLatch(1);
+        for (int i = 0; i < 50; i++) {
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        countDownLatch.await();
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    //TODO 下面的代码是具体的业务代码
+                    for (int j = 0; j < 10; j++) {
+                        System.out.println(Thread.currentThread().getName() + "  " + j);
+                    }
+                }
+            });
+            thread.start();
+        }
+        countDownLatch.countDown();
+        synchronized (CountDownLatchDemo.class) {
+            try {
+                CountDownLatchDemo.class.wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static void test1() {
         //设置等待2个线程执行结束
         CountDownLatch countDownLatch = new CountDownLatch(2);
         new Thread(new Runnable() {
@@ -52,6 +87,6 @@ public class CountDownLatchDemo {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
+
 }

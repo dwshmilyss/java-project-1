@@ -98,4 +98,12 @@ public class Test1 {
         return result;
 
     }
+
+    @Test
+    public void test5() {
+        int num = 'a';
+        System.out.println(num);
+        System.out.println("abc".hashCode());
+
+    }
 }

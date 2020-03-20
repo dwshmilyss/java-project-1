@@ -1,4 +1,4 @@
-package com.yiban.hadoop.dev;
+package com.yiban.hadoop.mapreduce.dev;
 
 import java.io.IOException;
 import java.util.StringTokenizer;

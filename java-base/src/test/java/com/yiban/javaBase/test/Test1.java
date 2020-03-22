@@ -1,4 +1,6 @@
 package com.yiban.javaBase.test;
+import java.util.Arrays;
+import	java.util.IdentityHashMap;
 
 import com.alibaba.dubbo.common.io.Bytes;
 import com.google.common.base.Strings;
@@ -105,5 +107,25 @@ public class Test1 {
         System.out.println(num);
         System.out.println("abc".hashCode());
 
+    }
+
+    @Test
+    public void test6() {
+//        IdentityHashMap<String, String> map = new IdentityHashMap<String, String> ();
+//        map.put(new String("1"),"aa");
+//        map.put(new String("1"),"bb");
+//        System.out.println(map.size());
+
+        String[] nums = {"1","2","3","4","5"};
+        String[] str1 = Arrays.copyOf(nums, nums.length, String[].class);
+        for (String ele : str1) {
+            System.out.println(ele);
+        }
+    }
+
+
+
+    {
+        System.out.println("aaa");
     }
 }

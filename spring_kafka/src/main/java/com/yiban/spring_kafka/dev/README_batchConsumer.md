@@ -1,7 +1,10 @@
 #
 https://docs.spring.io/spring-kafka/reference/html/_reference.html
 
-http://127.0.0.1:5558/swagger-ui.html
+测试swegger1
+1. 启动KafkaBatchConsumerApplication
+2. http://127.0.0.1:5558/swagger-ui.html
+3. ResponseBody是map类型的时候，传参格式：{"aa":"bb"}
 
 #### 关于KafkaOffsetMonitor监控spring-kafka
 ```$xslt

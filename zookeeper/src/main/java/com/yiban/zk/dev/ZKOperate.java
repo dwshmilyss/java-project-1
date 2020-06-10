@@ -13,7 +13,13 @@ import java.util.List;
  */
 public class ZKOperate {
     Logger logger = Logger.getLogger(ZKOperate.class);
-    MyZooKeeper myZooKeeper = new MyZooKeeper();
+    MyZooKeeper myZooKeeper = null;
+    public static final String SERVER_ADDRESS = "10.21.3.73:2181,10.21.3.74:2181,10.21.3.75:2181,10.21.3.76:2181,10.21.3.77:2181";
+
+    public ZKOperate() {
+        myZooKeeper = new MyZooKeeper();
+        myZooKeeper.connect("10.21.3.77:2181", 30000);
+    }
 
     /**
      * <p>创建zNode节点, String create(path<节点路径>, data[]<节点内容>, List(ACL访问控制列表), CreateMode<zNode创建类型>) </p><br/>
@@ -27,10 +33,14 @@ public class ZKOperate {
      *
      * @param path zNode节点路径
      * @param data zNode数据内容
+     *             ZooDefs.Ids.OPEN_ACL_UNSAFE  所有可见
      * @return 创建成功返回true, 反之返回false.
+     * 注意这里创建的临时节点，所以在服务端是看不到的
      */
-    public boolean createZNode(String path, String data) {
+    public boolean createZNode(String path, String data, boolean needWatch) {
         try {
+            //设置监控（由于zookeeper的监控都是一次性的，所以每次必须设置）
+            MyZooKeeper.zooKeeper.exists(path, needWatch);
             String zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
             logger.info("ZooKeeper创建节点成功，节点地址：" + zkPath);
             return true;
@@ -51,7 +61,7 @@ public class ZKOperate {
      * </pre>
      *
      * @param path    zNode节点路径
-     * @param version 版本号
+     * @param version 版本号 一般为-1
      * @return 删除成功返回true, 反之返回false.
      */
     public boolean deteleZNode(String path, int version) {
@@ -94,13 +104,12 @@ public class ZKOperate {
      * @param path zNode节点路径
      * @return 节点存储的值, 有值返回, 无值返回null
      */
-    public String readData(String path) {
+    public String readData(String path, boolean needWatch) {
         String data = null;
-        //stat存储状态信息，因为java的返回值只能有一个，所以要传一个对象进去，以便获取数据后添加到对象中
         Stat stat = new Stat();
         try {
-            data = new String(MyZooKeeper.zooKeeper.getData(path, false, stat));
-            logger.info("读取数据成功, path:" + path + ", content:" + data);
+            data = new String(MyZooKeeper.zooKeeper.getData(path, needWatch, stat));
+            logger.info("读取数据成功, path:" + path + ", content:" + data + ", stat = " + stat.toString());
         } catch (KeeperException e) {
             logger.error("读取数据失败,发生KeeperException! path: " + path
                     + ", errMsg:" + e.getMessage(), e);
@@ -109,6 +118,11 @@ public class ZKOperate {
                     + ", errMsg:" + e.getMessage(), e);
         }
         return data;
+    }
+
+    @Test
+    public void testReadData() {
+        System.out.println(readData("/aa/bb/dd", false));
     }
 
     /**
@@ -126,13 +140,16 @@ public class ZKOperate {
      * @throws KeeperException
      * @throws InterruptedException
      */
-    public List<String> getChild(String path) {
+    public List<String> getChild(String path, boolean needWatch) {
         try {
-            List<String> list = MyZooKeeper.zooKeeper.getChildren(path, false);
-            if (list.isEmpty()) {
+            List<String> childList = MyZooKeeper.zooKeeper.getChildren(path, needWatch);
+            if (childList.isEmpty()) {
                 logger.info("中没有节点" + path);
             }
-            return list;
+            for (String child : childList) {
+                System.out.println("child is = " + child);
+            }
+            return childList;
         } catch (KeeperException e) {
             logger.error("读取子节点数据失败,发生KeeperException! path: " + path
                     + ", errMsg:" + e.getMessage(), e);
@@ -149,9 +166,9 @@ public class ZKOperate {
      * @param path zNode节点路径
      * @return 存在返回true, 反之返回false
      */
-    public boolean isExists(String path) {
+    public boolean isExists(String path, boolean needWatch) {
         try {
-            Stat stat = MyZooKeeper.zooKeeper.exists(path, false);
+            Stat stat = MyZooKeeper.zooKeeper.exists(path, needWatch);
             return null != stat;
         } catch (KeeperException e) {
             logger.error("读取数据失败,发生KeeperException! path: " + path
@@ -163,11 +180,27 @@ public class ZKOperate {
         return false;
     }
 
+    @Test
+    public void testGetChild() {
+        getChild("/aa", false);
+    }
 
     @Test
     public void listAllChildren() throws IOException {
-        ZooKeeper zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, null);
-        listChildren(zooKeeper, "/");
+        ZooKeeper zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, this.myZooKeeper);
+        listChildren(zooKeeper, "/aa", false);
+    }
+
+    @Test
+    public void testIsExists() {
+        System.out.println(isExists("/bb", false));
+    }
+
+    @Test
+    public void test() throws Exception {
+        ZooKeeper zooKeeper = new ZooKeeper(SERVER_ADDRESS, 3000, null);
+        zooKeeper.addAuthInfo("digest", "dw:true".getBytes());
+        zooKeeper.create("/zk-book", "123".getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
     }
 
     /**
@@ -176,10 +209,10 @@ public class ZKOperate {
      * @param path
      * @param zooKeeper
      */
-    private void listChildren(ZooKeeper zooKeeper, String path) {
+    private void listChildren(ZooKeeper zooKeeper, String path, boolean needWatch) {
         logger.info("path = " + path);
         try {
-            List<String> children = zooKeeper.getChildren(path, false);
+            List<String> children = zooKeeper.getChildren(path, needWatch);
             recursionGetChildren(path, children);
         } catch (KeeperException e) {
             e.printStackTrace();
@@ -209,8 +242,7 @@ public class ZKOperate {
         if (children == null || children.isEmpty()) {
             return;
         } else {
-            for (String str : children
-                    ) {
+            for (String str : children) {
                 if (path.equals("/")) {
                     path = "";
                 }
@@ -219,60 +251,87 @@ public class ZKOperate {
         }
     }
 
-    @Test
-    public void watch() throws Exception {
-        final ZooKeeper zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, null);
-        final Stat stat = new Stat();
-        //创建watcher对象
-        Watcher watcher = new Watcher() {
-            public void process(WatchedEvent event) {
-                String path = event.getPath();
-                Event.KeeperState keeperState = event.getState();
-                Event.EventType eventType = event.getType();
-                System.out.println(path + "，数据被观察到！ " + eventType);
-                //对已经被delete的znode要单独做处理，不然观察者会抛出异常
-                if (eventType == Event.EventType.NodeDeleted) {
-                    System.out.println(path + "，被删除了！");
-                    return;
+
+    class TestWatcher implements Watcher {
+
+//        ZooKeeper zooKeeper;
+//
+//        TestWatcher() {
+//            try {
+//                zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, null);
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
+        @Override
+        public void process(WatchedEvent event) {
+            String path = event.getPath();
+            Event.KeeperState keeperState = event.getState();
+            Event.EventType eventType = event.getType();
+            System.out.println(path + "，数据被观察到！ " + eventType);
+            if (eventType == Event.EventType.None) {
+                System.out.println("EventType.None");
+                if (keeperState == Event.KeeperState.Disconnected) {
+                    System.out.println("链接已断开");
                 }
-                try {
-                    zooKeeper.getData("/test/aa", this, stat);
-                } catch (KeeperException e) {
-                    e.printStackTrace();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                if (keeperState == Event.KeeperState.SyncConnected) {
+                    System.out.println("已经建立链接");
                 }
             }
-        };
-        System.out.println("ok");
-        byte[] data = zooKeeper.getData("/test/aa", watcher, stat);
-        System.out.println(new String(data));
-        while (true) {
-            Thread.sleep(5000);
+            //对已经被delete的znode要单独做处理，不然观察者会抛出异常
+            if (eventType == Event.EventType.NodeDeleted) {
+                System.out.println(path + "，被删除了！");
+                return;
+            }
+//            //重新注册监听事件
+//            try {
+//                zooKeeper.getData("/aa/loc30000000002", this, null);
+//            } catch (KeeperException e) {
+//                e.printStackTrace();
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
         }
+    }
+
+    @Test
+    public void watch() throws Exception {
+        //创建watcher对象
+        TestWatcher watcher = new TestWatcher();
+        final ZooKeeper zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, watcher);
+//        System.out.println("==============");
+//        byte[] data = zooKeeper.getData("/aa/loc30000000002", watcher, null);
+//        System.out.println(new String(data));
+        Thread.sleep(5000);
+
+        zooKeeper.close();
+//        while (true) {
+//            Thread.sleep(5000);
+//        }
     }
 
     @Test
     public void createAllZnode() throws Exception {
         ZooKeeper zooKeeper = new ZooKeeper("10.21.3.77:2181", 2000, null);
-        cucursionCreateZnode(zooKeeper,"","/test/a/b/c","aa");
+        cucursionCreateZnode(zooKeeper, "", "/test/a/b/c", "aa");
     }
 
-    public void cucursionCreateZnode(ZooKeeper zooKeeper,String prefix, String path, String data) throws Exception {
-        if (path.matches("^/.*")){
+    public void cucursionCreateZnode(ZooKeeper zooKeeper, String prefix, String path, String data) throws Exception {
+        if (path.matches("^/.*")) {
             if (path.split("/").length >= 2) {
-                String temp1 = path.substring(1,path.length());
-                String temp2 = temp1.substring(0,temp1.indexOf("/") == -1?temp1.length():temp1.indexOf("/"));
-                String temp3 = temp1.substring(temp1.indexOf("/") == -1?temp1.length():temp1.indexOf("/"));
-                zooKeeper.create(  prefix+"/"+temp2,data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
-                if (temp3.contains("/")){
-                    cucursionCreateZnode(zooKeeper, prefix+"/"+temp2, temp3,data);
+                String temp1 = path.substring(1, path.length());
+                String temp2 = temp1.substring(0, temp1.indexOf("/") == -1 ? temp1.length() : temp1.indexOf("/"));
+                String temp3 = temp1.substring(temp1.indexOf("/") == -1 ? temp1.length() : temp1.indexOf("/"));
+                zooKeeper.create(prefix + "/" + temp2, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                if (temp3.contains("/")) {
+                    cucursionCreateZnode(zooKeeper, prefix + "/" + temp2, temp3, data);
                 }
-            }else {
-                zooKeeper.create(path,data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE,CreateMode.PERSISTENT);
+            } else {
+                zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
                 return;
             }
-        }else {
+        } else {
             System.out.println("format error");
         }
     }

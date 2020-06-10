@@ -7,6 +7,7 @@ import org.apache.zookeeper.ZooKeeper;
 
 import java.io.IOException;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Created by duanwei on 2017/3/20.
@@ -20,11 +21,47 @@ public class MyZooKeeper implements Watcher{
 
     public static ZooKeeper zooKeeper = null;
 
+    //定义原子变量记录watch的次数
+    AtomicInteger count = new AtomicInteger();
+
     @Override
     public void process(WatchedEvent watchedEvent) {
-        logger.info("收到事件通知：" + watchedEvent.getState() );
-        if(watchedEvent.getState()== Event.KeeperState.SyncConnected){
-            countDownLatch.countDown();
+        if (watchedEvent == null) {
+            return;
+        }
+        //连接状态
+        Event.KeeperState state = watchedEvent.getState();
+        //事件类型
+        Event.EventType eventType = watchedEvent.getType();
+        //受影响的path
+        String path = watchedEvent.getPath();
+
+        String logPrefix = "[watcher-" + this.count.incrementAndGet() + "]";
+        logger.warn("收到事件通知：" + watchedEvent.getState() );
+        logger.warn(logPrefix + "连接状态:\t"+state.toString());
+        logger.warn(logPrefix + "事件类型:\t" + eventType.toString());
+
+
+        if (eventType == Event.EventType.None) {
+            if(state == Event.KeeperState.SyncConnected){
+                logger.warn(logPrefix + "成功连上ZK服务器");
+                countDownLatch.countDown();
+            } else if (state == Event.KeeperState.Disconnected) {
+                logger.warn(logPrefix + "断开连接");
+
+            }
+        }else if (eventType == Event.EventType.NodeCreated) {
+            logger.warn(logPrefix + "创建节点");
+
+        } else if (eventType == Event.EventType.NodeDataChanged) {
+            logger.warn(logPrefix + "更新节点数据");
+
+        } else if (eventType == Event.EventType.NodeChildrenChanged) {
+            logger.warn(logPrefix + "更新子节点");
+
+        } else if (eventType == Event.EventType.NodeDeleted) {
+            logger.warn(logPrefix + "删除节点");
+
         }
     }
 
@@ -53,10 +90,12 @@ public class MyZooKeeper implements Watcher{
      * @param sessionTimeout Zookeeper连接超时时间
      */
     public void connect(String connectString,int sessionTimeout){
+        this.close();
         try {
             if(zooKeeper == null){
                 // ZK客户端允许我们将ZK服务器的所有地址都配置在这里
                 zooKeeper = new ZooKeeper(connectString,sessionTimeout,this);
+                logger.info("开始连接zookeeper服务器");
                 // 使用CountDownLatch.await()的线程（当前线程）阻塞直到所有其它拥有
                 //CountDownLatch的线程执行完毕（countDown()结果为0）
                 countDownLatch.await();
@@ -80,4 +119,6 @@ public class MyZooKeeper implements Watcher{
             logger.error("release connection error ," + e.getMessage() ,e);
         }
     }
+
+
 }

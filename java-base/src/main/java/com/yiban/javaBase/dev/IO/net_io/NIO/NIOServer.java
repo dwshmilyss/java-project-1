@@ -43,7 +43,7 @@ public class NIOServer {
      * @throws IOException
      */
     public void initServer(int port) throws IOException {
-        // 获得一个ServerSocket通道
+        // 获得一个ServerSocketChannel通道
         serverChannel = ServerSocketChannel.open();
         // 设置通道为非阻塞
         serverChannel.configureBlocking(false);
@@ -61,7 +61,12 @@ public class NIOServer {
          * 选择器在接受了一个或多个通道的委托后，开始选择工作，它的选择工作就完全交给操作系统，
          * linux下即为poll或epoll
          */
-        serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+//        int interestSet = SelectionKey.OP_ACCEPT | SelectionKey.OP_CONNECT;
+//        System.out.println("interestSet = " + interestSet);
+        //这里好像只能用OP_ACCEPT来注册
+        SelectionKey key = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
+//        SelectionKey key = serverChannel.register(selector, interestSet);
+        key.attach("abc");
     }
 
     /**
@@ -80,14 +85,25 @@ public class NIOServer {
 //            selector.select(1000);
             //只有当注册的事件到达时才会继续；否则该方法会一直阻塞
             selector.select();
-            //获取selector中注册的事件的迭代器
+            //获取指定selector中注册的事件的迭代器
             Iterator ite = this.selector.selectedKeys().iterator();
             while (ite.hasNext()) {
                 SelectionKey key = (SelectionKey) ite.next();
                 //获取到该key后就删除，以防重复处理
                 ite.remove();
                 //如果是客户端请求连接事件
-                if (key.isAcceptable()) {
+                if (key.isAcceptable()) {//是否可接收
+                    System.out.println("attachment = " + key.attachment());//返回selecctKey的attachment，可以在注册channel的时候指定
+                    key.channel();//返回该SelectionKey对应的channel
+                    key.selector();//返回该SelectionKey对应的selector
+                    key.interestOps();//返回该SelectionKey监控的IO操作的bit mask
+                    //可以通过如下方法判断selector是否对channel的某种事件感兴趣
+                    int interestSet = key.interestOps();
+                    boolean isInterestedInAccept = (interestSet & SelectionKey.OP_ACCEPT) == SelectionKey.OP_ACCEPT;
+                    boolean isInterestedInConnect = (interestSet & SelectionKey.OP_CONNECT) == SelectionKey.OP_CONNECT;
+                    boolean isInterestedInRead = (interestSet & SelectionKey.OP_READ) == SelectionKey.OP_READ;
+                    boolean isInterestedInWrite = (interestSet & SelectionKey.OP_WRITE) == SelectionKey.OP_WRITE;
+                    key.readyOps();//返回一个bit mask，代表在相应的channel上可以进行的IO操作
                     ServerSocketChannel server = (ServerSocketChannel) key.channel();
                     //获得和客户端连接的channel
                     SocketChannel channel = server.accept();
@@ -97,7 +113,7 @@ public class NIOServer {
                     channel.write(ByteBuffer.wrap(new String("sersver has received").getBytes()));
                     //在和客户端连接成功之后，为了可以接收到客户端的信息，需要给通道设置读的权限。
                     channel.register(this.selector, SelectionKey.OP_READ);
-                } else if (key.isReadable()) {//如果获取了可读的event
+                } else if (key.isReadable()) {//是否可读
                     read(key);
                 }
             }

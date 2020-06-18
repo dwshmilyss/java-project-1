@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.GOF.proxy.dynamic_porxy;
+package com.yiban.javaBase.dev.GOF.proxy.dynamic_porxy.demo1;
 
 import org.springframework.cglib.proxy.Enhancer;
 import org.springframework.cglib.proxy.MethodInterceptor;

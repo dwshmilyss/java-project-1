@@ -23,18 +23,19 @@ public class ZKClientTest {
         // 连接zk服务器
         MyZooKeeper zooKeeper = new MyZooKeeper();
         zooKeeper.connect("10.21.3.77:2181",30000);
+        //自定义的创建节点方法
+//        System.out.println(zkOperate.createZNode("/aa", "test for data"));
         try {
+            //zookeeper原生的创建节点方法
+//            MyZooKeeper.zooKeeper.create("/aa", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+//            MyZooKeeper.zooKeeper.create("/aa/loc1", String.valueOf(10).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
+//            MyZooKeeper.zooKeeper.create("/aa/loc2", String.valueOf(11).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+            MyZooKeeper.zooKeeper.create("/aa/loc3", String.valueOf(12).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
 
-            zkOperate.createZNode("/bb", "test for data");
-            //
-            MyZooKeeper.zooKeeper.create("/aa", new byte[0], ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
-            MyZooKeeper.zooKeeper.create("/aa/loc1", String.valueOf(10).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL_SEQUENTIAL);
-            MyZooKeeper.zooKeeper.create("/aa/loc2", String.valueOf(11).getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
-
-            byte[] bytes1 = MyZooKeeper.zooKeeper.getData("/aa/loc2", false, new Stat());
-            byte[] bytes2 = MyZooKeeper.zooKeeper.getData("/aa/loc10000000000", false, new Stat());
-            System.out.println("bytes1 = " + new String(bytes1));
-            System.out.println("bytes2 = " + new String(bytes2));
+//            byte[] bytes1 = MyZooKeeper.zooKeeper.getData("/aa/loc2", false, new Stat());
+//            byte[] bytes2 = MyZooKeeper.zooKeeper.getData("/aa/loc10000000000", false, new Stat());
+//            System.out.println("bytes1 = " + new String(bytes1));
+//            System.out.println("bytes2 = " + new String(bytes2));
         } catch (KeeperException e) {
             e.printStackTrace();
         } catch (InterruptedException e) {

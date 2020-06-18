@@ -1,8 +1,6 @@
 package com.yiban.javaBase.dev.reflect;
+import java.lang.reflect.*;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,31 +26,37 @@ public class Demo1 {
 //        }
 
 
-        getFields(new Test(),false);
+//        getFields(new Test(),false);
+//        System.out.println("==============================");
+//        getMethods(new Test(),false);
+//        System.out.println("==============================");
+//        System.out.println(getStaticFields("gender"));
         System.out.println("==============================");
-        getMethods(new Test(),false);
+        getPrivateParamConstructors(new Test());
         System.out.println("==============================");
-        System.out.println(getStaticFields("str2"));
+        getPublicParamConstructors(new Test());
         System.out.println("==============================");
+        System.out.println(Test.class.getSimpleName());
+        System.out.println(Test.class.getCanonicalName());
 
-        PrivateClass2 p = new PrivateClass2();
-        Class<?> classType = p.getClass();
-
-        Field field = classType.getDeclaredField("name");
-        field.setAccessible(true); // 抑制Java对修饰符的检查
-        field.set(p, "lisi");
-        System.out.println(field.getName() + " " + field.get(p));
-        System.out.println("==============================");
-
-        /**
-         * getDeclaredMethod 表示获取私有方法 不加Declared表示获取public
-         */
-        Method method = classType.getDeclaredMethod("sayHello",
-                new Class[]{String.class, Integer.class});
-        method.setAccessible(true); // 抑制Java的访问控制检查
-        //调用对象的私有方法 要加上上面这句话
-        String str = (String) method.invoke(p, new Object[]{"zhangsan", 18});
-        System.out.println(str);
+//        PrivateClass2 p = new PrivateClass2();
+//        Class<?> classType = p.getClass();
+//
+//        Field field = classType.getDeclaredField("name");
+//        field.setAccessible(true); // 抑制Java对修饰符的检查
+//        field.set(p, "lisi");
+//        System.out.println(field.getName() + " " + field.get(p));
+//        System.out.println("==============================");
+//
+//        /**
+//         * getDeclaredMethod 表示获取私有方法 不加Declared表示获取public
+//         */
+//        Method method = classType.getDeclaredMethod("sayHello",
+//                new Class[]{String.class, Integer.class});
+//        method.setAccessible(true); // 抑制Java的访问控制检查
+//        //调用对象的私有方法 要加上上面这句话
+//        String str = (String) method.invoke(p, new Object[]{"zhangsan", 18});
+//        System.out.println(str);
     }
 
 
@@ -136,6 +140,36 @@ public class Demo1 {
 
 
     /**
+     * 调用私有的有参构造函数
+     * @param object
+     * @throws Exception
+     */
+    private static void getPrivateParamConstructors(Object object) throws Exception {
+        Class clazz = object.getClass();
+
+        Class[] pTypes = new Class[]{int.class, Class.forName("java.lang.String")};
+        Constructor constructor = clazz.getDeclaredConstructor(pTypes);
+        constructor.setAccessible(true);
+        Object[] objects = new Object[]{1, "aa"};
+        constructor.newInstance(objects);
+        //调用默认的构造函数
+    }
+
+    /**
+     * 调用共有的有参构造函数
+     * @param object
+     * @throws Exception
+     */
+    private static void getPublicParamConstructors(Object object) throws Exception {
+        Class clazz = object.getClass();
+        Class[] pTypes = new Class[]{Class.forName("java.lang.String")};
+        Constructor constructor = clazz.getConstructor(pTypes);
+        Object[] objects = new Object[]{"aa"};
+        constructor.newInstance(objects);
+        //调用默认的构造函数
+    }
+
+    /**
      * 获取静态字段 其实完全没必要 因为使用对象也可以获取静态字段
      * @param field
      * @return
@@ -144,7 +178,7 @@ public class Demo1 {
         try {
             Field f = Test.class.getDeclaredField(field);
             f.setAccessible(true);
-            return f.get(null);
+            return f.get(new Test());
         } catch (Exception e) {}
         return null;
     }
@@ -199,6 +233,18 @@ class Test {
 
     private void test2() {
         System.out.println("test2");
+    }
+
+    private Test(int a,String b){
+        System.out.println("private + parameters");
+    }
+
+    public Test(String name){
+        System.out.println("public + parameters");
+    }
+
+    public Test(){
+        System.out.println("public + non parameters");
     }
 }
 

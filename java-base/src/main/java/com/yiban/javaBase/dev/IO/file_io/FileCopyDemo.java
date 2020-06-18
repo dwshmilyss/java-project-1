@@ -1,5 +1,7 @@
 package com.yiban.javaBase.dev.IO.file_io;
+import	java.nio.ByteBuffer;
 
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,6 +27,13 @@ public class FileCopyDemo {
      * @param dest
      */
     public static void copyByNIO(File src, File dest) {
+        if (!dest.exists()) {
+            try {
+                dest.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         FileInputStream fis = null;
         FileOutputStream fos = null;
         FileChannel inChannel = null;
@@ -61,6 +70,13 @@ public class FileCopyDemo {
      * @param target
      */
     public static void nioBufferCopy(File source, File target) {
+        if (!target.exists()) {
+            try {
+                target.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         FileChannel inChannel = null;
         FileChannel outChannel = null;
         FileInputStream inStream = null;
@@ -70,17 +86,15 @@ public class FileCopyDemo {
             outStream = new FileOutputStream(target);
             inChannel = inStream.getChannel();
             outChannel = outStream.getChannel();
-            ByteBuffer buffer = ByteBuffer.allocate(4096);
+            ByteBuffer buffer = ByteBuffer.allocate(10);
             while (inChannel.read(buffer) != -1) {
                 //切换模式（由读模式切换为写模式）
-                /**
-                 * Buffer有两种模式，写模式和读模式。在读模式下调用flip()之后，Buffer从读模式变成写模式。
-                 *
-                 */
+                //Buffer有两种模式，写模式和读模式。在读模式下调用flip()之后，Buffer从读模式变成写模式。
                 buffer.flip();
-                while (buffer.hasRemaining()) {
-                    System.out.print((char) buffer.get());
-                }
+                //下面这句话不要也可以 只是打印出buffer里面的内容而已 和读取写入数据无关
+//                while (buffer.hasRemaining()) {
+//                    System.out.print((char) buffer.get());
+//                }
                 //写入数据
                 outChannel.write(buffer);
                 //清空缓存
@@ -266,6 +280,27 @@ public class FileCopyDemo {
         } else {
             return true;
         }
+    }
+
+
+    @Test
+    public void testFileNIO() throws Exception {
+//        System.out.println("123456789".getBytes().length);
+//        RandomAccessFile randomAccessFile = new RandomAccessFile("/Users/duanwei/test_nio.txt", "rw");
+//        FileChannel inChannel = randomAccessFile.getChannel();
+//        ByteBuffer buffer = ByteBuffer.allocate(10);
+//        int bytesReaded = inChannel.read(buffer);
+//        System.out.println(buffer.clear());
+//        System.out.println(buffer.hasRemaining());
+//        System.out.println("bytesReaded = " + bytesReaded);
+//        buffer.put("1234567890".getBytes());
+//        buffer.flip();
+//        inChannel.write(buffer);
+//        System.out.println(buffer.clear());
+//
+//        inChannel.close();
+//        randomAccessFile.close();
+        FileCopyDemo.nioBufferCopy(new File("/Users/duanwei/test_nio.txt"),new File("/Users/duanwei/test_nio_copy.txt "));
     }
 
 }

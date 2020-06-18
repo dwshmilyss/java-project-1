@@ -10,3 +10,6 @@ out
 gen
 .DS_Store
 *.log
+workspace
+.project
+.classpath

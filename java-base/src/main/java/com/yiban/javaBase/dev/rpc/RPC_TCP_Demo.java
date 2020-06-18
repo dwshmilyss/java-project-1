@@ -16,7 +16,7 @@ import java.util.Map;
  * @date 2018/9/19
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class TCP_RPC_Demo {
+public class RPC_TCP_Demo {
     public static void main(String[] args) {
         System.out.println("aa");
     }

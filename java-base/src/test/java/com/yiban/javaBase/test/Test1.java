@@ -1,14 +1,12 @@
 package com.yiban.javaBase.test;
-import java.util.Arrays;
-import	java.util.IdentityHashMap;
+import java.lang.ref.WeakReference;
+import java.util.*;
 
 import com.alibaba.dubbo.common.io.Bytes;
 import com.google.common.base.Strings;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * @auther WEI.DUAN
@@ -106,7 +104,13 @@ public class Test1 {
         int num = 'a';
         System.out.println(num);
         System.out.println("abc".hashCode());
-
+        Map<WeakReference<String>, WeakReference<String>> weakReferenceMap = new WeakHashMap<>();
+        weakReferenceMap.put(new WeakReference<>("aa"), new WeakReference<>("dw1"));
+        weakReferenceMap.put(new WeakReference<>("bb"), new WeakReference<>("dw2"));
+        weakReferenceMap.put(new WeakReference<>("cc"), new WeakReference<>("dw3"));
+        System.out.println(weakReferenceMap.size());
+        System.gc();
+        System.out.println(weakReferenceMap.size());
     }
 
     @Test

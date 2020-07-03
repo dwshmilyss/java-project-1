@@ -13,3 +13,6 @@ gen
 workspace
 .project
 .classpath
+/btrace/lib/
+/hive/lib/
+/java-base/lib/

@@ -16,3 +16,4 @@ workspace
 /btrace/lib/
 /hive/lib/
 /java-base/lib/
+.settings/

@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.algorithm.consistent_hash;
+package com.yiban.javaBase.dev.algorithm.consistent_hash.demo1;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;

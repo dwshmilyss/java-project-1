@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.params;
+package com.yiban.javaBase.dev.tools;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +7,8 @@ import java.util.PropertyResourceBundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Params {
-    private static final Logger log = LoggerFactory.getLogger(Params.class);
+public class ParameterTools {
+    private static final Logger log = LoggerFactory.getLogger(ParameterTools.class);
 
     /**
      * 属性配置文件路径
@@ -32,7 +32,7 @@ public class Params {
         PropertyResourceBundle props = null;
 
         try {
-            fis = Params.class.getClassLoader().getResourceAsStream(
+            fis = ParameterTools.class.getClassLoader().getResourceAsStream(
                     PARAMETERS_PROPERTIES_PATH);
             props = new PropertyResourceBundle(fis);
             // 分页每页显示数

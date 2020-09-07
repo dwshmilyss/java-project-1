@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.params;
+package com.yiban.javaBase.dev.tools;
 
 public class DateParams {
     public static final String DATE_DAY = "yyyy-MM-dd";

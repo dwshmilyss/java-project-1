@@ -28,8 +28,6 @@ import javax.imageio.stream.ImageInputStream;
 import javax.servlet.http.HttpServletRequest;
 
 import com.yiban.javaBase.dev.encrypt.MD5;
-import com.yiban.javaBase.dev.params.DateParams;
-import com.yiban.javaBase.dev.params.Params;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -690,7 +688,7 @@ public class MyTools {
         if (pageNo == 0){
             rowBounds = new RowBounds();
         }else{
-            rowBounds = new RowBounds(pageNo, Params.page_limit);
+            rowBounds = new RowBounds(pageNo, ParameterTools.page_limit);
         }
         return rowBounds;
     }

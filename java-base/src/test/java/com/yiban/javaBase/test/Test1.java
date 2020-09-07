@@ -25,7 +25,11 @@ public class Test1 {
 //        System.out.println(1L << 6);
 //        System.out.println(63 >> 6);
 //        System.out.println(1 | 1 << 1);
-        System.out.println(Math.abs("test_8_3_g2".hashCode()) % 8);
+//        System.out.println(Math.abs("test_8_3_g2".hashCode()) % 8);
+        boolean flag = false;
+        boolean flag1 = true;
+        System.out.println(flag |= flag1);
+        System.out.println(flag1);
     }
 
     @Test

@@ -190,7 +190,6 @@ public class Demo1 {
         return s;
     }
 }
-
 class PrivateClass2 {
     private String name = "zhangsan";
 
@@ -247,4 +246,5 @@ class Test {
         System.out.println("public + non parameters");
     }
 }
+
 

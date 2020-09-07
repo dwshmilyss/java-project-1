@@ -1,6 +1,10 @@
 package com.yiban.javaBase.dev.concurrent;
 
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import org.apache.spark.util.UninterruptibleThread;
+import org.jetbrains.annotations.NotNull;
+
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,15 +36,25 @@ public class ConcurrentWaitDemo {
     public static boolean flag = false;
 
     public static void main(String[] args) {
+        ThreadFactory threadFactory = new ThreadFactoryBuilder()
+                .setDaemon(true)
+                .setNameFormat("thread_id-%d")
+                .setThreadFactory(new ThreadFactory() {
+                    @Override
+                    public Thread newThread(@NotNull Runnable r) {
+                        return new UninterruptibleThread(r,"unused");
+                    }
+                }).build();
         //测试不同的线程池的使用效果
         ExecutorService singleThreadExecutor = Executors.newSingleThreadExecutor();
         ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
-        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10);
+//        ExecutorService cachedThreadPool = Executors.newCachedThreadPool(threadFactory);
+        ExecutorService fixedThreadPool = Executors.newFixedThreadPool(10,threadFactory);
         ExecutorService executor4 = Executors.newWorkStealingPool();
 
 //        useThreadJoin();
-//        useCountDownLatch(fixedThreadPool);
-        useSemaphore(fixedThreadPool);
+        useCountDownLatch(fixedThreadPool);
+//        useSemaphore(fixedThreadPool);
 //        useCyclicBarrier(fixedThreadPool);
 
 //        usePhaser(fixedThreadPool);

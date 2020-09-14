@@ -1,4 +1,4 @@
-package com.yiban.flume.dev.interceptor;
+package com.yiban.flume.dev.interceptors;
 
 import com.google.common.base.Charsets;
 import com.google.common.collect.Lists;
@@ -6,7 +6,6 @@ import org.apache.flume.Context;
 import org.apache.flume.Event;
 import org.apache.flume.interceptor.Interceptor;
 
-import java.nio.charset.Charset;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

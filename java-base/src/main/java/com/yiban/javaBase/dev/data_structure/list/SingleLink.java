@@ -1,6 +1,5 @@
-package com.yiban.javaBase.dev.data_structure.link;
+package com.yiban.javaBase.dev.data_structure.list;
 
-import java.util.Comparator;
 import java.util.Stack;
 
 /**

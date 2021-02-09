@@ -1,7 +1,8 @@
 package com.yiban.javaBase.dev.data_structure.tree.binary_tree;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import org.spark_project.jetty.util.ArrayQueue;
+
+import java.util.*;
 
 /**
  * Created by Administrator on 2018/10/13 0013.
@@ -173,10 +174,11 @@ public class BinaryTree<E extends Comparable> {
     }
 
     /**
-     * 中序遍历（先左子树，然后根节点，最后右子树）
-     * 只有这种遍历是按顺序输出的
+     * 中序遍历（根节点在中间输出）只有这种遍历是按顺序输出的
+     * 1. 先中序遍历左子树，一直到叶子，也就是说最先输出的应该是左子树最左边的叶子节点
+     * 2. 然后输出根节点
+     * 3. 最后中序遍历右子树，即使在遍历右子树的时候，也是最先输出右子树最左侧的叶子节点
      */
-
     public void middleOrder(Node current) {
         if (current != null) {
             middleOrder(current.leftChild);
@@ -186,23 +188,182 @@ public class BinaryTree<E extends Comparable> {
     }
 
     /**
-     * 前序遍历 先访问根节点 然后中序遍历左子树 最后中序遍历右子树
+     * 中序遍历-栈
+     *  这里和前序遍历的第二种方法的区别只是输出值得位置不同而已
+     * @param current
      */
+    public void middleOrderByStack(Node current) {
+        Stack<Node> stack = new Stack<>();
+        while (!stack.isEmpty() || current != null) {
+            if (current != null) {
+                stack.push(current);
+                current = current.leftChild;
+            } else {
+                current = stack.pop();
+                //和前序遍历方法二的区别就只有这里 输出值得位置不同
+                //走到这里说明已经到了左子树的左叶子节点
+                System.out.print(current.data + " ");
+                current = current.rightChild;
 
-    public void preOrder(Node current) {
-        if (current != null) {
-            System.out.print(current.data + " ");
-            middleOrder(current.leftChild);
-            middleOrder(current.rightChild);
+            }
         }
     }
 
-    //后序遍历
+    /**
+     * 前序遍历-递归(根节点最先输出)
+     * 1. 先访问根节点(最先输出全树的root节点)
+     * 2. 然后前序遍历左子树，直到所有左子树节点遍历完毕，一直到叶子。先输出的是最左侧子树的root节点
+     * 3. 最后前序遍历右子树，和左子树一样，也是最先输出右子树最左侧子树的root节点
+     */
+    public void preOrder(Node current) {
+        if (current != null) {
+            System.out.print(current.data + " ");
+            preOrder(current.leftChild);
+            preOrder(current.rightChild);
+        }
+    }
+
+    /**
+     * 前序遍历-栈
+     * 两种方法均可 都好理解
+     * 方法一：先把root节点压入栈中，然后while循环直到栈为空，弹出刚才压入的节点，因为第一次压入的是
+     *  root节点，所以第一次弹出的也是root节点，然后判断该root是否有左右子树，这里为什么要先判断是否有
+     *  右子树呢，因为是前序遍历啊，前序遍历先输出左子树，栈是先进后出的，所以右子树先入栈，后弹出。
+     *
+     *  方法二： 先走while循环，因为是 || 条件，第一次传入root节点(current)，判断，current节点不为Null，进入循环体
+     *  再判断current是否为null(第一次的时候这里是判断root)，不为null就输出，先输出current节点，然后把current节点压栈，然后将当前节点的左子树赋值给current
+     *  然后在开始循环体，判断current是否为null（以后就是判断是否有左节点），如果不为null，证明有左子树
+     *
+     * @param current
+     */
+    public void preOrderByStack(Node current) {
+        //方法一
+//        if (current != null) {
+//            Stack<Node> stack = new Stack<>();
+//            stack.push(current);
+//            while (!stack.isEmpty()) {
+//                Node node = stack.pop();
+//                  //先压右，再压左
+//                if (node.rightChild != null) {
+//                    stack.push(node.rightChild);
+//                }
+//                if (node.leftChild != null) {
+//                    stack.push(node.leftChild);
+//                }
+//                System.out.print(node.data + " ");
+//            }
+//        } else {
+//            return;
+//        }
+        //方法二
+        Stack<Node> stack = new Stack<>();
+        while (!stack.isEmpty() || current != null) {
+            if (current != null) {
+                System.out.print(current.data + " ");
+                stack.push(current);
+                current = current.leftChild;
+            } else {
+                current = stack.pop();
+                current = current.rightChild;
+            }
+        }
+    }
+
+
+    /**
+     * 后序遍历(根节点最后输出)
+     * 1. 先后续遍历左子树，最先输出左子树最左侧的叶子节点(如果有的话)，然后是最左侧子树的右节点(如果有的话)，最后是最左侧子树的root节点
+     * 2. 然后根节点
+     * 3. 后续遍历右子树
+     *
+     * @param current
+     */
     public void afterOrder(Node current) {
         if (current != null) {
-            middleOrder(current.leftChild);
-            middleOrder(current.rightChild);
+            afterOrder(current.leftChild);
+            afterOrder(current.rightChild);
             System.out.print(current.data + " ");
+        }
+    }
+
+    /**
+     * 后续遍历-栈(需要借助map实现)
+     * @param current
+     */
+    public void afterOrderByStack(Node current) {
+        //方法一 栈+Map
+//        Stack<Node> stack = new Stack<>();
+//        Map<E, Integer> map = new HashMap<>();
+//        while (!stack.isEmpty() || current != null) {
+//            if (current != null) {
+//                stack.push(current);
+//                map.put(current.data, 1);
+//                current = current.leftChild;
+//            } else {
+//                current = stack.peek();//取出栈顶元素，但不移除
+//                //这里的算法比较巧妙，为什么是2次呢，因为只有这样才能先输出左节点，然后输出右节点
+//                // 因为对于存储到栈中的元素来说，是先存的根节点，然后左节点，然后右节点
+//                // 只有循环到第二次，才能访问到右节点，这点要是不明白，可以画图，一目了然
+//                if (map.get(current.data) == 2) { //如果是第二次访问，则弹出
+//                    stack.pop();
+//                    System.out.print(current.data + " ");
+//                    current = null; //需要往上走，也就是会到
+//                } else {
+//                    map.put(current.data, 2);
+//                    current = current.rightChild;
+//                }
+//            }
+//        }
+
+        //方法二 栈+栈
+        Stack<Node> q1 = new Stack();
+        Stack<Node> q2 = new Stack();
+        if (current == null)
+            return;
+        if (current != null) {
+            q1.push(current);
+        }
+        while (!q1.isEmpty()) {
+            Node t1 = q1.pop();
+            q2.push(t1);
+            //这里因为又要借助栈，所以要先压左，再压右，所以弹出的时候先弹右，再弹左
+            //这样到了新栈中就是先压右，后压左，弹出时就是左在前，右在后
+            if (t1.leftChild != null) {
+                q1.push(t1.leftChild);
+            }
+            if (t1.rightChild != null) {
+                q1.push(t1.rightChild);
+            }
+        }
+        while (!q2.isEmpty()) {
+            Node t1 = q2.pop();
+            System.out.print(t1.data + " ");
+        }
+    }
+
+    /**
+     * 层序遍历
+     * 也就是说从根节点开始，从左到右，一层一层的遍历节点
+     *
+     * @param current
+     */
+    public void tierOrer(Node current) {
+        Queue<Node> queue = new ArrayQueue<>();
+        if (current == null) {
+            return;
+        }
+        if (current != null) {
+            queue.add(current);
+        }
+        while (!queue.isEmpty()) {
+            Node node = queue.poll();
+            if (node.leftChild != null) {
+                queue.add(node.leftChild);
+            }
+            if (node.rightChild != null) {
+                queue.add(node.rightChild);
+            }
+            System.out.print(node.data + " ");
         }
     }
 
@@ -272,6 +433,7 @@ public class BinaryTree<E extends Comparable> {
         return root;
     }
 
+
     public static void main(String[] args) {
         BinaryTree<Integer> binaryTree = new BinaryTree<>();
         int[] datas = {5, 3, 1, 2, 6, 4, 7};
@@ -279,18 +441,27 @@ public class BinaryTree<E extends Comparable> {
             binaryTree.insert(datas[i]);
         }
 
-        binaryTree.middleOrder(binaryTree.root);
-        System.out.println("\n ================");
-        binaryTree.preOrder(binaryTree.root);
-        System.out.println("\n ================");
+//        System.out.println("\n =======中序遍历(递归)=========");
+//        binaryTree.middleOrder(binaryTree.root);
+//        System.out.println("\n =======中序遍历(栈)=========");
+//        binaryTree.middleOrderByStack(binaryTree.root);
+//        System.out.println("\n ========前序遍历(递归)========");
+//        binaryTree.preOrder(binaryTree.root);
+//        System.out.println("\n ========前序遍历(栈)========");
+//        binaryTree.preOrderByStack(binaryTree.root);
+        System.out.println("\n =========后续遍历(递归)=======");
         binaryTree.afterOrder(binaryTree.root);
-        System.out.println("\n ================");
+        System.out.println("\n =========后续遍历(栈)=======");
+        binaryTree.afterOrderByStack(binaryTree.root);
+//        System.out.println("\n =========层序遍历=======");
+//        binaryTree.tierOrer(binaryTree.root);
+
 //        binaryTree.delete(3);
-        binaryTree.invertNodeByRecursion(binaryTree.root);
-        binaryTree.middleOrder(binaryTree.root);
-        System.out.println("\n ================");
-        binaryTree.invertNode1(binaryTree.root);
-        binaryTree.middleOrder(binaryTree.root);
-        System.out.println("\n ================");
+//        binaryTree.invertNodeByRecursion(binaryTree.root);
+//        binaryTree.middleOrder(binaryTree.root);
+//        System.out.println("\n ================");
+//        binaryTree.invertNode1(binaryTree.root);
+//        binaryTree.middleOrder(binaryTree.root);
+//        System.out.println("\n ================");
     }
 }

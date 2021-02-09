@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.data_structure.link;
+package com.yiban.javaBase.dev.data_structure.list;
 
 /**
  * @auther WEI.DUAN

@@ -7,6 +7,7 @@ import com.google.common.base.Strings;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ConcurrentSkipListSet;
 
 /**
  * @auther WEI.DUAN
@@ -26,10 +27,10 @@ public class Test1 {
 //        System.out.println(63 >> 6);
 //        System.out.println(1 | 1 << 1);
 //        System.out.println(Math.abs("test_8_3_g2".hashCode()) % 8);
-        boolean flag = false;
-        boolean flag1 = true;
-        System.out.println(flag |= flag1);
-        System.out.println(flag1);
+
+        System.out.println(Math.log(2));
+        System.out.println(Math.log10(100));
+        System.out.println(Math.log1p(2));
     }
 
     @Test
@@ -131,9 +132,33 @@ public class Test1 {
         }
     }
 
+    @Test
+    public void test7() {
+        System.out.println(randomHeight(1/4));
+    }
 
+    public int randomHeight(double p) {
+        int height = 0;
+        while (new Random().nextDouble() < p)
+            height ++;
+        return height + 1;
+    }
 
-    {
-        System.out.println("aaa");
+    @Test
+    public void test8() {
+        ConcurrentSkipListSet concurrentSkipListSet = new ConcurrentSkipListSet();
+        concurrentSkipListSet.add("b");
+        concurrentSkipListSet.add("a");
+        concurrentSkipListSet.add("d");
+        concurrentSkipListSet.add("c");
+        for (Object ele :
+                concurrentSkipListSet) {
+            System.out.println("ele = " + ele);
+        }
+    }
+
+    @Test
+    public void test9() {
+
     }
 }

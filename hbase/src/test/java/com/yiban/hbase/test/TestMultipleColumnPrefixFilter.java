@@ -5,7 +5,9 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
 import org.apache.hadoop.hbase.filter.ColumnPrefixFilter;
+import org.apache.hadoop.hbase.filter.FilterList;
 import org.apache.hadoop.hbase.filter.MultipleColumnPrefixFilter;
+import org.apache.hadoop.hbase.filter.PageFilter;
 import org.apache.hadoop.hbase.mapreduce.TableMapReduceUtil;
 import org.apache.hadoop.hbase.regionserver.HRegion;
 import org.apache.hadoop.hbase.regionserver.IncreasingToUpperBoundRegionSplitPolicy;
@@ -109,8 +111,10 @@ public class TestMultipleColumnPrefixFilter {
     private Configuration getConfiguration() {
         Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
-        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
-        configuration.set("hbase.master", "10.21.3.73:60000");
+//        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
+//        configuration.set("hbase.master", "10.21.3.73:60000");
+        configuration.set("hbase.zookeeper.quorum", "10.21.3.120,10.21.3.121,10.21.3.122,10.21.3.123,10.21.3.124");
+        configuration.set("hbase.master", "10.21.3.120:60000");
 //        configuration.set("hbase.column.max.version", "2");
         return configuration;
     }
@@ -211,31 +215,43 @@ public class TestMultipleColumnPrefixFilter {
         MultipleColumnPrefixFilter multiplePrefixFilter;
         Scan scan1 = new Scan();
         scan1.setMaxVersions();
+        scan1.setMaxResultsPerColumnFamily(1);
+        PageFilter pageFilter = new PageFilter(10);
         byte[][] filter_prefix = new byte[1][];
         filter_prefix[0] = new byte[]{'p'};
 
         multiplePrefixFilter = new MultipleColumnPrefixFilter(filter_prefix);
-        scan1.setFilter(multiplePrefixFilter);
+        FilterList filterList1 = new FilterList();
+        filterList1.addFilter(pageFilter);//控制返回的条数
+        filterList1.addFilter(multiplePrefixFilter);//过滤条件
+        scan1.setFilter(filterList1);
+//        scan1.setFilter(multiplePrefixFilter);
+//        scan1.setFilter(pageFilter);
         List<KeyValue> results1 = new ArrayList<KeyValue>();
         ResultScanner scanner1 = table.getScanner(scan1);
         for (Result result : scanner1) {
             for (KeyValue keyValue : result.raw()) {
-                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()) + "version = " + keyValue.getTimestamp());
+                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + " = " + new String(keyValue.getValue()) + ",version = " + keyValue.getTimestamp());
                 results1.add(keyValue);
             }
         }
-
+        System.out.println("================================");
         ColumnPrefixFilter singlePrefixFilter;
         Scan scan2 = new Scan();
         scan2.setMaxVersions();
+        scan2.setMaxResultsPerColumnFamily(1);
         singlePrefixFilter = new ColumnPrefixFilter(Bytes.toBytes("p"));
-
-        scan2.setFilter(singlePrefixFilter);
+        FilterList filterList2 = new FilterList();
+        filterList2.addFilter(pageFilter);
+        filterList2.addFilter(singlePrefixFilter);
+        scan2.setFilter(filterList2);
+        scan2.setReversed(true);
+//        scan2.setFilter(singlePrefixFilter);
         List<KeyValue> results2 = new ArrayList<KeyValue>();
         ResultScanner scanner2 = table.getScanner(scan2);
         for (Result result : scanner2) {
             for (KeyValue keyValue : result.raw()) {
-                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()) + "version = " + keyValue.getTimestamp());
+                System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily())  + ":" + new String(keyValue.getQualifier()) + " = " + new String(keyValue.getValue()) + ",version = " + keyValue.getTimestamp());
                 results2.add(keyValue);
             }
         }

@@ -13,22 +13,34 @@ import java.util.List;
  */
 public class ZKOperate {
     Logger logger = Logger.getLogger(ZKOperate.class);
-    MyZooKeeper myZooKeeper = null;
+    public MyZooKeeper myZooKeeper = null;
     public static final String SERVER_ADDRESS = "10.21.3.73:2181,10.21.3.74:2181,10.21.3.75:2181,10.21.3.76:2181,10.21.3.77:2181";
+    public static volatile ZKOperate zkOperate;
 
-    public ZKOperate() {
+    private ZKOperate() {
         myZooKeeper = new MyZooKeeper();
-        myZooKeeper.connect("10.21.3.77:2181", 30000);
+        myZooKeeper.connect(SERVER_ADDRESS, 30000);
+    }
+
+    public static ZKOperate getInstance() {
+        if (null == zkOperate) {
+            synchronized (ZKOperate.class) {
+                if (null == zkOperate) {
+                    zkOperate = new ZKOperate();
+                }
+            }
+        }
+        return zkOperate;
     }
 
     /**
      * <p>创建zNode节点, String create(path<节点路径>, data[]<节点内容>, List(ACL访问控制列表), CreateMode<zNode创建类型>) </p><br/>
      * <pre>
-     *     节点创建类型(CreateMode)
-     *     1、PERSISTENT:持久化节点
+     *     int nodeMode 节点创建类型(CreateMode)
+     *     0、PERSISTENT:持久化节点
      *     2、PERSISTENT_SEQUENTIAL:顺序自动编号持久化节点，这种节点会根据当前已存在的节点数自动加 1
-     *     3、EPHEMERAL:临时节点客户端,session超时这类节点就会被自动删除
-     *     4、EPHEMERAL_SEQUENTIAL:临时自动编号节点
+     *     1、EPHEMERAL:临时节点客户端,session超时这类节点就会被自动删除
+     *     3、EPHEMERAL_SEQUENTIAL:临时自动编号节点
      * </pre>
      *
      * @param path zNode节点路径
@@ -37,11 +49,28 @@ public class ZKOperate {
      * @return 创建成功返回true, 反之返回false.
      * 注意这里创建的临时节点，所以在服务端是看不到的
      */
-    public boolean createZNode(String path, String data, boolean needWatch) {
+    public boolean createZNode(String path, String data, boolean needWatch, int nodeMode) {
         try {
             //设置监控（由于zookeeper的监控都是一次性的，所以每次必须设置）
             MyZooKeeper.zooKeeper.exists(path, needWatch);
-            String zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+            String zkPath = "";
+            switch (nodeMode) {
+                case 0:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                    break;
+                case 1:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+                    break;
+                case 2:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+                    break;
+                case 3:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+                    break;
+                default:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                    break;
+            }
             logger.info("ZooKeeper创建节点成功，节点地址：" + zkPath);
             return true;
         } catch (KeeperException e) {
@@ -50,6 +79,38 @@ public class ZKOperate {
             logger.error("创建节点失败：" + e.getMessage() + "，path:" + path, e);
         }
         return false;
+    }
+
+    public String createZNode1(String path, String data, boolean needWatch, int nodeMode) {
+        String zkPath = "";
+        try {
+            //设置监控（由于zookeeper的监控都是一次性的，所以每次必须设置）
+            MyZooKeeper.zooKeeper.exists(path, needWatch);
+            switch (nodeMode) {
+                case 0:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                    break;
+                case 1:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+                    break;
+                case 2:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+                    break;
+                case 3:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT_SEQUENTIAL);
+                    break;
+                default:
+                    zkPath = MyZooKeeper.zooKeeper.create(path, data.getBytes(), ZooDefs.Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+                    break;
+            }
+            logger.info("ZooKeeper创建节点成功，节点地址：" + zkPath);
+            return zkPath;
+        } catch (KeeperException e) {
+            logger.error("创建节点失败：" + e.getMessage() + "，path:" + path, e);
+        } catch (InterruptedException e) {
+            logger.error("创建节点失败：" + e.getMessage() + "，path:" + path, e);
+        }
+        return zkPath;
     }
 
     /**

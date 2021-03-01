@@ -18,7 +18,7 @@ public class ZKClientTest {
         String child2Path = rootPath + "/word1";
 
         //ZKOperate操作API 封装了zk的一些基本操作
-        ZKOperate zkOperate = new ZKOperate();
+        ZKOperate zkOperate = ZKOperate.getInstance();
 
         // 连接zk服务器
         MyZooKeeper zooKeeper = new MyZooKeeper();

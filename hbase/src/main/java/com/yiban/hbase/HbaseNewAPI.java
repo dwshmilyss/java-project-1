@@ -30,8 +30,9 @@ public class HbaseNewAPI {
         try {
             Connection connection = getConnection();
             //创建表
-            TableName tableName = createTable(connection, "test_1_copy", new String[]{"family", "column"});
+//            TableName tableName = createTable(connection, "test_1_copy", new String[]{"family", "column"});
 //            TableName tableName = TableName.valueOf("user");
+            TableName tableName = TableName.valueOf("Student");
 
 //            //插入数据 begin
 //            List<User> list = new ArrayList<>(101);
@@ -45,7 +46,7 @@ public class HbaseNewAPI {
 //            }
 //                //插入数据 end
 
-//            getNoDealData(connection,tableName);//按照hbase的格式输出显示所有数据
+            getNoDealData(connection, tableName);//按照hbase的格式输出显示所有数据
 
             //查询所有数据并填充User对象
 //            List<User> list = getAllData(connection, tableName);
@@ -131,8 +132,12 @@ public class HbaseNewAPI {
     public static Connection getConnection() throws IOException {
         Configuration configuration = HBaseConfiguration.create();
         configuration.set("hbase.zookeeper.property.clientPort", "2181");
-        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
-        configuration.set("hbase.master", "10.21.3.73:60000");
+        //3.73那套集群的hbase
+//        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
+//        configuration.set("hbase.master", "10.21.3.73:60000");
+        //3.120 CDH集群的hbase
+        configuration.set("hbase.zookeeper.quorum", "10.21.3.120,10.21.3.121,10.21.3.122,10.21.3.123,10.21.3.124");
+        configuration.set("hbase.master", "10.21.3.120:60000");
         Connection connection = ConnectionFactory.createConnection(configuration);
         return connection;
     }
@@ -191,9 +196,53 @@ public class HbaseNewAPI {
     public static void getNoDealData(Connection connection, TableName tableName) throws IOException {
         Table table = connection.getTable(tableName);
         Scan scan = new Scan();
+        scan.setMaxVersions();
+//        scan.setMaxResultsPerColumnFamily(1);
+//        scan.setReversed(true);
+//        scan.setBatch(2);
+//        scan.setAllowPartialResults(true);//允许获取非整行数据
         ResultScanner results = table.getScanner(scan);
         for (Result result : results) {
             System.out.println("scan : " + result);
+            //第一种遍历每个列方式
+            for (Cell cell: result.rawCells()) {
+                String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+                String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+                String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+                System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
+            }
+            //第二种遍历方式
+//            for (Cell cell : result.listCells()) {
+//                String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+//                String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+//                String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+//                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+//                System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
+//            }
+            // 第三种遍历方式，不过这种方式拿rowKey好麻烦啊
+//            for (KeyValue keyValue :
+//                    result.raw()) {
+//                //获取个rowkey真是麻烦
+////                int rowlength = Bytes.toShort(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET);
+////                String rowKey = Bytes.toStringBinary(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET + Bytes.SIZEOF_SHORT, rowlength);
+//                //当然也可以用简单的API获取rowkey
+//                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
+//                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
+//                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
+//                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
+//                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
+//            }
+            // 第四种遍历方式
+//            for (KeyValue keyValue :
+//                    result.list()) {
+//                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
+//                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
+//                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
+//                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
+//                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
+//            }
+            System.out.println("--------------------------------");
         }
     }
 

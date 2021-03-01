@@ -87,10 +87,10 @@ public class MRSearch {
         conf.set("mapreduce.framework.name","yarn");
         conf.set("mapreduce.job.queuename","rt1");
 
-        conf.addResource("core-site.xml");
-        conf.addResource("yarn-site.xml");
-        conf.addResource("hdfs-site.xml");
-        conf.addResource("mapred-site.xml");
+        conf.addResource("3.73/core-site.xml");
+        conf.addResource("3.73/yarn-site.xml");
+        conf.addResource("3.73/hdfs-site.xml");
+        conf.addResource("3.73/mapred-site.xml");
         conf.set("fs.hdfs.impl", "org.apache.hadoop.hdfs.DistributedFileSystem");
 
         conf.set("mapreduce.app-submission.cross-platform","true");

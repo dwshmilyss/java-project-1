@@ -159,6 +159,23 @@ public class Test1 {
 
     @Test
     public void test9() {
+//        List<String> linkedList = new LinkedList<>();
+//        linkedList.add("a");
+//        linkedList.add("d");
+//        linkedList.add("b");
+//        linkedList.add("c");
+//        for (String s : linkedList) {
+//            System.out.println("s = " + s);
+//        }
 
+        Map<String, Integer> linkedHashMap = new LinkedHashMap<>();
+        linkedHashMap.put("b", 2);
+        linkedHashMap.put("d", 4);
+        linkedHashMap.put("a", 1);
+        linkedHashMap.put("c", 3);
+        for (Map.Entry<String, Integer> entry :
+                linkedHashMap.entrySet()) {
+            System.out.println("key = " + entry.getKey() + ",value = " + entry.getValue());
+        }
     }
 }

@@ -4,12 +4,21 @@ import com.yiban.hbase.entity.User;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.hbase.*;
 import org.apache.hadoop.hbase.client.*;
+import org.apache.hadoop.hbase.client.coprocessor.AggregationClient;
+import org.apache.hadoop.hbase.client.coprocessor.LongColumnInterpreter;
 import org.apache.hadoop.hbase.filter.*;
+import org.apache.hadoop.hbase.master.HMaster;
+import org.apache.hadoop.hbase.regionserver.*;
+import org.apache.hadoop.hbase.regionserver.compactions.FIFOCompactionPolicy;
 import org.apache.hadoop.hbase.util.Bytes;
+import org.apache.hadoop.hbase.util.Pair;
+import org.apache.zookeeper.KeeperException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +26,7 @@ import java.util.List;
  * @auther WEI.DUAN
  * @date 2019/3/12
  * @website http://blog.csdn.net/dwshmilyss
- * 使用hbase 1.3.1 API
+ * 此代码基于cdh5.7.6-hbase1.2.0
  */
 public class HbaseNewAPI {
     private static Admin admin;
@@ -27,12 +36,20 @@ public class HbaseNewAPI {
     private static final Logger LOGGER = LoggerFactory.getLogger(HbaseNewAPI.class);
 
     public static void main(String[] args) {
-        try {
-            Connection connection = getConnection();
+        try (Connection connection = getConnection()){
             //创建表
 //            TableName tableName = createTable(connection, "test_1_copy", new String[]{"family", "column"});
 //            TableName tableName = TableName.valueOf("user");
-            TableName tableName = TableName.valueOf("Student");
+//            TableName tableName = TableName.valueOf("test1");
+
+//            TableName tableName = TableName.valueOf("my:fensi");
+//            testPut(tableName, "c", "f1", "from", "d");
+
+            TableName tableName = TableName.valueOf("test:testBeforeCreateRegion");
+            //用16进制数字型字符串预创建2个region
+//            byte[][] splits = getHexSplits("001", "100", 2);
+//            boolean flag = createTableByBeforeCreateRegion(connection, tableName, new String[]{"cf"}, splits);
+//            System.out.println("flag = " + flag);
 
 //            //插入数据 begin
 //            List<User> list = new ArrayList<>(101);
@@ -44,10 +61,15 @@ public class HbaseNewAPI {
 //            for (User user : list) {
 //                insertData(connection,tableName,user);
 //            }
+            getPutHeapSize();
 //                //插入数据 end
+//            getNoDealData(connection, tableName);//按照hbase的格式输出显示所有数据
 
-            getNoDealData(connection, tableName);//按照hbase的格式输出显示所有数据
-
+            //统计表行数测试
+//            String coprocessorClassName = "org.apache.hadoop.hbase.coprocessor.AggregateImplementation";
+//            HbaseNewAPI.addTableCoprocessor(tableName, coprocessorClassName);
+//            long rowCount = HbaseNewAPI.rowCount(tableName, "Family");
+//            System.out.println("rowCount = " + rowCount);
             //查询所有数据并填充User对象
 //            List<User> list = getAllData(connection, tableName);
 //            if (list != null) {
@@ -74,7 +96,8 @@ public class HbaseNewAPI {
 //            //指定过滤器作为过滤条件
 ////            getDataBySingleColumnValueFilter(connection, tableName, "contact", "email", null, regexStringComparator);
 //
-//
+            //测试按单列查询条件（带分页，但是如果有多个region，pagefilter依然是只作用于每个region，所以每次返回的结果数就是 region number * pageSize）
+//            getDataBySingleColumnValueFilter(connection, tableName, "cf", "c1", "a",null);
 //            /**
 //             * 组合实现复杂查询
 //             * 可以利用FilterList的嵌套来实现and 和 or 同时存在的条件
@@ -118,10 +141,118 @@ public class HbaseNewAPI {
 
 //            System.out.println(getDataByRowKey(getConnection(), tableName, "user-99"));
 
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
+    /**
+     * 用预创建region的方式建表
+     *
+     * @param connection
+     * @param tableName
+     * @param columnFamilys
+     * @param splits
+     * @return
+     * @throws IOException
+     */
+    public static boolean createTableByBeforeCreateRegion(Connection connection, TableName tableName, String[] columnFamilys, byte[][] splits)
+            throws IOException {
+        HTableDescriptor hTableDescriptor = null;
+        try {
+            admin = connection.getAdmin();
+            if (admin.tableExists(tableName)) {
+                System.out.println("表已存在");
+            } else {
+                hTableDescriptor = new HTableDescriptor(tableName);
+                //在表上设置compaction策略
+//                hTableDescriptor.setConfiguration(DefaultStoreEngine.DEFAULT_COMPACTION_POLICY_CLASS_KEY, FIFOCompactionPolicy.class.getName());
+                for (String columnFamily : columnFamilys) {
+                    HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(columnFamily);
+                    //在列上设置compaction策略
+//                hColumnDescriptor.setConfiguration(DefaultStoreEngine.DEFAULT_COMPACTION_POLICY_CLASS_KEY, FIFOCompactionPolicy.class.getName());
+                    hTableDescriptor.addFamily(hColumnDescriptor);
+                }
+                admin.createTable(hTableDescriptor, splits);
+            }
+            return true;
+        } catch (TableExistsException e) {
+            LOGGER.info("table " + hTableDescriptor.getNameAsString() + " already exists");
+            // the table already exists...
+            return false;
+        }
+    }
+
+    public static byte[][] getHexSplits(String startKey, String endKey, int numRegions) { //start:001,endkey:100,10region [001,010]
+        byte[][] splits = new byte[numRegions - 1][];
+        BigInteger lowestKey = new BigInteger(startKey, 16);
+        BigInteger highestKey = new BigInteger(endKey, 16);
+        BigInteger range = highestKey.subtract(lowestKey);
+        BigInteger regionIncrement = range.divide(BigInteger.valueOf(numRegions));
+        lowestKey = lowestKey.add(regionIncrement);
+        for (int i = 0; i < numRegions - 1; i++) {
+            BigInteger key = lowestKey.add(regionIncrement.multiply(BigInteger.valueOf(i)));
+            byte[] b = String.format("%016x", key).getBytes();
+            splits[i] = b;
+        }
+        return splits;
+    }
+
+    /**
+     * 测试插入数据
+     * 用于为TestObserverCoprocessor.java生成测试数据
+     *
+     * @param tableName
+     * @param rowKey
+     * @param family
+     * @param qualifier
+     * @param value
+     * @throws Exception
+     */
+    public static void testPut(TableName tableName, String rowKey, String family, String qualifier, String value) throws Exception {
+        Table table = getConnection().getTable(tableName);
+        Put put = new Put(rowKey.getBytes());
+        put.addColumn(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
+        table.put(put);
+        System.out.println("成功插入一条数据");
+        table.close();
+    }
+
+    public static void addTableCoprocessor(TableName tableName, String coprocessorClassName) {
+        try {
+            admin = getConnection().getAdmin();
+            admin.disableTable(tableName);
+            HTableDescriptor hTableDescriptor = admin.getTableDescriptor(tableName);
+            hTableDescriptor.addCoprocessor(coprocessorClassName);
+            admin.modifyTable(tableName, hTableDescriptor);
+            admin.enableTable(tableName);
+        } catch (IOException e) {
+            LOGGER.info(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * 统计表行数
+     * 这里用的就是coprocessor
+     *
+     * @param tableName
+     * @param family
+     * @return
+     */
+    public static long rowCount(TableName tableName, String family) {
+        AggregationClient ac = new AggregationClient(getConfiguration());
+        Scan scan = new Scan();
+        //指定扫描的列簇
+        scan.addFamily(Bytes.toBytes(family));
+        long rowCount = 0;
+        try {
+            rowCount = ac.rowCount(tableName, new LongColumnInterpreter(), scan);
+        } catch (Throwable e) {
+            LOGGER.info(e.getMessage(), e);
+        }
+        return rowCount;
+    }
+
 
     /**
      * 创建连接（连接zk和hbase master）
@@ -142,6 +273,19 @@ public class HbaseNewAPI {
         return connection;
     }
 
+    public static Configuration getConfiguration() {
+        Configuration configuration = HBaseConfiguration.create();
+        configuration.set("hbase.zookeeper.property.clientPort", "2181");
+        //3.73那套集群的hbase
+//        configuration.set("hbase.zookeeper.quorum", "10.21.3.73,10.21.3.74,10.21.3.75,10.21.3.76,10.21.3.77");
+//        configuration.set("hbase.master", "10.21.3.73:60000");
+        //3.120 CDH集群的hbase
+        configuration.set("hbase.zookeeper.quorum", "10.21.3.120,10.21.3.121,10.21.3.122,10.21.3.123,10.21.3.124");
+        configuration.set("hbase.master", "10.21.3.120:60000");
+        return configuration;
+    }
+
+
     /**
      * 创建表
      *
@@ -157,8 +301,12 @@ public class HbaseNewAPI {
             System.out.println("表已存在");
         } else {
             HTableDescriptor hTableDescriptor = new HTableDescriptor(tableName1);
+            //在表上设置compaction策略
+            hTableDescriptor.setConfiguration(DefaultStoreEngine.DEFAULT_COMPACTION_POLICY_CLASS_KEY, FIFOCompactionPolicy.class.getName());
             for (String columnFamily : columnFamilys) {
                 HColumnDescriptor hColumnDescriptor = new HColumnDescriptor(columnFamily);
+                //在列上设置compaction策略
+//                hColumnDescriptor.setConfiguration(DefaultStoreEngine.DEFAULT_COMPACTION_POLICY_CLASS_KEY, FIFOCompactionPolicy.class.getName());
                 hTableDescriptor.addFamily(hColumnDescriptor);
             }
             admin.createTable(hTableDescriptor);
@@ -186,6 +334,8 @@ public class HbaseNewAPI {
         table.put(put);
     }
 
+    private static final byte[] POSTFIX = new byte[]{0x00};
+
     /**
      * 扫描表 直接输出（按照hbase的格式输出）
      *
@@ -193,57 +343,135 @@ public class HbaseNewAPI {
      * @param tableName
      * @throws IOException
      */
-    public static void getNoDealData(Connection connection, TableName tableName) throws IOException {
+    public static void getNoDealData(Connection connection, TableName tableName) throws IOException, InterruptedException, KeeperException {
+        int totalRows = 0;
+        byte[] lastRow = null;
+        Filter pageFilter = new PageFilter(10);
         Table table = connection.getTable(tableName);
+        RegionLocator regionLocator = connection.getRegionLocator(tableName);
+        System.out.println("region number = " + regionLocator.getAllRegionLocations().size());
+//        byte[][] startKeys = regionLocator.getStartKeys();
+//        for (byte[] key : startKeys) {
+//            System.out.println(new String(key) + " ");
+//        }
+//        System.out.println("==============================");
+//        byte[][] endKeys = regionLocator.getEndKeys();
+//        for (byte[] key : endKeys) {
+//            System.out.println(new String(key) + " ");
+//        }
+//        System.out.println("==============first================");
+//        Pair<byte[][], byte[][]> startEndKeys = regionLocator.getStartEndKeys();
+//        byte[][] first = startEndKeys.getFirst();//这个其实就是getStartKeys
+//        byte[][] second = startEndKeys.getSecond();//这个其实就是getEndKeys
+//        for (byte[] key : first) {
+//            System.out.println(new String(key) + " ");
+//        }
+//        System.out.println("=============second=================");
+//        for (byte[] key : second) {
+//            System.out.println(new String(key) + " ");
+//        }
+
+        HRegionLocation hRegionLocation = regionLocator.getRegionLocation("003".getBytes());
+        System.out.println(hRegionLocation.getRegionInfo() + " ");
         Scan scan = new Scan();
+        HRegionServer hRegionServer = new HRegionServer(getConfiguration());
+        System.out.println("hRegionServer = " + hRegionServer.toString());
         scan.setMaxVersions();
-//        scan.setMaxResultsPerColumnFamily(1);
-//        scan.setReversed(true);
-//        scan.setBatch(2);
-//        scan.setAllowPartialResults(true);//允许获取非整行数据
-        ResultScanner results = table.getScanner(scan);
-        for (Result result : results) {
-            System.out.println("scan : " + result);
-            //第一种遍历每个列方式
-            for (Cell cell: result.rawCells()) {
+        scan.setFilter(pageFilter);
+        admin = connection.getAdmin();
+        List<HRegionInfo> hRegionInfos = admin.getTableRegions(tableName);
+        System.out.println("region name = " + hRegionInfos.get(0).getEncodedName());
+        Region region = hRegionServer.getRegionByEncodedName(hRegionInfos.get(0).getEncodedName());
+//        ResultScanner tableScanner = table.getScanner(scan);
+        RegionScanner regionScanner = region.getScanner(scan);
+        System.out.println(regionScanner.getRegionInfo());
+        int cn = 0;
+        List<Cell> cellList = new ArrayList<>();
+//        regionScanner.next(cellList);
+        while (regionScanner.nextRaw(cellList)) {
+            cn++;
+           for (Cell cell : cellList) {
                 String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
                 String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
                 String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
                 String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
                 System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
             }
-            //第二种遍历方式
-//            for (Cell cell : result.listCells()) {
-//                String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
-//                String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
-//                String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
-//                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
-//                System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
-//            }
-            // 第三种遍历方式，不过这种方式拿rowKey好麻烦啊
-//            for (KeyValue keyValue :
-//                    result.raw()) {
-//                //获取个rowkey真是麻烦
-////                int rowlength = Bytes.toShort(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET);
-////                String rowKey = Bytes.toStringBinary(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET + Bytes.SIZEOF_SHORT, rowlength);
-//                //当然也可以用简单的API获取rowkey
-//                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
-//                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
-//                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
-//                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
-//                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
-//            }
-            // 第四种遍历方式
-//            for (KeyValue keyValue :
-//                    result.list()) {
-//                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
-//                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
-//                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
-//                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
-//                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
-//            }
-            System.out.println("--------------------------------");
         }
+//        for (Result result : tableScanner.nextRaw()) {//等价于results.next()
+//            cn++;
+//            System.out.println("scan : " + result);
+//        }
+        System.out.println("cn = " + cn);
+
+//        while (true) {
+//            Scan scan = new Scan();
+//            scan.setMaxVersions();
+//            scan.setFilter(pageFilter);
+//            if (lastRow != null) {//获取上一次查询的最后一个rowkey
+//                byte[] startRow = Bytes.add(lastRow, POSTFIX);
+//                System.out.println("start row: " + Bytes.toStringBinary(startRow));
+//                scan.setStartRow(startRow);
+//            }
+////        scan.setMaxResultsPerColumnFamily(1);
+////        scan.setReversed(true);
+////        scan.setBatch(2);
+////        scan.setAllowPartialResults(true);//允许获取非整行数据
+//            ResultScanner scanner = table.getScanner(scan);
+//            int localRows = 0;
+////        System.out.println("results = " + results.next(20).length);
+////            for (Result result : scanner) {//等价于results.next()
+//            Result result;
+//            while ((result = scanner.next()) != null) {
+//                localRows++;
+//                totalRows++;
+//                lastRow = result.getRow();
+//                System.out.println("scan : " + result);
+//                //第一种遍历每个列方式
+////            for (Cell cell : result.rawCells()) {
+////                String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+////                String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+////                String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+////                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+////                System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
+////            }
+//                //第二种遍历方式
+////            for (Cell cell : result.listCells()) {
+////                String rowKey = Bytes.toString(cell.getRowArray(), cell.getRowOffset(), cell.getRowLength());
+////                String familyName = Bytes.toString(cell.getFamilyArray(), cell.getFamilyOffset(), cell.getFamilyLength());
+////                String colName = Bytes.toString(cell.getQualifierArray(), cell.getQualifierOffset(), cell.getQualifierLength());
+////                String value = Bytes.toString(cell.getValueArray(), cell.getValueOffset(), cell.getValueLength());
+////                System.out.println("rowKey = " + rowKey + ",family = " + familyName + ",column = " + colName + ",value = " + value);
+////            }
+//                // 第三种遍历方式，不过这种方式拿rowKey好麻烦啊
+////            for (KeyValue keyValue :
+////                    result.raw()) {
+////                keyValue.getTypeByte();
+////                //获取个rowkey真是麻烦
+//////                int rowlength = Bytes.toShort(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET);
+//////                String rowKey = Bytes.toStringBinary(keyValue.getBuffer(), keyValue.getOffset() + KeyValue.ROW_OFFSET + Bytes.SIZEOF_SHORT, rowlength);
+////                //当然也可以用简单的API获取rowkey
+////                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
+////                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
+////                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
+////                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
+////                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
+////            }
+//                // 第四种遍历方式
+////            for (KeyValue keyValue :
+////                    result.list()) {
+////                String rowKey = Bytes.toString(keyValue.getRowArray(), keyValue.getRowOffset(), keyValue.getRowLength());
+////                String family = Bytes.toString(keyValue.getFamilyArray(), keyValue.getFamilyOffset(), keyValue.getFamilyLength());
+////                String column = Bytes.toString(keyValue.getQualifierArray(), keyValue.getQualifierOffset(), keyValue.getQualifierLength());
+////                String value = Bytes.toString(keyValue.getValueArray(), keyValue.getValueOffset(), keyValue.getValueLength());
+////                System.out.println("rowKey = " + rowKey + ",family = " + family + ",column = " + column + ",value = " + value);
+////            }
+//                System.out.println("--------------------------------");
+//            }
+//            scanner.close();
+//            if (localRows == 0) break;
+//        }
+//        System.out.println("totalRows = " + totalRows);
     }
 
     public static User getDataByRowKey(Connection connection, TableName tableName, String rowKey) throws IOException {
@@ -385,6 +613,21 @@ public class HbaseNewAPI {
     }
 
 
+    public static  void getPutHeapSize() throws UnsupportedEncodingException {
+        Put put = new Put(Bytes.toBytes("A0"));
+        put.addColumn("case_lizu".getBytes(), "c_code".getBytes(), "A0".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_rcode".getBytes(), "6".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_region".getBytes(), "杭州市滨江区".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_cate".getBytes(), "盗窃案件".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_start".getBytes(), "2006/06/23 00:00:00".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_end".getBytes(), "2006/06/23 10:00:00".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_start_m".getBytes(), "1150992000000".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_end_m".getBytes(), "1151028000000".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_name".getBytes(), "案件名称0".getBytes("UTF-8"));
+        put.addColumn("case_lizu".getBytes(), "c_mark".getBytes(), "暂无".getBytes("UTF-8"));
+        System.out.println(put.heapSize());
+    }
+
     /**
      * 批量查询
      *
@@ -458,10 +701,11 @@ public class HbaseNewAPI {
         try {
             Table table = connection.getTable(tableName);
             Scan scan = new Scan();
-            scan.addColumn("info".getBytes(), "age".getBytes());
-            scan.addColumn("contact".getBytes(), "email".getBytes());
-            scan.setMaxResultSize(10);
-            scan.setCaching(10);
+//            scan.addColumn("info".getBytes(), "age".getBytes());
+//            scan.addColumn("contact".getBytes(), "email".getBytes());
+            scan.addColumn("cf".getBytes(), "c1".getBytes());
+//            scan.setMaxResultSize(10);
+//            scan.setCaching(10);
             PageFilter pageFilter = new PageFilter(10);
             Filter singleColumnValueFilter = null;
             FilterList filterList = new FilterList();
@@ -477,11 +721,14 @@ public class HbaseNewAPI {
             filterList.addFilter(pageFilter);
             scan.setFilter(filterList);
             ResultScanner scanner = table.getScanner(scan);
+            int cn = 0;
             for (Result result : scanner) {
+                cn ++ ;
                 for (KeyValue keyValue : result.raw()) {
                     System.out.println("rowkey = " + new String(keyValue.getRow()) + "," + new String(keyValue.getFamily()) + ":" + new String(keyValue.getQualifier()) + "=" + new String(keyValue.getValue()));
                 }
             }
+            System.out.println("cn = " + cn);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -556,4 +803,5 @@ public class HbaseNewAPI {
             e.printStackTrace();
         }
     }
+
 }

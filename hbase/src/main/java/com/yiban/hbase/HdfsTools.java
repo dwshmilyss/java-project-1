@@ -17,6 +17,7 @@ import org.apache.hadoop.io.IOUtils;
  * @auther WEI.DUAN
  * @date 2019/7/23
  * @website http://blog.csdn.net/dwshmilyss
+ * HDFS的工具类 2.6.x
  */
 public class HdfsTools {
     //read the file from HDFS

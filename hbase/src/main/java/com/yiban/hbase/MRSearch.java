@@ -24,6 +24,7 @@ import java.io.IOException;
  * @auther WEI.DUAN
  * @date 2019/7/23
  * @website http://blog.csdn.net/dwshmilyss
+ *  基于hbase1.2.5
  */
 public class MRSearch {
     private static final TableName TABLENAME = TableName.valueOf("test1");

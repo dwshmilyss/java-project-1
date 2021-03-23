@@ -4,6 +4,7 @@ package com.yiban.javaBase.test;
 import com.alibaba.fastjson.JSONArray;
 import com.yiban.javaBase.dev.concurrent.fork_join.SortTask;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.math3.exception.MathArithmeticException;
 import org.intellij.lang.annotations.Language;
 import org.junit.Assert;
 import sun.misc.Unsafe;
@@ -270,6 +271,31 @@ public class Test {
 //        }
     }
 
+    @org.junit.Test
+    public void test11() {
+        int i = 0;
+        int j = 0;
+        boolean a = true;
+        boolean b;
+        b = a & (0 < (i+=1));
+        b = a && (0 < (i+=2));
+        b = a | (0 < (j+=1));
+        b = a || (0 < (j+=2));
+        //这里输出i=3 j=1，i=3很好理解，j=1是因为||运算，因为前面的a已经是ture，根据if机制，那么后面的表达式就不执行了
+        System.out.println("i = " + i + " j = " + j);
+    }
+
+    @org.junit.Test
+    public void test12() {
+        try {
+            int age = 5 / 0;
+        } catch (ArithmeticException e) {
+            System.out.println("1");
+        } catch (Exception e) {
+            System.out.println(2);
+        }
+    }
+
 
     public static String addZeroForNum(String str, int strLength) {
         int strLen = str.length();
@@ -282,7 +308,6 @@ public class Test {
                 strLen = str.length();
             }
         }
-
         return str;
     }
 }

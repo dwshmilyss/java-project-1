@@ -3,6 +3,7 @@ package com.yiban.hadoop.mapreduce.dev;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
+import com.yiban.hadoop.mapreduce.dev.partitioner.MyPartitioner;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -68,7 +69,7 @@ public class WordCount {
         //如果这里指定了jar 那么下面的setJarByClass就可以省略
         conf.set("mapreduce.job.jar","D:\\source_code\\java-project-1\\out\\artifacts\\hadoop_jar\\hadoop.jar");
 
-
+        //in有多个路径的时候
         String[] otherArgs = new GenericOptionsParser(conf, args).getRemainingArgs();
         if (otherArgs.length < 2) {
             System.err.println("Usage: wordcount <in> [<in>...] <out>");
@@ -80,9 +81,17 @@ public class WordCount {
 //        job.setJarByClass(WordCount.class);
         job.setMapperClass(TokenizerMapper.class);
         job.setCombinerClass(IntSumReducer.class);
+        //设置自己的partitioner
+//        job.setPartitionerClass(MyPartitioner.class);
         job.setReducerClass(IntSumReducer.class);
+        //设置reducer输出数据<K,V>的类型，因为mapper的输出类型和reducer是一致的(都是<Text,IntWritable>)，所以都用这个指定就可以了
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(IntWritable.class);
+        //但是如果mapper和reducer的输出类型不一致，例如mapper输出<Text,Text>，reducer输出<Text,IntWritable>，这时候需要单独给mapper指定
+        // 而且如果mapper和reducer的输出类型不一致，是不能setCombinerClass()指定为reducer的。道理很简单，combiner也是在mapper中执行的
+        // 如果指定的类型不一致，还是会报错。如果真想指定combiner，也要指定和mapper一样的<K,V>类型
+//        job.setMapOutputKeyClass(Text.class);
+//        job.setMapOutputValueClass(Text.class);
         for (int i = 0; i < otherArgs.length - 1; ++i) {
             FileInputFormat.addInputPath(job, new Path(otherArgs[i]));
         }

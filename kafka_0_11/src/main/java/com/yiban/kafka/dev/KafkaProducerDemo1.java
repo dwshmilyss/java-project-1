@@ -22,7 +22,7 @@ import java.util.Properties;
  */
 public class KafkaProducerDemo1 {
 
-    //0.10.1.0版本
+    //0.11.0.3版本
     private static KafkaProducer kafkaProducer;
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(KafkaProducerDemo1.class);
@@ -120,7 +120,7 @@ public class KafkaProducerDemo1 {
      * 在一个事务内,即有生产消息又有消费消息，即常说的Consume-tansform-produce模式
      */
     public void consumeTransferProduce() {
-        // 1.构建上产者
+        // 1.构建生产者
         Producer producer = buildProducer();
         // 2.初始化事务(生成productId),对于一个生产者,只能执行一次初始化事务操作
         producer.initTransactions();
@@ -145,7 +145,7 @@ public class KafkaProducerDemo1 {
                     commits.put(new TopicPartition(record.topic(), record.partition()),
                             new OffsetAndMetadata(record.offset()));
 
-                    // 6.生产新的消息。比如外卖订单状态的消息,如果订单成功,则需要发送跟商家结转消息或者派送员的提成消息
+                    // 6.生产新的消息。比如外卖订单状态的消息,如果订单成功,则需要发送给商家结转消息或者派送员的提成消息
                     producer.send(new ProducerRecord<String, String>("test", "data2"));
                 }
 

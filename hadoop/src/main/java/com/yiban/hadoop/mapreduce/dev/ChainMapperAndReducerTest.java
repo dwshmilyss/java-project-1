@@ -204,8 +204,10 @@ public class ChainMapperAndReducerTest {
         job.setOutputKeyClass(Text.class);
         job.setOutputValueClass(Text.class);
 
+        //指定MapReduce解析输入和输出文件的类。TextInputFormat是默认的(一般来讲都是文本文件)。也可以不写
         job.setInputFormatClass(TextInputFormat.class);
         job.setOutputFormatClass(TextOutputFormat.class);
+
 
         Path inpath = new Path(args[0]);
         Path outpath = new Path(args[1]);

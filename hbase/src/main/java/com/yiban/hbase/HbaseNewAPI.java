@@ -61,7 +61,6 @@ public class HbaseNewAPI {
 //            for (User user : list) {
 //                insertData(connection,tableName,user);
 //            }
-            getPutHeapSize();
 //                //插入数据 end
 //            getNoDealData(connection, tableName);//按照hbase的格式输出显示所有数据
 
@@ -610,22 +609,6 @@ public class HbaseNewAPI {
         //也可以只删除指定的列
         delete.addColumns(Bytes.toBytes("contact"), Bytes.toBytes("email"));
         table.delete(delete);
-    }
-
-
-    public static  void getPutHeapSize() throws UnsupportedEncodingException {
-        Put put = new Put(Bytes.toBytes("A0"));
-        put.addColumn("case_lizu".getBytes(), "c_code".getBytes(), "A0".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_rcode".getBytes(), "6".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_region".getBytes(), "杭州市滨江区".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_cate".getBytes(), "盗窃案件".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_start".getBytes(), "2006/06/23 00:00:00".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_end".getBytes(), "2006/06/23 10:00:00".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_start_m".getBytes(), "1150992000000".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_end_m".getBytes(), "1151028000000".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_name".getBytes(), "案件名称0".getBytes("UTF-8"));
-        put.addColumn("case_lizu".getBytes(), "c_mark".getBytes(), "暂无".getBytes("UTF-8"));
-        System.out.println(put.heapSize());
     }
 
     /**

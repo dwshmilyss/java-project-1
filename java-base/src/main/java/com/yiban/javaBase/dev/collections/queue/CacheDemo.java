@@ -1,7 +1,8 @@
 package com.yiban.javaBase.dev.collections.queue;
 
 
-import org.apache.log4j.Logger;
+
+import lombok.extern.log4j.Log4j2;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -13,6 +14,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @date 2017/5/3
  * @website http://blog.csdn.net/dwshmilyss
  */
+@Log4j2
 public class CacheDemo {
 
     // 测试入口函数
@@ -92,8 +94,6 @@ public class CacheDemo {
     }
 
     static class Cache<K, V> {
-        private static final Logger logger = Logger.getLogger(Cache.class.getName());
-
         private ConcurrentMap<K, V> cacheObjMap = new ConcurrentHashMap();
 
         private DelayQueue<DelayItem<K>> q = new DelayQueue();
@@ -116,7 +116,7 @@ public class CacheDemo {
 
         private void daemonCheck() {
 
-            logger.info("cache service started.");
+            log.info("cache service started.");
 
             for (; ; ) {
                 try {
@@ -129,12 +129,11 @@ public class CacheDemo {
                         cacheObjMap.remove(key); // compare and remove
                     }
                 } catch (InterruptedException e) {
-                    logger.info(e.getMessage(), e);
+                    log.info(e.getMessage(), e);
                     break;
                 }
             }
-
-            logger.info("cache service stopped.");
+            log.info("cache service stopped.");
         }
 
         // 添加缓存对象

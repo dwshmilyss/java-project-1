@@ -3,7 +3,6 @@ import java.lang.ref.WeakReference;
 import java.util.*;
 
 import com.alibaba.dubbo.common.io.Bytes;
-import com.google.common.base.Strings;
 import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;

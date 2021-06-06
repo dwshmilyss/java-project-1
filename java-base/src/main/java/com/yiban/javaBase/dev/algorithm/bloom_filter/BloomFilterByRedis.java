@@ -1,8 +1,8 @@
 package com.yiban.javaBase.dev.algorithm.bloom_filter;
 
+import com.google.common.hash.Funnels;
+import com.google.common.hash.Hashing;
 import com.yiban.javaBase.dev.redis.RedisPool;
-import org.spark_project.guava.hash.Funnels;
-import org.spark_project.guava.hash.Hashing;
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.Pipeline;
 
@@ -122,7 +122,7 @@ public class BloomFilterByRedis {
      */
     private long hash(String key) {
         Charset charset = Charset.forName("UTF-8");
-        return Hashing.murmur3_128().hashObject(key, Funnels.stringFunnel()).asLong();
+        return Hashing.murmur3_128().hashObject(key, Funnels.stringFunnel(charset)).asLong();
     }
 
     private String getRedisKey(String where) {

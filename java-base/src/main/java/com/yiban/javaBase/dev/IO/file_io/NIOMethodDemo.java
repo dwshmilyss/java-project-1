@@ -1,5 +1,6 @@
 package com.yiban.javaBase.dev.IO.file_io;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Assert;
 import sun.misc.Cleaner;
 import sun.nio.ch.DirectBuffer;
@@ -16,6 +17,7 @@ import java.nio.file.StandardOpenOption;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 /**
  * some method test for NIO
@@ -34,7 +36,7 @@ public class NIOMethodDemo {
 //            tester.runTest();
 //        }
 
-        testMappedByteBufferRead();
+        testMappedByteBuffer();
     }
 
     public static void testWrite() {
@@ -117,66 +119,64 @@ public class NIOMethodDemo {
      */
     public static void testMappedByteBuffer() {
         ByteBuffer byteBuffer = ByteBuffer.allocate(1 * 1024 * 1024);
-        byte[] bytes = new byte[1 * 1024 * 1024];
         File file = null;
+        byte[] bytes = new byte[1024];
         FileInputStream fis = null;
         FileOutputStream fos = null;
         FileChannel inChannel = null;
         FileChannel outChannel = null;
         MappedByteBuffer inMappedByteBuffer = null;
         try {
-            fis = new FileInputStream("d://template_pro_201810_38.log");
-            fos = new FileOutputStream("d://template_pro_201810_38_bak.log");
+            //1. InputStream和OutputStream
+            fis = new FileInputStream("d:/logs/rs_g1_gc.log");
+            fos = new FileOutputStream("d:/logs/rs_g1_gc.log.tmp");
             inChannel = fis.getChannel();
             outChannel = fos.getChannel();
-            long timeStar = 0L;
-            long timeEnd = 0L;
-            /**
-             * 测试两种读的效率
-             */
-//            timeStar = System.currentTimeMillis();
-//            //普通读(Read time :15ms)
-////            inChannel.read(byteBuffer);
-////            byteBuffer.clear();
-//            //Memory Mapped Files 读 (Read time :11ms)
-////            MappedByteBuffer mbb = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, inChannel.size());
-//            System.out.println("file size = " + (int)inChannel.size() / 1024 / 1024 + "m");
-//            timeEnd = System.currentTimeMillis();
-//            System.out.println("Read time :" + (timeEnd - timeStar) + "ms");
+//            StopWatch stopWatch = StopWatch.createStarted();
+            org.springframework.util.StopWatch stopWatch1 = new org.springframework.util.StopWatch("tast group");
+            stopWatch1.start("task1");
+//            普通读写3m的文件(cost time:4ms)
+            while (inChannel.read(byteBuffer) != -1) {
+                byteBuffer.flip();
+//                while (byteBuffer.hasRemaining()) {
+//                    System.out.print((char) byteBuffer.get());
+//                }
+                //这里如果用byteBuffer写入文件就不能用上面的打印，因为上面的byteBuffer.get()应该是把数据从缓存中取出了，这里再用byteBuffer就取不到数据了
+                outChannel.write(byteBuffer);
+                byteBuffer.clear();
+            }
 
-            /**
-             * 测试两种写方式的效率
-             */
-            timeStar = System.currentTimeMillis();
-            //普通写(Write time :285ms)
-//            while (inChannel.read(byteBuffer) != -1) {
-//                byteBuffer.flip();
-//                outChannel.write(byteBuffer);
-//                byteBuffer.clear();
-//            }
-            //Memory Mapped Files 写 ()
-            file = new File("d://template_pro_201810_38.log");
+            System.out.println("file size = " + (int) inChannel.size() / 1024 / 1024 + "m");
+            stopWatch1.stop();
+
+//            Memory Mapped Files 读写
+            file = new File("d:/logs/rs_g1_gc.log");
+            System.out.println("file.length() = " + file.length()/1024/1024 + "mb");
             RandomAccessFile source = new RandomAccessFile(file, "r");
             inChannel = source.getChannel();
-            outChannel = new RandomAccessFile("d://template_pro_201810_38_bak.log", "rw").getChannel();
+            outChannel = new RandomAccessFile("d:/logs/rs_g1_gc.log.tmp1", "rw").getChannel();
+            FileChannel outChannel1 = new RandomAccessFile("d:/logs/rs_g1_gc.log.tmp2", "rw").getChannel();
             long size = inChannel.size();
             inMappedByteBuffer = inChannel.map(FileChannel.MapMode.READ_ONLY, 0, size);
             MappedByteBuffer outMappedByteBuffer = outChannel.map(FileChannel.MapMode.READ_WRITE, 0, size);
-            /**
-             * 下面两种方法都可以实现写入文件 但是貌似第一个更快一些
-             */
-            //Write time :221ms
+            MappedByteBuffer outMappedByteBuffer1 = outChannel1.map(FileChannel.MapMode.READ_WRITE, 0, size);
+            stopWatch1.start("task2");
+            //3ms(这种方式最快，上面的次之，下面的最慢)
             while (inMappedByteBuffer.hasRemaining()) {
                 ByteBuffer buffer = inMappedByteBuffer.get(bytes);
                 outMappedByteBuffer.put(buffer);
             }
-            //Write time :340ms
-//            for (int i = 0; i < size; i++) {
-//                byte b = inMappedByteBuffer.get(i);
-//                outMappedByteBuffer.put(i, b);
-//            }
-            timeEnd = System.currentTimeMillis();
-            System.out.println("Write time :" + (timeEnd - timeStar) + "ms");
+            stopWatch1.stop();
+            stopWatch1.start("task3");
+            //12ms
+            for (int i = 0; i < size; i++) {
+                byte b = inMappedByteBuffer.get(i);
+                outMappedByteBuffer1.put(i, b);
+            }
+            stopWatch1.stop();
+            String result = stopWatch1.prettyPrint();
+            System.err.println(result);
+
         } catch (Exception ex) {
             ex.printStackTrace();
         } finally {
@@ -194,8 +194,9 @@ public class NIOMethodDemo {
                     fos.close();
                 }
                 /**
-                 * MappedByteBuffer对象会一直持有文件句柄，直到GC时释放，所以是无法立刻删除其关联的文件的
-                 * 要想删除，则需要调用cleanHandle方法
+                 * MappedByteBuffer 对象会一直持有文件句柄，直到GC时释放，所以是无法立刻删除其关联的文件的
+                 * 要想删除，则需要调用cleanHandle方法先清除MappedByteBuffer对象
+                 * 而且需要先关闭上面的输入输出流，否则也无法删除
                  */
                 cleanHandle(inMappedByteBuffer);
                 file.delete();
@@ -208,8 +209,9 @@ public class NIOMethodDemo {
     }
 
     /**
-     * clean handle method
-     *
+     * 清除 MappedByteBuffer 所占用的对象
+     * 如果是用MappedByteBuffer映射了物理文件，若要立刻删除文件，则这部必须在删除文件动作前调用
+     * 否则只能等到GC回收了MappedByteBuffer对象的引用，文件才会被删除
      * @param obj process object
      */
     private static void cleanHandle(final Object obj) {
@@ -275,7 +277,7 @@ public class NIOMethodDemo {
                                 dos.flush();
                             }
                             //写也是一个byte一个byte的写
-                            while (dis.read() != -1){
+                            while (dis.read() != -1) {
                             }
                         } catch (Exception ex) {
                             ex.printStackTrace();

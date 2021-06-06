@@ -1,6 +1,6 @@
 package com.yiban.javaBase.dev.annotations.lombok;
 
-import lombok.extern.log4j.Log4j;
+import lombok.extern.log4j.Log4j2;
 
 /**
  * test for lombok
@@ -9,7 +9,7 @@ import lombok.extern.log4j.Log4j;
  * @date 2017/11/30
  * @website http://blog.csdn.net/dwshmilyss
  */
-@Log4j
+@Log4j2
 public class Test {
     public static void main(String[] args) {
         Person person1 = new Person();

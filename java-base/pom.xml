@@ -205,11 +205,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.yiban.thread</groupId>
-            <artifactId>MultithreadedTC</artifactId>
-            <version>1.01</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

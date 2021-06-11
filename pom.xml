@@ -46,7 +46,7 @@
         <dubbo.version>2.6.2</dubbo.version>
         <fastjson.version>1.2.31</fastjson.version>
         <avro.version>1.8.2</avro.version>
-        <mybatis.version>3.4.1</mybatis.version>
+        <mybatis.version>3.5.6</mybatis.version>
         <influxdb.version>2.5</influxdb.version>
         <hadoop.version>2.7.3</hadoop.version>
         <hbase.version>1.2.3</hbase.version>

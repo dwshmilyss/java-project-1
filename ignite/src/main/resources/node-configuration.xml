@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/util
+        http://www.springframework.org/schema/util/spring-util.xsd">
+    <bean class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="workDirectory" value="/data/work"/>
+        <property name="clientMode" value="true"/>
+<!--        <property name="workDirectory" value="/Users/edz/data/work"/>-->
+        <property name="dataStorageConfiguration">
+            <bean class="org.apache.ignite.configuration.DataStorageConfiguration">
+                <property name="walSegmentSize" value="#{2000L * 1024 * 1024}"/>
+                <property name="maxWalArchiveSize" value="#{2500L * 1024 * 1024}"/>
+                <property name="writeThrottlingEnabled" value="true"/>
+                <property name="defaultDataRegionConfiguration">
+                    <bean class="org.apache.ignite.configuration.DataRegionConfiguration">
+                        <property name="persistenceEnabled" value="true"/>
+                        <property name="name" value="Default_Region"/>
+                        <property name="initialSize" value="#{2500L * 1024 * 1024}"/>
+                        <property name="checkpointPageBufferSize" value="#{625L * 1024 * 1024}"/>
+                    </bean>
+                </property>
+                <property name="walPath" value="/data/wal"/>
+                <property name="walArchivePath" value="/data/walarchive"/>
+            </bean>
+        </property>
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.kubernetes.TcpDiscoveryKubernetesIpFinder">
+                        <property name="namespace" value="leadswarp"/>
+                        <property name="serviceName" value="ignite"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+</beans>

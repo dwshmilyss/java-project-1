@@ -1,0 +1,27 @@
+{
+  "type": "record",
+  "name": "UserActionLog",
+  "namespace": "com.yiban.avro.entity",
+  "fields": [
+    {
+      "name": "userName",
+      "type": "string"
+    },
+    {
+      "name": "actionType",
+      "type": "string"
+    },
+    {
+      "name": "ipAddress",
+      "type": "string"
+    },
+    {
+      "name": "gender",
+      "type": "int"
+    },
+    {
+      "name": "provience",
+      "type": "string"
+    }
+  ]
+}

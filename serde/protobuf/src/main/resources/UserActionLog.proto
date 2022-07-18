@@ -1,0 +1,16 @@
+syntax="proto3";
+
+package com.yiban.serde.protobuf.model;
+
+option java_package = "com.yiban.serde.protobuf.model";
+option java_multiple_files=true;
+option java_outer_classname="UserActionLogModel";
+
+message UserActionLog
+{
+  string userName = 1;
+  string actionType = 2;
+  string ipAddress = 3;
+  int32 gender = 4;
+  string provience = 5;
+}

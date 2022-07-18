@@ -1,0 +1,232 @@
+<?xml version="1.0"?>
+<!--
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License. See accompanying LICENSE file.
+-->
+<configuration>
+    <!--多久尝试连接一次ResourceManager,默认是30秒，这里配置为2秒--> 
+	<property> 
+	   <name>yarn.resourcemanager.connect.retry-interval.ms</name> 
+	   <value>2000</value> 
+	</property>
+	<!--开启resource manager HA,默认为false--> 
+	<property> 
+	   <name>yarn.resourcemanager.ha.enabled</name> 
+	   <value>true</value> 
+	</property> 
+	<!--配置resource manager -->
+	<property>
+	  <name>yarn.resourcemanager.ha.rm-ids</name>
+	  <value>rm1,rm2</value>
+	</property>
+	<property>
+  	  <name>ha.zookeeper.quorum</name>
+  	  <value>slave01:2181,slave02:2181,slave03:2181</value> 
+	</property>
+
+	<!--开启故障自动切换--> 
+	<property> 
+	   <name>yarn.resourcemanager.ha.automatic-failover.enabled</name> 
+	   <value>true</value> 
+	</property> 
+	<property>
+	  <name>yarn.resourcemanager.hostname.rm1</name>
+	  <value>master01</value>
+	</property>
+					   
+	<property>
+	   <name>yarn.resourcemanager.hostname.rm2</name>
+	   <value>master02</value>
+	</property>
+	<!--在namenode1上配置rm1,在master02上配置rm2,注意：一般都喜欢把配置好的文件远程复制到其它机器上，但这个在YARN的另一个机器上一定要修改--> 
+	<property> 
+	  <name>yarn.resourcemanager.ha.id</name> 
+	  <value>rm1</value> 
+	<description>If we want to launch more than one RM in single node, we need this configuration</description> 
+	</property> 
+	<!--开启自动恢复功能--> 
+	<property>
+	  <name>yarn.resourcemanager.recovery.enabled</name> 
+	  <value>true</value> 
+	</property>
+	<!--配置与zookeeper的连接地址--> 
+	<property> 
+	  <name>yarn.resourcemanager.store.class</name> 
+	  <value>org.apache.hadoop.yarn.server.resourcemanager.recovery.ZKRMStateStore</value> 
+	</property> 
+	<property>
+	  <name>yarn.resourcemanager.zk-address</name>
+	  <value>master01:2181,master02:2181,slave01:2181,slave02:2181,slave03:2181</value>
+	</property>
+        <!--schelduler失联等待连接时间-->
+        <property>
+          <name>yarn.app.mapreduce.am.scheduler.connection.wait.interval-ms</name>
+          <value>5000</value>
+        </property>
+	<!-- 集群ID,一个逻辑名称，可以随便取，确保唯一即可  -->
+	<property> 
+	  <name>yarn.resourcemanager.cluster-id</name> 
+	  <value>gagcluster-yarn</value> 
+	</property> 
+	<!--配置rm1--> 
+	<property> 
+	  <name>yarn.resourcemanager.address.rm1</name> 
+	  <value>master01:8132</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.scheduler.address.rm1</name> 
+	  <value>master01:8130</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.webapp.address.rm1</name> 
+	  <value>master01:8188</value> 
+	</property> 
+	<property>
+	   <name>yarn.resourcemanager.resource-tracker.address.rm1</name> 
+	   <value>master01:8131</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.admin.address.rm1</name> 
+	  <value>master01:8033</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.ha.admin.address.rm1</name> 
+	  <value>master01:23142</value> 
+	</property> 
+	<!--配置rm2--> 
+	<property> 
+	  <name>yarn.resourcemanager.address.rm2</name> 
+	  <value>master02:8132</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.scheduler.address.rm2</name> 
+	  <value>master02:8130</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.webapp.address.rm2</name> 
+	  <value>master02:8188</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.resource-tracker.address.rm2</name> 
+	  <value>master02:8131</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.admin.address.rm2</name> 
+	  <value>master02:8033</value> 
+	</property> 
+	<property> 
+	  <name>yarn.resourcemanager.ha.admin.address.rm2</name> 
+	  <value>master02:23142</value> 
+	</property> 
+<!-- 配置关于mapreduce的相关参数 -->
+	<property> 
+	  <name>yarn.nodemanager.aux-services</name> 
+	  <value>mapreduce_shuffle</value> 
+	</property> 
+	<property> 
+	  <name>yarn.nodemanager.aux-services.mapreduce_shuffle.class</name> 
+	  <value>org.apache.hadoop.mapred.ShuffleHandler</value> 
+	</property> 
+	<property> 
+	  <name>yarn.nodemanager.local-dirs</name> 
+	  <value>/usr/local/data/hadoop_2.8.2/yarn/local</value> 
+	</property> 
+	<property> 
+	  <name>yarn.nodemanager.log-dirs</name> 
+	  <value>/usr/local/logs/hadoop_2.8.2/log</value> 
+	</property> 
+	<!--故障处理类--> 
+	<property> 
+	  <name>yarn.client.failover-proxy-provider</name> 
+	  <value>org.apache.hadoop.yarn.client.ConfiguredRMFailoverProxyProvider</value> 
+	</property> 
+	<property>
+	  <name>yarn.resourcemanager.ha.automatic-failover.zk-base-path</name>
+	  <value>/yarn-leader-election</value>
+	</property>
+	<!-- 启动historyserver收集各节点日志功能这样才能在web端的访问地址上统一查看日志 -->
+	<property>    
+    	  <name>yarn.log-aggregation-enable</name>  
+    	  <value>true</value>    
+	</property>
+	<property>
+          <name>yarn.log.server.url</name>
+          <value>http://master01:19888/jobhistory/job/</value>
+        </property>
+
+	<property>  
+          <name>yarn.resourcemanager.scheduler.class</name>  
+          <value>org.apache.hadoop.yarn.server.resourcemanager.scheduler.fair.FairScheduler</value>   
+	</property>  
+	<property>  
+          <name>yarn.scheduler.fair.allocation.file</name>  
+          <value>/usr/local/hadoop-2.8.2/etc/hadoop/fair-allocation.xml</value>
+	</property> 
+<!--当应用程序未指定队列名时，是否指定用户名作为应用程序所在的队列名。如果设置为false或者未设置，所有未知队列的应用程序将被提交到default队列中，默认值为true-->
+	<property>  
+          <name>yarn.scheduler.fair.user-as-default-queue</name>
+          <value>false</value>  
+	</property>
+<!-- 是否启用抢占机制，默认值是false -->
+	<property>  
+          <name>yarn.scheduler.fair.preemption</name>
+          <value>false</value>  
+	</property>
+<!-- 在一个队列内部分配资源时，默认情况下，采用公平轮询的方法将资源分配各各个应用程序，而该参数则提供了另外一种资源分配方式：按照应用程序资源需求数目分配资源，即需求资源数量越多，分配的资源越多。默认情况下，该参数值为false -->
+	<property>  
+          <name>yarn.scheduler.fair.sizebasedweight</name>  
+          <value>true</value>  
+	</property>
+<!-- 是否启动批量分配功能。当一个节点出现大量资源时，可以一次分配完成，也可以多次分配完成。默认情况下，该参数值为false -->
+	<property>  
+	  <name>yarn.scheduler.fair.assignmultiple</name>  
+	  <value>true</value>  
+	</property>
+<!-- 如果开启批量分配功能，可指定一次分配的container数目。默认情况下，该参数值为-1，表示不限制 -->
+	<property>  
+         <name>yarn.scheduler.fair.max.assign</name>  
+         <value>-1</value>  
+	</property>  
+	<property>  
+         <name>yarn.scheduler.fair.locality.threshold.node</name>   
+         <value>-1.0</value>  
+	</property>  
+	<property>  
+         <name>yarn.scheduler.fair.locality.threshold.rack</name>
+         <value>-1.0</value>  
+	</property>  
+<!--资源配置 -->
+       <property>
+         <name>yarn.nodemanager.vmem-check-enabled</name>
+         <value>false</value>
+        </property>
+
+        <property>
+         <name>yarn.nodemanager.resource.memory-mb</name>
+         <value>18432</value>
+        </property>
+
+        <property>
+         <name>yarn.scheduler.maximum-allocation-mb</name>
+         <value>18432</value>
+        </property>
+
+      <property>
+        <name>yarn.scheduler.maximum-allocation-vcores</name>
+        <value>8</value>
+      </property>
+
+    <property>
+        <name>yarn.nodemanager.resource.cpu-vcores</name>
+        <value>8</value>
+    </property>
+</configuration>

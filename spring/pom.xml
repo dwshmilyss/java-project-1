@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.yiban.spring</groupId>
+    <artifactId>spring</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>com.yiban.java</groupId>
+        <artifactId>java-project-1</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <modules>
+        <module>spring_core</module>
+        <module>spring_kafka</module>
+        <module>spring_boot</module>
+    </modules>
+
+</project>

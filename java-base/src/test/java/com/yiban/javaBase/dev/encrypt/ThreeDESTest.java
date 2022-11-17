@@ -1,9 +1,14 @@
 package com.yiban.javaBase.dev.encrypt;
 
+import com.github.jsonzou.jmockdata.DataConfig;
 import com.github.jsonzou.jmockdata.JMockData;
+import com.github.jsonzou.jmockdata.MockConfig;
 import com.github.jsonzou.jmockdata.TypeReference;
+import com.github.jsonzou.jmockdata.mocker.IntegerMocker;
+import com.github.jsonzou.jmockdata.mocker.StringMocker;
 import com.ibm.icu.text.DecimalFormat;
 import com.yiban.javaBase.User;
+import com.yiban.javaBase.test.Contact;
 import org.hamcrest.JMock1Matchers;
 import org.junit.Assert;
 import org.junit.jupiter.api.Test;
@@ -25,6 +30,23 @@ class ThreeDESTest {
     public void test1() {
 //        User mock = JMockData.mock(User.class);
 //        System.out.println("mock.name + \" , \" + mock.age = " + mock.getName() + " , " + mock.getAge());
+
+        MockConfig config = new MockConfig();
+        final DataConfig dateDC = config.subConfig("date");
+        config.registerMocker(new StringMocker() {
+            @Override
+            public String mock(DataConfig mockConfig) {
+                // 修改date字段为固定值
+                if (dateDC == mockConfig) {
+                    return "2020/01/01";
+                }
+                return super.mock(mockConfig);
+            }
+        }, String.class);
+        Contact mock = JMockData.mock(Contact.class,config);
+        System.out.println(mock.toString());
+        Contact mock1 = JMockData.mock(Contact.class,config);
+        System.out.println(mock1.toString());
 //        String str = JMockData.mock(String.class);
 //        System.out.println("str = " + str);
 //        int i = JMockData.mock(int.class);
@@ -33,10 +55,10 @@ class ThreeDESTest {
 //        System.out.println("num = " + num);
 //        List<User> userList = JMockData.mock(new TypeReference<List<User>>(){});
 //        System.out.println("userList = " + userList.size());
-        double d = 0.00005555;
-        double d1 = 1.000053335;
-        m5(d);
-        m5(d1);
+//        double d = 0.00005555;
+//        double d1 = 1.000053335;
+//        m5(d);
+//        m5(d1);
 
 //        double l = 1.000053335;
 //        short offset = (short) Math.ceil(Math.log10(l) + 1);

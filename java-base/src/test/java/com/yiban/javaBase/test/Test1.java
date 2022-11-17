@@ -1,5 +1,6 @@
 package com.yiban.javaBase.test;
 import java.lang.ref.WeakReference;
+import java.time.LocalTime;
 import java.util.*;
 
 import com.alibaba.dubbo.common.io.Bytes;
@@ -7,6 +8,8 @@ import org.junit.Test;
 
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentSkipListSet;
+
+import static java.time.temporal.ChronoUnit.SECONDS;
 
 /**
  * @auther WEI.DUAN
@@ -27,9 +30,19 @@ public class Test1 {
 //        System.out.println(1 | 1 << 1);
 //        System.out.println(Math.abs("test_8_3_g2".hashCode()) % 8);
 
-        System.out.println(Math.log(2));
-        System.out.println(Math.log10(100));
-        System.out.println(Math.log1p(2));
+//        System.out.println(Math.log(2));
+//        System.out.println(Math.log10(100));
+//        System.out.println(Math.log1p(2));
+        LocalTime startTime = LocalTime.parse("23:00:00");
+        LocalTime endTime = LocalTime.parse("01:00:00");
+
+        long diffSeconds = SECONDS.between(startTime, endTime);
+        LocalTime randomTime;
+        if (startTime.isBefore(endTime)) {
+            randomTime = startTime.plus(diffSeconds, SECONDS);
+        } else {
+            randomTime = startTime.plus(24 * 60 * 60 + diffSeconds, SECONDS);
+        }
     }
 
     @Test

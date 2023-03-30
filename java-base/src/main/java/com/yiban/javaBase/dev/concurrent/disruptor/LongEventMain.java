@@ -34,7 +34,7 @@ public class LongEventMain {
         Disruptor<LongEvent> disruptor = new Disruptor<>(LongEvent::new, bufferSize, executor);
 
         // Connect the handler
-        disruptor.handleEventsWith((event, sequence, endOfBatch) -> System.out.println("Event: " + event));
+        disruptor.handleEventsWith(new LongEventHandler());
 
         // Start the Disruptor, starts all threads running
         disruptor.start();

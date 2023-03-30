@@ -11,9 +11,9 @@ import org.apache.log4j.pattern.LogEvent;
  * @date 2018/1/12
  * @website http://blog.csdn.net/dwshmilyss
  */
-public class LongEventHandler implements EventHandler<LogEvent> {
+public class LongEventHandler implements EventHandler<LongEvent> {
     @Override
-    public void onEvent(LogEvent event, long sequence, boolean endofBatch) throws Exception {
-        System.out.println("Event: " + event);
+    public void onEvent(LongEvent event, long sequence, boolean endofBatch) throws Exception {
+        System.out.println("Event value : " + event.getValue());
     }
 }

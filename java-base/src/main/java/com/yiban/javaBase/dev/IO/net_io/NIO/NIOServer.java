@@ -12,6 +12,17 @@ import java.util.Iterator;
 /**
  * NIOServer
  *
+ * 伪代码(一个经典的网络编程的服务端)：
+ *
+ * listenSocket = socket(); //调用socket系统调用创建一个主动套接字
+ * bind(listenSocket);  //绑定地址和端口
+ * listen(listenSocket); //将默认的主动套接字转换为服务器使用的被动套接字，也就是监听套接字
+ * while (1) { //循环监听是否有客户端连接请求到来
+ *    connSocket = accept(listenSocket); //接受客户端连接
+ *    recv(connsocket); //从客户端读取数据，只能同时处理一个客户端
+ *    send(connsocket); //给客户端返回数据，只能同时处理一个客户端
+ * }
+ *
  * @auther WEI.DUAN
  * @date 2017/9/1
  * @website http://blog.csdn.net/dwshmilyss
@@ -29,8 +40,8 @@ public class NIOServer {
     public static void main(String[] args) {
         try {
             NIOServer server = new NIOServer();
-            server.initServer(8000);
-            server.listen();
+            server.initServerAndListen(8000);
+            server.selectAndRW();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,7 +53,7 @@ public class NIOServer {
      * @param port 绑定的端口号
      * @throws IOException
      */
-    public void initServer(int port) throws IOException {
+    public void initServerAndListen(int port) throws IOException {
         // 获得一个ServerSocketChannel通道
         serverChannel = ServerSocketChannel.open();
         // 设置通道为非阻塞
@@ -63,19 +74,21 @@ public class NIOServer {
          */
 //        int interestSet = SelectionKey.OP_ACCEPT | SelectionKey.OP_CONNECT;
 //        System.out.println("interestSet = " + interestSet);
-        //这里好像只能用OP_ACCEPT来注册
+        //这里好像只能用OP_ACCEPT来注册(因为首先需要建议连接嘛)
         SelectionKey key = serverChannel.register(selector, SelectionKey.OP_ACCEPT);
 //        SelectionKey key = serverChannel.register(selector, interestSet);
         key.attach("abc");
     }
 
     /**
+     * IO多路复用
      * 采用轮询的方式监听selector上是否有需要处理的事件，如果有，则进行处理
-     *
+     * 调用serverChannel.socket().bind()后服务器会创建监听套接字lfd，然后client就可以调用connect连接了，一旦有client连接，服务端会调用accept函数创建cfd描述符
+     * cfd的作用是负责连接client，接收客户端的IO请求(read/write)
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    public void listen() throws IOException {
+    public void selectAndRW() throws IOException {
         System.out.println("服务端启动成功！");
         //轮询访问selector
         for (; ; ) {

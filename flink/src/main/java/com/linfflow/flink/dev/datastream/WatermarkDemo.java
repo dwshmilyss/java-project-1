@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.OutputTag;
 
-public class TumblingEventWindowExample {
+public class WatermarkDemo {
     /**
      * nc -lk 9999
      * 11000 a
@@ -177,8 +177,8 @@ public class TumblingEventWindowExample {
                 })
                 .keyBy(0)
                 .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-                .sideOutputLateData(outputTag) // 收集延迟大于2s的数据
                 .allowedLateness(Time.seconds(2)) //允许2s延迟
+                .sideOutputLateData(outputTag) // 收集延迟大于2s的数据
                 // 延时数据处理的第三种方式，数据重定向
                 .reduce(new ReduceFunction<Tuple2<String, Long>>() {
                     @Override

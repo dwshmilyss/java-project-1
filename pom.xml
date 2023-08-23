@@ -40,11 +40,6 @@
         <log4j.version>1.2.17</log4j.version>
         <slf4j.version>1.7.15</slf4j.version>
         <jedis.version>2.9.0</jedis.version>
-        <spring.version>5.1.6.RELEASE</spring.version>
-        <springfox.version>2.7.0</springfox.version>
-<!--        <spring.boot.version>2.3.5.RELEASE</spring.boot.version>-->
-        <spring.boot.version>2.5.0</spring.boot.version>
-        <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
         <dubbo.version>2.6.2</dubbo.version>
         <fastjson.version>1.2.31</fastjson.version>
         <avro.version>1.8.2</avro.version>
@@ -60,6 +55,10 @@
         <junit.vintage.version>5.7.0-M1</junit.vintage.version>
         <junit.platform.version>1.7.0-M1</junit.platform.version>
         <mockito.jupiter.version>3.3.3</mockito.jupiter.version>
+        <spring.boot.version>2.5.0</spring.boot.version>
+        <spring.cloud.version>2.2.8.RELEASE</spring.cloud.version>
+        <spring.version>5.1.6.RELEASE</spring.version>
+        <springfox.version>2.7.0</springfox.version>
     </properties>
 
 
@@ -162,59 +161,6 @@
                 <version>${springfox.version}</version>
             </dependency>
             <!-- springfox end -->
-            <!-- spring-boot start -->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-web</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-jpa</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-quartz</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-test</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-test</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <!--spring-boot集成redis-->
-            <dependency>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-data-redis</artifactId>
-                <version>${spring.boot.version}</version>
-            </dependency>
-            <!-- spring-boot end -->
-
-            <!-- spring-cloud start -->
-            <!-- 增加eureka依赖 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
-                <version>${spring.cloud.version}</version>
-            </dependency>
-            <!-- 为实现服务间调用，添加feign的依赖 add by WanChengHe 20190508 -->
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-openfeign</artifactId>
-                <version>${spring.cloud.version}</version>
-            </dependency>
-            <!-- spring end -->
 
             <dependency>
                 <groupId>org.projectlombok</groupId>

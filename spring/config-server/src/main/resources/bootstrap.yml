@@ -1,0 +1,10 @@
+eureka:
+  client:
+    enabled: ${REGISTRY_ENABLED:false}
+    serviceUrl:
+      defaultZone: http://${REGISTRY_1_HOST:localhost}:${REGISTRY_1_PORT:8761}/eureka/,http://${REGISTRY_2_HOST:localhost}:${REGISTRY_2_PORT:8762}/eureka/
+  instance:
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${spring.cloud.client.ip-address}:${server.port}
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health

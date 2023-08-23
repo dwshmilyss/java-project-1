@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: config-server
+    # 使用本地文件，也可配置成从git获取配置文件
+  profiles:
+    active:
+      - native
+  cloud:
+    config:
+      server:
+        native:
+          search-locations: classpath:/config
+      allow-override: true
+      override-none: true
+      override-system-properties: false
+      discovery:
+        enabled: true
+      fail-fast: true
+# 注册eureka地址，提供客户端eureka访问
+#eureka:
+#  client:
+#    serviceUrl:
+#      defaultZone: http://ip:port/eureka/
+server:
+  port: 8889

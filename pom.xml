@@ -11,7 +11,7 @@
 
     <modules>
         <module>java-base</module>
-        <module>dubbo</module>
+        <module>dubbo_alibaba</module>
         <module>elasticsearch</module>
         <module>btrace</module>
         <module>hadoop</module>
@@ -25,6 +25,7 @@
         <module>serde</module>
         <module>kafka</module>
         <module>hive</module>
+        <module>dubbo_apache</module>
     </modules>
 
     <properties>

@@ -1,5 +1,8 @@
 package com.yiban.javaBase.dev.concurrent;
 
+import java.util.concurrent.locks.AbstractQueuedSynchronizer;
+import java.util.concurrent.locks.LockSupport;
+
 /**
  * interrupt demo
  *
@@ -9,20 +12,29 @@ package com.yiban.javaBase.dev.concurrent;
  */
 public class InterruptDemo {
 
-    public static void main(String[] args) {
-        InnerClass innerClass = new InterruptDemo().new InnerClass();
-        innerClass.run();
-
-    }
-
-    class InnerClass extends Thread {
-
-        @Override
-        public void run() {
-            int i = 0;
-            while (!Thread.currentThread().isInterrupted()) {
-                System.out.println(i++);
+    public static void main(String[] args) throws InterruptedException {
+        Thread t1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                boolean flag;
+                System.out.println("子线程开始执行");
+                flag = Thread.currentThread().isInterrupted();
+                System.out.println("park before flag = " + flag);
+                LockSupport.park(this);
+                flag = Thread.currentThread().isInterrupted();
+                System.out.println("park after flag = " + flag);
+                System.out.println("子线程结束执行");
             }
-        }
+        });
+
+        t1.start();
+        Thread.sleep(1000); // 等待1秒
+
+        System.out.println("主线程中断子线程");
+        t1.interrupt();
+
+        t1.join();// 等待子线程执行完毕
+        System.out.println("主线程结束");
     }
+
 }

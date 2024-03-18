@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.algorithm.consistent_hash.demo2;
+package com.yiban.javaBase.dev.algorithm.consistent_hash.ketama;
 
 import java.util.ArrayList;
 import java.util.HashMap;

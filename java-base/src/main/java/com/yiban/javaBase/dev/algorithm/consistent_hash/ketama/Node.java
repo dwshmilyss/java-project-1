@@ -1,4 +1,4 @@
-package com.yiban.javaBase.dev.algorithm.consistent_hash.demo2;
+package com.yiban.javaBase.dev.algorithm.consistent_hash.ketama;
 
 /**
  * @auther WEI.DUAN

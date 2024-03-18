@@ -318,8 +318,9 @@ public class BinaryTree<E extends Comparable> {
         //方法二 栈+栈
         Stack<Node> q1 = new Stack();
         Stack<Node> q2 = new Stack();
-        if (current == null)
+        if (current == null) {
             return;
+        }
         if (current != null) {
             q1.push(current);
         }
@@ -411,7 +412,7 @@ public class BinaryTree<E extends Comparable> {
      * @return
      */
     public Node invertNode1(Node root) {
-        if (root == null) return null;
+        if (root == null){ return null;}
         Queue<Node> queue = new LinkedList<>();
         queue.add(root);
         while (!queue.isEmpty()) {

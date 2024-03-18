@@ -122,8 +122,9 @@ public class ConsistentHash<T> {
          */
         Iterator<Long> it1 = sortedSet.iterator();
         Iterator<Long> it2 = sortedSet.iterator();
-        if (it2.hasNext())
+        if (it2.hasNext()) {
             it2.next();
+        }
         long keyPre, keyAfter;
         while (it1.hasNext() && it2.hasNext()) {
             keyPre = it1.next();

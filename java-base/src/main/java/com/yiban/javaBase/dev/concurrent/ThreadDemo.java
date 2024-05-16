@@ -31,15 +31,15 @@ public class ThreadDemo {
 //        testJoin();
 
 
-        TT tt1 = new TT("aa");
-//        TT tt2 = new TT("bb");
-        tt1.setName("myThread");
-        tt1.start();
-        try {
-            Thread.sleep(60 * 60 * 1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+//        TT tt1 = new TT("aa");
+////        TT tt2 = new TT("bb");
+//        tt1.setName("myThread");
+//        tt1.start();
+//        try {
+//            Thread.sleep(60 * 60 * 1000);
+//        } catch (InterruptedException e) {
+//            e.printStackTrace();
+//        }
 //        tt2.start();
 
 
@@ -51,6 +51,9 @@ public class ThreadDemo {
 //                }
 //            }).start();
 //        }
+        new Thread(() -> {
+            System.out.println("Thread started");
+        }).start();
     }
 
 

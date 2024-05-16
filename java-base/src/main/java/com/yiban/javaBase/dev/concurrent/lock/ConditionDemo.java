@@ -96,12 +96,15 @@ public class ConditionDemo {
         public void run(){
             try{
                 lock.lock();
+                System.out.println("ThreadA 获取了锁");
                 System.out.println("A进程输出" + " : " + ++index);
                 conditionA.await();
+                System.out.println("ThreadA 被唤醒了");
             }catch (Exception e){
                 e.printStackTrace();
             }finally {
                 lock.unlock();
+                System.out.println("ThreadA 释放了锁");
             }
         }
     }
@@ -111,12 +114,15 @@ public class ConditionDemo {
         public void run(){
             try{
                 lock.lock();
+                System.out.println("ThreadB 获取了锁");
                 System.out.println("B进程输出" + " : " + ++index);
                 conditionA.await();
+                System.out.println("ThreadB 被唤醒了");
             }catch (Exception e){
                 e.printStackTrace();
             }finally {
                 lock.unlock();
+                System.out.println("ThreadB 释放了锁");
             }
         }
     }
@@ -126,12 +132,15 @@ public class ConditionDemo {
         public void run(){
             try{
                 lock.lock();
+                System.out.println("ThreadC 获取了锁");
                 System.out.println("C进程输出" + " : " + ++index);
                 conditionA.await();
+                System.out.println("ThreadC 被唤醒了");
             }catch (Exception e){
                 e.printStackTrace();
             }finally {
                 lock.unlock();
+                System.out.println("ThreadC 释放了锁");
             }
         }
     }

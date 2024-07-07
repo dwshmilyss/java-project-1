@@ -1,6 +1,6 @@
-package com.linfflow.flink.dev.datastream;
+package com.linfflow.flink.dev.datastream.window;
 
-import com.linfflow.flink.dev.datastream.entity.DriverMileages;
+import com.linfflow.flink.dev.pojo.DriverMileages;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream.entity;
+package com.linfflow.flink.dev.pojo;
 
 /**
  * @Description: TODO

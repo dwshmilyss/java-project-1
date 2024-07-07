@@ -17,3 +17,4 @@ workspace
 /hive/lib/
 /java-base/lib/
 .settings/
+/kafka/kafka_0_10/src/main/resources/amazon_reviews_us_Books_v1_00.tsv

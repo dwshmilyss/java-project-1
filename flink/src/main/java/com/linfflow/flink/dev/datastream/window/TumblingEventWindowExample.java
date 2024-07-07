@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream;
+package com.linfflow.flink.dev.datastream.window;
 
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
@@ -14,7 +14,7 @@ import org.apache.flink.streaming.api.windowing.assigners.TumblingEventTimeWindo
 import org.apache.flink.streaming.api.windowing.time.Time;
 import org.apache.flink.util.OutputTag;
 
-public class WatermarkDemo {
+public class TumblingEventWindowExample {
     /**
      * nc -lk 9999
      * 11000 a
@@ -177,8 +177,8 @@ public class WatermarkDemo {
                 })
                 .keyBy(0)
                 .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-                .allowedLateness(Time.seconds(2)) //允许2s延迟
                 .sideOutputLateData(outputTag) // 收集延迟大于2s的数据
+                .allowedLateness(Time.seconds(2)) //允许2s延迟
                 // 延时数据处理的第三种方式，数据重定向
                 .reduce(new ReduceFunction<Tuple2<String, Long>>() {
                     @Override

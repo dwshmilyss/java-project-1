@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream;
+package com.linfflow.flink.dev.datastream.window;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;

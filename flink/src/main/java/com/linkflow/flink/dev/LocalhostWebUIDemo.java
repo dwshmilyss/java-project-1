@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev;
+package com.linkflow.flink.dev;
 
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;

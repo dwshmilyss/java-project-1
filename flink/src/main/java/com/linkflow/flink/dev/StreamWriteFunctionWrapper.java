@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.linfflow.flink.dev;
+package com.linkflow.flink.dev;
 
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.runtime.io.disk.iomanager.IOManager;

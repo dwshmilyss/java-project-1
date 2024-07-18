@@ -1,7 +1,7 @@
-package com.linfflow.flink.dev.datastream.sideoutput;
+package com.linkflow.flink.dev.datastream.sideoutput;
 
 import com.alibaba.fastjson.JSON;
-import com.linfflow.flink.dev.pojo.OrderLog;
+import com.linkflow.flink.dev.pojo.OrderLog;
 import org.apache.flink.api.common.functions.RichFlatMapFunction;
 import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.streaming.api.datastream.DataStreamSource;

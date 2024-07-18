@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.dataset;
+package com.linkflow.flink.dev.dataset;
 
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringEncoder;

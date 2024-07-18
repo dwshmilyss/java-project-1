@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream.window;
+package com.linkflow.flink.dev.datastream.window;
 
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;

@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream.sideoutput;
+package com.linkflow.flink.dev.datastream.sideoutput;
 
 import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.api.common.state.ReducingState;

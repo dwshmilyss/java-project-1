@@ -1,10 +1,11 @@
-package com.linfflow.flink.dev.datastream.window;
+package com.linkflow.flink.dev.datastream.window;
 
-import com.linfflow.flink.dev.pojo.WaterSensor;
+import com.linkflow.flink.dev.pojo.WaterSensor;
 import org.apache.commons.lang.time.DateFormatUtils;
 import org.apache.flink.api.common.eventtime.*;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.functions.ReduceFunction;
+import org.apache.flink.api.common.typeinfo.TypeInformation;
 import org.apache.flink.api.java.functions.KeySelector;
 import org.apache.flink.api.java.tuple.Tuple2;
 import org.apache.flink.streaming.api.TimeCharacteristic;
@@ -136,21 +137,21 @@ public class WatermarkDemo {
                         new WaterSensor("sensor_2", 1547718112L, 3),
                         new WaterSensor("sensor_2", 1547718123L, 4),
                         new WaterSensor("sensor_2", 1547718124L, 5),
-                        new WaterSensor("sensor_2", 1547718125L, 6), //这里如果改为1547718126L  下面的那一条就不能参与计算了，因为过了allowedLateness的时间(1547718126)
+                        new WaterSensor("sensor_2", 1547718126L, 6), //这里如果改为1547718126L  下面的那一条就不能参与计算了，因为过了allowedLateness的时间(1547718126)
                         new WaterSensor("sensor_2", 1547718114L, 7));
 
 
         //1. 定义Watermark策略，最大允许延迟3秒的数据到达
         WatermarkStrategy<WaterSensor> watermarkStrategy = WatermarkStrategy
                 //1.1.1 和1.1.2实现同样的效果
-//                .forGenerator(new WatermarkGeneratorSupplier<WaterSensor>() {
-//                    @Override
-//                    public WatermarkGenerator<WaterSensor> createWatermarkGenerator(Context context) {
-//                        return new BoundedOutOfOrdernessWatermarks(Duration.ofSeconds(3L));
-//                    }
-//                })
+                .forGenerator(new WatermarkGeneratorSupplier<WaterSensor>() {
+                    @Override
+                    public WatermarkGenerator<WaterSensor> createWatermarkGenerator(Context context) {
+                        return new BoundedOutOfOrdernessWatermarks(Duration.ofSeconds(3L));
+                    }
+                })
                 // 1.1.2 指定watermark生成：乱序，等待3s 相当于开窗时间延迟3s
-                .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3L))
+//                .<WaterSensor>forBoundedOutOfOrderness(Duration.ofSeconds(3L))
                 // 1.2 指定 时间戳分配器，从数据中提取
                 .withTimestampAssigner(new SerializableTimestampAssigner<WaterSensor>() {
                     @Override
@@ -186,10 +187,14 @@ public class WatermarkDemo {
                 System.out.println("value = " + value + ",watermark = " + ctx.timerService().currentWatermark());
             }
         }).print();
+        //定义一个侧输出流来保存窗口关闭之后到来的数据
+        OutputTag<WaterSensor> waterSensorOutputTag = new OutputTag<WaterSensor>("late", TypeInformation.of(WaterSensor.class));
         //4. window
         WindowedStream<WaterSensor, String, TimeWindow> sensorWS = keyedStream
                 .window(TumblingEventTimeWindows.of(Time.seconds(10)))
-                .allowedLateness(Time.seconds(3L));//相当于窗口关闭时间延迟3s
+                .allowedLateness(Time.seconds(3L))//相当于窗口关闭时间延迟3s
+                .sideOutputLateData(waterSensorOutputTag);
+
 
         //5. process 底层的window API，可以打印出窗口的一些信息
         SingleOutputStreamOperator<String> process = sensorWS.process(
@@ -220,7 +225,12 @@ public class WatermarkDemo {
                 return new WaterSensor(value1.getId(), value2.getTs(), value1.getVc() + value2.getVc());
             }
         }).print();*/
+
+        //6.逻辑处理完之后 如果侧输出流中有数据 还应该将侧流中的数据提取出来进行进一步的处理,调用.getSideOutput()方法，传入对应的侧输出标签，就可以获取到迟到数据所在的流了。
+        //这里注意，getSideOutput()是 SingleOutputStreamOperator 的方法，获取到的侧输出流数据类型应该和 OutputTag 指定的类型一致，与窗口聚合之后流中的数据类型可以不同。
+        DataStream<WaterSensor> lateStream = process.getSideOutput(waterSensorOutputTag);
         process.print();
+        lateStream.print("侧输出流中的数据:");
         env.execute("testWithoutOrdernessStream");
     }
 
@@ -439,4 +449,5 @@ public class WatermarkDemo {
             return new Watermark(System.currentTimeMillis() - maxTimeLag);
         }
     }
+
 }

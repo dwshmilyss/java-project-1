@@ -1,6 +1,6 @@
-package com.linfflow.flink.dev.datastream.window;
+package com.linkflow.flink.dev.datastream.window;
 
-import com.linfflow.flink.dev.pojo.WaterSensor;
+import com.linkflow.flink.dev.pojo.WaterSensor;
 import org.apache.flink.api.common.eventtime.SerializableTimestampAssigner;
 import org.apache.flink.api.common.eventtime.WatermarkStrategy;
 import org.apache.flink.api.common.functions.ReduceFunction;

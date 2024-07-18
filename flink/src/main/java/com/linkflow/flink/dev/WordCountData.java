@@ -16,7 +16,7 @@
  * limitations under the License.
  */
 
-package com.linfflow.flink.dev;
+package com.linkflow.flink.dev;
 
 /**
  * Provides the default data sets used for the WordCount example program. The default data sets are

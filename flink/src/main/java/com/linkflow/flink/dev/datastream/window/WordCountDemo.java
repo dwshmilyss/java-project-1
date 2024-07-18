@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.datastream;
+package com.linkflow.flink.dev.datastream.window;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.functions.MapFunction;
@@ -19,25 +19,19 @@ import org.apache.flink.util.Collector;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @Description: 各种DStream的算子
- * @Date: 2023/7/19
- * @Auther: David.duan
- * @Param null:
- **/
-public class OperatorDemo {
+public class WordCountDemo {
     public static void main(String[] args) throws Exception {
 //        testRichMapFunction();
-        testKeyByMutli();
-//        testTumblingProcessingTimeWindows();
+//        testKeyByMutli();
+//        wordcount();
 //        testReduce();
 //        testMinOrMax();
-//        testWindow();
+        testWindow();
     }
 
     /**
      * input: "dw 20200101 2"
-     * 测试按多个字段进行keyBy
+     *
      * @throws Exception
      */
     public static void testKeyByMutli() throws Exception {
@@ -58,6 +52,7 @@ public class OperatorDemo {
 //        KeyedStream<Tuple3<String, String, Integer>, Tuple> key = map.keyBy(0, 1);
         //new api
         KeyedStream<Tuple3<String, String, Integer>, String> key = map.keyBy(t -> t.f0 + t.f1);
+        // another new api
 //        key.print();
         key.min(2).print();
 //        SingleOutputStreamOperator<Tuple3<String, String, Integer>> summed = key.sum(2);
@@ -65,11 +60,6 @@ public class OperatorDemo {
         env.execute();
     }
 
-    /**
-     * @Description: 测试RichMapFunction
-     * @Date: 2023/7/19
-     * @Auther: David.duan
-     **/
     public static void testRichMapFunction() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
@@ -96,15 +86,10 @@ public class OperatorDemo {
         env.execute();
     }
 
-    /**
-     * @Description: 测试
-     * @Date: 2023/7/19
-     * @Auther: David.duan
-     **/
-    public static void testTumblingProcessingTimeWindows() throws Exception {
+
+    public static void wordcount() throws Exception {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         DataStream<String> lines = env.socketTextStream("localhost", 9999);
-        //一行一行的读取数据，按空格切分
         DataStream<String> words = lines.flatMap(new FlatMapFunction<String, String>() {
             @Override
             public void flatMap(String value, Collector<String> out) throws Exception {
@@ -114,22 +99,21 @@ public class OperatorDemo {
                 }
             }
         });
-        //把word转换为tuple2(word,1)
         DataStream<Tuple2<String, Long>> wordWithOne = words.map(new MapFunction<String, Tuple2<String, Long>>() {
             @Override
             public Tuple2<String, Long> map(String value) throws Exception {
                 return new Tuple2(value, 1L);
             }
         });
-        //按tuple(0)分组
         KeyedStream<Tuple2<String, Long>, String> keyedData = wordWithOne.keyBy(new KeySelector<Tuple2<String, Long>, String>() {
             @Override
             public String getKey(Tuple2<String, Long> value) throws Exception {
                 return value.f0;
             }
         });
-        //每5s开一次窗 计算sum
+//        keyedData.print();
         WindowedStream<Tuple2<String, Long>, String, TimeWindow> windowedStream = keyedData.window(TumblingProcessingTimeWindows.of(Time.seconds(5)));
+//        SingleOutputStreamOperator<Tuple2<String, Long>> sumData = keyedData.sum(1);
         SingleOutputStreamOperator<Tuple2<String, Long>> sumData = windowedStream.sum(1).setParallelism(2);
         sumData.print();
         env.execute("Flink WordCount");

@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev.pojo;
+package com.linkflow.flink.dev.pojo;
 
 import java.util.Objects;
 

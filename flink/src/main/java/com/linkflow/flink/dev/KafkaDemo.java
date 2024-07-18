@@ -1,4 +1,4 @@
-package com.linfflow.flink.dev;
+package com.linkflow.flink.dev;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;

@@ -29,7 +29,7 @@ public class WordCountDemo {
         //程序异常退出，或者人为取消，不删除checkpoint目录数据
         env.getCheckpointConfig().enableExternalizedCheckpoints(CheckpointConfig.ExternalizedCheckpointCleanup.RETAIN_ON_CANCELLATION);
 //        env.setStateBackend(new FsStateBackend("hdfs://hadoop-hdfs-namenode:9000/dww/flink/checkpoints"));
-        env.setStateBackend(new FsStateBackend("hdfs://192.168.121.31:8020/dww/flink/checkpoint/wordcount"));
+        env.setStateBackend(new FsStateBackend("hdfs://localhost:9000/flink/checkpoint/wordcount"));
         DataStream<String> lines = env.socketTextStream("localhost", 9999); // nc -l 9999
 //        DataStream<String> lines = env.fromElements(WordCountData.WORDS);
         //纯java写法

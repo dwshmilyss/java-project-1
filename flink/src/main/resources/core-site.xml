@@ -20,7 +20,7 @@
 
     <property>
         <name>fs.defaultFS</name>
-        <value>hdfs://hadoop-hdfs-namenode:9000/</value>
+        <value>hdfs://localhost:9000/</value>
         <description>NameNode URI</description>
     </property>
     <property>

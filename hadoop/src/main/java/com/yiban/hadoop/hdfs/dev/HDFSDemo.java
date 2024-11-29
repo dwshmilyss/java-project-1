@@ -1,11 +1,15 @@
 package com.yiban.hadoop.hdfs.dev;
 
+import com.google.common.hash.Hasher;
+import com.google.common.hash.Hashing;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.*;
 import org.apache.hadoop.io.IOUtils;
 
 import java.io.*;
 import java.net.URI;
+import java.security.MessageDigest;
+
 
 /**
  * @auther WEI.DUAN
@@ -95,11 +99,88 @@ public class HDFSDemo {
         }
     }
 
+    public static void testChecksum() throws Exception {
+        // HDFS 文件路径
+        String hdfsFilePath = "hdfs://localhost:9000/a.txt";
+        // 本地文件路径
+        String localFilePath = "/Users/edz/a.txt";
+
+        // 配置 HDFS
+        Configuration conf = new Configuration();
+        conf.set("fs.defaultFS", "hdfs://localhost:9000"); // 替换为你的 NameNode 地址
+        FileSystem fs = FileSystem.get(conf);
+
+        // 获取 HDFS 文件的校验和
+        FileChecksum hdfsChecksum = fs.getFileChecksum(new Path(hdfsFilePath));
+        String hdfsChecksumString = hdfsChecksum.toString();
+        System.out.println("hdfsChecksumString = " + hdfsChecksumString);
+
+        // 计算本地文件的校验和
+        String localChecksum = calculateFileMD5(new File(localFilePath),"MD5");
+        System.out.println("localChecksum = " + localChecksum);
+
+        // 比较校验和
+        if (hdfsChecksumString.equals(localChecksum)) {
+            System.out.println("The downloaded file is complete.");
+        } else {
+            System.out.println("The downloaded file is incomplete or corrupted.");
+        }
+
+        fs.close();
+    }
+
+    // 计算本地文件的 MD5
+    private static String calculateFileMD5(File file,String algorithm) throws Exception {
+        MessageDigest digest = MessageDigest.getInstance(algorithm);
+        try (FileInputStream fis = new FileInputStream(file)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                digest.update(buffer, 0, bytesRead);
+            }
+        }
+
+        StringBuilder hash = new StringBuilder();
+        for (byte b : digest.digest()) {
+            hash.append(String.format("%02x", b));
+        }
+        return hash.toString();
+    }
+
+    /**
+     *
+     * @param filePath
+     * @return
+     * @throws IOException
+     */
+    public static long calculateGuavaCRC32C(String filePath) throws IOException {
+        Hasher hasher = Hashing.crc32c().newHasher();
+
+        try (FileInputStream fis = new FileInputStream(filePath)) {
+            byte[] buffer = new byte[8192];
+            int bytesRead;
+
+            while ((bytesRead = fis.read(buffer)) != -1) {
+                hasher.putBytes(buffer, 0, bytesRead);
+            }
+        }
+
+        return hasher.hash().padToLong();
+    }
+
+
+
     public static void main(String[] args) {
+        System.out.println(System.getProperty("java.version"));
+        System.out.println(System.getProperty("java.home"));
         try {
 //            readFile("/a.txt");
 //            writeFile("/b.txt");
-            appendHDFS(getFileSystem());
+//            appendHDFS(getFileSystem());
+            testChecksum();
+//            String code = calculateFileMD5(new File("/Users/edz/a.txt"), "CRC32C");
+//            String checksumHex = Long.toHexString(calculateGuavaCRC32C("/Users/edz/a.txt"));
+//            System.out.println(checksumHex);
         } catch (Exception e) {
             e.printStackTrace();
         }

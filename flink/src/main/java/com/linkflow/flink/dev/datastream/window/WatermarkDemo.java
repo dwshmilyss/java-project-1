@@ -28,6 +28,27 @@ import org.apache.flink.util.OutputTag;
 
 import java.time.Duration;
 
+/**
+ * flink 三种类型的watermark策略
+ * 1、WatermarkStrategy.forBoundedOutOfOrderness:允许事件时间中出现一定的乱序（延迟时间）。
+ * 水印的时间戳值为：watermark = 当前观察到的最大事件时间 - 最大允许延迟时间
+ * 如果新的事件时间超过当前水印，水印会更新，适用于大多数实际场景。
+ * 2、WatermarkStrategy.forMonotonousTimestamps：假设事件时间严格递增，无乱序
+ * 水印等于观察到的最新事件时间。无延迟
+ * 3、WatermarkStrategy.noWatermarks：不生成任何水印。
+ * 适用场景：不需要事件时间的处理场景。
+ * ---
+ * 水印传播规则
+ * 	•	生成频率：
+ * 	•	水印生成的频率由 Flink 的 ExecutionConfig 参数 autoWatermarkInterval 控制。
+ * 	•	默认值为 200 毫秒（即每 200 毫秒检查一次是否需要生成和传播新的水印）。
+ * 	•	可通过以下代码更改：
+ * 	env.getConfig().setAutoWatermarkInterval(100); // 每 100 毫秒生成水印
+ * 	全局水印更新：
+ * 	•	Flink 在分布式环境中处理水印时，会选择 所有并行子任务的最小水印值 作为全局水印，确保下游不会提前处理数据。
+ *
+ * 默认情况下，Flink 不生成水印，需要显式指定 WatermarkStrategy。
+ */
 public class WatermarkDemo {
     /**
      * nc -lk 9999

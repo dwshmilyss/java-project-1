@@ -26,6 +26,7 @@
         <module>kafka</module>
         <module>hive</module>
         <module>dubbo_apache</module>
+        <module>java17</module>
     </modules>
 
     <properties>

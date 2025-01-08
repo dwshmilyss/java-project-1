@@ -24,8 +24,8 @@ public class WindowDemo {
         String delimiter = "\n";
 //        testTumbling(port,hostname,delimiter);
 //        testSlidingTumbling(port, hostname, delimiter);
-//        testSessionWindow(port, hostname, delimiter);
-        testCountWindow(port, hostname, delimiter);
+        testSessionWindow(port, hostname, delimiter);
+//        testCountWindow(port, hostname, delimiter);
 //        testSlidingCountWindow(port, hostname, delimiter);
     }
 
@@ -107,6 +107,7 @@ public class WindowDemo {
 
     /**
      * @Description: 会话窗口 每隔10s如果没有数据进来了则开启一次计算
+     * 该窗口的计算和eventTime无关，因为他是通过processingTime来计算的
      * .window(ProcessingTimeSessionWindows.withGap(Time.seconds(10)))
      * @Date: 2023/8/1
      * @Auther: David.duan

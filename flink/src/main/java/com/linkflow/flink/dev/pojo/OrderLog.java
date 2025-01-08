@@ -1,11 +1,15 @@
 package com.linkflow.flink.dev.pojo;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderLog {
     private String orderId;
 
@@ -14,6 +18,7 @@ public class OrderLog {
     private String priceType;
 
     private Long requestTime;
+
 
     /**
      * @param id:

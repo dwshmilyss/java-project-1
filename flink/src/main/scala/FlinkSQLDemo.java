@@ -149,7 +149,7 @@ public class FlinkSQLDemo {
                         "  'format' = 'csv',\n" +
                         "  'properties.security.protocol' = 'SASL_PLAINTEXT', -- 使用 SASL 认证的通信协议\n" +
                         "  'properties.sasl.mechanism' = 'SCRAM-SHA-256',-- SASL 机制（如 PLAIN、SCRAM-SHA-256、SCRAM-SHA-512）\n" +
-                        "  'properties.sasl.jaas.config' = 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"user1\" password=\"QfGVMFCTFy\";'" +
+                        "  'properties.sasl.jaas.config' = 'org.apache.kafka.common.security.plain.PlainLoginModule required username=\"user1\" password=\"y7qNWQ8vqf\";'" +
                         ")"
         );
 

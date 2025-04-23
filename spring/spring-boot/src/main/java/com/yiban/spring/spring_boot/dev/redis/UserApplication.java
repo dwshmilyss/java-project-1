@@ -16,7 +16,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @EnableDiscoveryClient
 @EnableSwagger2
-@EnableFeignClients(basePackages = "com.yiban.spring.boot.dev.redis")
+@EnableFeignClients(basePackages = "com.yiban.spring.spring_boot.dev.redis")
 @EnableCaching
 public class UserApplication {
 }

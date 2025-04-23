@@ -1,0 +1,39 @@
+--- # 默认配置（适用于所有环境）
+spring:
+  application:
+    name: register-server
+  profiles:
+    active: "development" # 默认激活的配置文件
+
+
+management:
+  server:
+    address: 0.0.0.0 # 管理端口绑定到所有 IP
+    port: 9761 # 管理端口，暴露管理接口，如健康检查、关机接口等
+  endpoints:
+    enabled-by-default: true
+    web:
+      exposure:
+        include: "*" # 允许暴露所有的 Actuator 端点
+  endpoint:
+    jolokia:
+      enabled: true # Jolokia 端点，用于 JMX 管理
+    shutdown:
+      enabled: true # 允许暴露 shutdown 端点
+server:
+  port: 8761  # 应用端口，即 Eureka Server 的主服务端口
+eureka:
+  server:
+    enable-self-preservation: false # 关闭自我保护模式
+    eviction-interval-timer-in-ms: 60000 # 服务驱逐检查间隔，设置为60秒
+
+---
+spring:
+  profiles: development
+
+eureka:
+  client:
+    register-with-eureka: false # Eureka Server 不注册到自身
+    fetch-registry: false # 不从其他 Eureka Server 中获取注册表
+  instance:
+    lease-renewal-interval-in-seconds: 10

@@ -3,6 +3,7 @@ package com.yiban.spring.config.client;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 
 /**
  * @Description: TODO
@@ -10,9 +11,9 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
  * @Date: 2023/8/11
  **/
 @SpringBootApplication
-@EnableEurekaClient
-public class ConfigClientApplication {
+@EnableEurekaServer
+public class RegisterServerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ConfigClientApplication.class, args);
+        SpringApplication.run(RegisterServerApplication.class, args);
     }
 }

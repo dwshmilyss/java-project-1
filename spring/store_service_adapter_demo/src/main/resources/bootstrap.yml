@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: jc-club-oss
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+        file-extension: yaml
+        group: DEFAULT_GROUP
+        extension-configs:
+          - data-id: ${spring.application.name}-${spring.profiles.active}.yaml
+            refresh: true

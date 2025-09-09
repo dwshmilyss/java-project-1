@@ -14,6 +14,9 @@ import java.util.ArrayList;
  */
 public class ArrayListDemo {
     public static void main(String[] args) {
+        ArrayList<Integer> list1 = new ArrayList<>();
+        list1.add(1);
+
         ArrayList<String> list = new ArrayList<>(20);
         int length = getCapacity(list);
         int size = list.size();

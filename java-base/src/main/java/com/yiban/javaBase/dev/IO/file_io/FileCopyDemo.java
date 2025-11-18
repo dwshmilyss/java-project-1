@@ -22,7 +22,7 @@ public class FileCopyDemo {
 
     /**
      * 不考虑多线程优化，单线程文件复制最快的方法是(文件越大该方法越有优势，一般比常用方法快30+%):
-     *
+     * 这里利用的是sendfile
      * @param src
      * @param dest
      */
